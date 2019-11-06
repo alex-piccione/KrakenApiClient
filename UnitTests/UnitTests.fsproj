@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Alex75.Kraken.ApiClient\Alex75.Kraken.ApiClient.fsproj" />
+    <ProjectReference Include="..\Alex75.KrakenApiClient\Alex75.KrakenApiClient.fsproj" />
   </ItemGroup>
 
 </Project>

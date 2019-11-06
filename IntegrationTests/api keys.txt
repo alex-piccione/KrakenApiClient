@@ -1,0 +1,2 @@
+﻿Public key: aaaaa
+Secret key: bbbbb

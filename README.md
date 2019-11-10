@@ -8,7 +8,13 @@ Based on _.Net Standard 2.0_
 
 ## Functionalities
 
-- Get Ticker
+<dl>
+  <dt>Get Ticker</dt>
+  <dd>Retrieve the ask/bid prices of a specific currency pair</dd>
+  <dt>Get Balance <img src="./api key lock.svg" height=24></dt>
+  <dd>Retrieve the owned and available amount for the specified currencies</dd>
+</dl>
+
 
 ## Kraken documentation
 
@@ -16,3 +22,4 @@ REST API documentation: https://www.kraken.com/features/api
 WebSocket API documentation: https://www.kraken.com/en-gb/features/websocket-api  
 API support page: https://support.kraken.com/hc/en-us/categories/360000080686-API  
 
+C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/

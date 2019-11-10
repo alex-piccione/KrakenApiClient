@@ -19,8 +19,11 @@
   <ItemGroup>
     <Content Include="data\GET ticker response.json" />
     <Content Include="data\GET pairs response.json" />
-    <Compile Include="Client test.fs" />
-    <Content Include="api keys.txt" />
+    <Compile Include="Client GetBalance.fs" />
+    <Compile Include="Client GetTicker.fs" />
+    <Content Include="api keys.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

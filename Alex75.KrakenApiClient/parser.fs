@@ -3,6 +3,7 @@
 open System
 open FSharp.Data
 open Alex75.Cryptocurrencies
+open api.response.models
 
 //type ApiResponse = {error:Object[]; result:Object}
 
@@ -74,3 +75,17 @@ let parseTicker (pair:CurrencyPair, data:string) =
 //    "o": "0.26430000"
 //  }
 //}
+
+
+let parse_balance(data:string) =
+
+    let json = JsonValue.Parse(data)
+    let errors =  json.["error"].AsArray()
+
+    if errors.Length > 0 then
+        let error = errors.[0].ToString()
+        failwith error
+
+    // todo
+    Balance(0m)
+

@@ -1,2 +1,2 @@
-﻿Public key: aaaaa
-Secret key: bbbbb
+﻿public key= aaaaa
+secret key= bbbbb

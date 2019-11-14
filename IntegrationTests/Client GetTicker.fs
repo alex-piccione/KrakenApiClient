@@ -1,4 +1,4 @@
-﻿module IntegrationTests.Client
+﻿module IntegrationTests.Client.GetTicker
 
 open NUnit.Framework
 open FsUnit

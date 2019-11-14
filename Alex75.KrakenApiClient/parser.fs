@@ -1,26 +1,9 @@
 ﻿module parser
 
 open System
+open System.Collections.Generic
 open FSharp.Data
 open Alex75.Cryptocurrencies
-
-//type ApiResponse = {error:Object[]; result:Object}
-
-
-//let parseTicker (data:Stream) =
-//    JsonValue.Read()
-
-//let extract_pair name =
-
-//    (*
-//    The X and Z in front of some pairs is a classification system, which will not be used for the newest coins, where X stands for cryptocurrency based assets while Z is for fiat based assets.
-//    XRPUSD = XXRPZUSD  
-//    *)
-
-//    match name with 
-//    | "XXRPZUSD" -> CurrencyPair.XRP_USD
-//    | _ -> Curre
-
 
 
 let parseTicker (pair:CurrencyPair, data:string) =
@@ -74,3 +57,26 @@ let parseTicker (pair:CurrencyPair, data:string) =
 //    "o": "0.26430000"
 //  }
 //}
+
+
+let parse_balance(data:string) =
+
+    let json = JsonValue.Parse(data)
+    let errors =  json.["error"].AsArray()
+
+    if errors.Length > 0 then
+        let error = errors.[0].ToString()
+        failwith error
+
+    let balances = Dictionary<string, decimal>()    
+
+    for (kraken_currency, amount) in json.["result"].Properties() do
+        
+        let currency = match currency_mapping.currency_map.TryGetValue kraken_currency with
+                       | (found, mapped_currency) when found -> mapped_currency
+                       | _ -> kraken_currency
+
+        balances.Add(currency, amount.AsDecimal())
+
+    balances
+    

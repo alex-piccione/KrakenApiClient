@@ -1,7 +1,7 @@
-﻿module pair_mapping
+﻿module currency_pair_mapping
 
 /// map of Pair <-> Kraken Pair
-let mapping = Map<string, string>([ 
+let pair_map = Map<string, string>([ 
     ("ADACAD","ADACAD")
     ("ADAETH","ADAETH")
     ("ADAEUR","ADAEUR")
@@ -122,5 +122,5 @@ let mapping = Map<string, string>([
     ("ZECUSD","XZECZUSD")
 ])
     
-let get_kraken_pair pair = mapping.[pair]
+let get_kraken_pair pair = pair_map.[pair]
 

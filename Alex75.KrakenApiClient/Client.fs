@@ -2,20 +2,18 @@
 
 open System
 open System.Linq
-open Alex75.Cryptocurrencies
-open Flurl.Http
-open utils
 open System.Collections.Generic
-open System.Threading
+
 open Flurl.Http
-open System.Net
-open System.Text
+open Alex75.Cryptocurrencies
+open utils
 
 
-//[<Interface>]
+
 type IClient =
     abstract member GetTicker: main:Currency * other:Currency -> TickerResponse
     abstract member GetBalance: currencies:Currency[] -> BalanceResponse
+    abstract member CreateMarketOrder: pair:CurrencyPair * amount:decimal -> CreateMarketOrderResponse
 
 
 type public Client (public_key:string, secret_key:string) =
@@ -79,3 +77,15 @@ type public Client (public_key:string, secret_key:string) =
                 BalanceResponse(true, null, balance_list)
 
             with e -> BalanceResponse(false, e.Message, null)
+
+
+        member __.CreateMarketOrder (pair:CurrencyPair, amount:decimal) =
+            ensure_keys()
+            
+            try
+
+
+                
+                raise Exception("not implemented")
+
+            with e -> CreateMarketOrderResponse(false, e.Message)

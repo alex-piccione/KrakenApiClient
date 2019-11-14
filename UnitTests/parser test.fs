@@ -26,13 +26,26 @@ let parse_ticker () =
 [<Test>]
 let ``parse_balance when is error``() =
 
-    let json = loadApiResponse "GetBalance response.json"
+    let json = loadApiResponse "Balance response - error.json"
 
     (fun () -> parser.parse_balance(json) |> ignore) |> should throw typeof<Exception>
-    //(parser.parse_balance(json) |> ignore) |> should throw typeof<Exception>
 
+
+
+[<Test>]
+let ``parse_balance`` () =
+
+    let json = loadApiResponse "Balance response.json"
     
-    //balance |> should not' (be null)
-    //balance.Amount |> should equal 
+    let balance = parser.parse_balance(json)
+    
+    balance |> should not' (be null)
+    balance.Keys |> should contain ("USD")
+    balance.Keys |> should contain ("EUR")
+    balance.Keys |> should contain ("XRP")
+    balance.Keys |> should contain ("LTC")
 
-
+    balance.["USD"] |> should equal 0m
+    balance.["EUR"] |> should equal 501
+    balance.["XRP"] |> should equal 0.68765056
+    balance.["LTC"] |> should equal 0.0000042500

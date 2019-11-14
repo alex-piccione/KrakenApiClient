@@ -11,7 +11,10 @@ namespace Example
         {
             Console.WriteLine("Hello World!");
 
-            IClient client = new Client();
+            //IClient client = new Client(); // public methods
+            string publicKey = "";
+            string privateKey = "";
+            IClient client = new Client(privateKey, publicKey);  // private methods      
 
             // get ticker
             GetTicker(client);

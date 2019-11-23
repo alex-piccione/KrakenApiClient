@@ -2,28 +2,39 @@
 
 open System
 open System.Linq
-open Alex75.Cryptocurrencies
-open Flurl.Http
-open utils
 open System.Collections.Generic
-open System.Threading
+
 open Flurl.Http
-open System.Net
-open System.Text
+open Alex75.Cryptocurrencies
+open utils
+
+//[<Enum>]
+type OrderAction = | Buy | Sell
 
 
-//[<Interface>]
 type IClient =
     abstract member GetTicker: main:Currency * other:Currency -> TickerResponse
     abstract member GetBalance: currencies:Currency[] -> BalanceResponse
+    abstract member CreateMarketOrder: pair:CurrencyPair * action:OrderAction * buyAmount:decimal -> CreateMarketOrderResponse
 
 
 type public Client (public_key:string, secret_key:string) =
     
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
+    let base_url = "https://api.kraken.com/0"
+
+    let create_props (values:IDictionary<string, string>) = 
+
+        // to refactor
+        let props = System.Text.StringBuilder()
+        for kv in values do
+            props.AppendFormat("&{0}={1}", kv.Key, kv.Value) |> ignore 
+        props.ToString()
+        
 
     new () = Client(null, null)
        
+    
 
     interface IClient with        
 
@@ -31,7 +42,7 @@ type public Client (public_key:string, secret_key:string) =
            
             let kraken_pair = utils.get_kraken_pair main other
 
-            let url = f"https://api.kraken.com/0/public/Ticker?pair=%s" kraken_pair.AAABBB
+            let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB
                        
             try
                 let responseMessage = url.GetAsync().Result
@@ -44,7 +55,7 @@ type public Client (public_key:string, secret_key:string) =
         
         member __.GetBalance(currencies:Currency[]) =            
             ensure_keys()
-            let url = "https://api.kraken.com/0/private/Balance"
+            let url = f"%s/private/Balance" base_url
 
             try
                 (* this works 
@@ -76,6 +87,43 @@ type public Client (public_key:string, secret_key:string) =
                 let balance_list = Dictionary<Currency, decimal>()
                 for v in balance do balance_list.Add(Currency(v.Key), v.Value)    
 
+                //let balance_list_2 = List.collect ( fun (k,v) ->  (Currency(k), v) ) <| balance
+
                 BalanceResponse(true, null, balance_list)
 
             with e -> BalanceResponse(false, e.Message, null)
+
+
+        member __.CreateMarketOrder (pair:CurrencyPair, action:OrderAction, buyAmount:decimal) =
+            ensure_keys()
+
+            let url = f"%s/private/AddOrder" base_url            
+            let kraken_pair = (utils.get_kraken_pair pair.Main pair.Other).AAABBB
+
+            try
+
+                let nonce = DateTime.Now.Ticks
+                let values = dict ([
+                    ("pair", kraken_pair)  
+                    ("type", action.ToString().ToLower())
+                    ("ordertype", "market")
+                    //("price")
+                    ("volume", buyAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)) // ???? {"error":["EGeneral:Invalid arguments:volume"]}
+                    //("leverage")
+                    //("oflags", "viqc") // volume in quote currency   // no more available !
+                    //("validate", "true") // ANY value (also validate=true) will be a simulation, order id not returned
+                ])
+                
+                let props:string = create_props values
+
+                // string reqs = string.Format("&pair={0}&type={1}&ordertype={2}&volume={3}&leverage={4}", pair, type, ordertype, volume,leverage);
+                                
+                let content = f"nonce=%i%s" nonce props
+                let responseMessage = (url.WithApi "/0/private/AddOrder" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
+                let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+
+                let struct (orderIds, amount) = parser.parse_order(json)
+                
+                CreateMarketOrderResponse(true, null, orderIds, amount)                
+
+            with e -> CreateMarketOrderResponse.Fail e.Message

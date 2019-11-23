@@ -13,6 +13,8 @@ Based on _.Net Standard 2.0_
   <dd>Retrieve the ask/bid prices of a specific currency pair</dd>
   <dt>Get Balance <img src="./api key lock.svg" height=24></dt>
   <dd>Retrieve the owned and available amount for the specified currencies</dd>
+  <dt>Create Market Order</dt>
+  <dd>Create an order at teh price market</dd>
 </dl>
 
 
@@ -23,3 +25,6 @@ WebSocket API documentation: https://www.kraken.com/en-gb/features/websocket-api
 API support page: https://support.kraken.com/hc/en-us/categories/360000080686-API  
 
 C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
+
+  
+Nonce value for the key is in seconds/milliseconds ??

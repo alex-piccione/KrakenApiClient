@@ -1,20 +1,14 @@
 ﻿namespace IntegrationTests.Client
 
 open System
-open System.IO
 open NUnit.Framework
 open FsUnit
 
 open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
-open Test_base
+open utils
 
 module GetBalance =
-
-    let apiKeys = ApiKeys()
-
-    let public_key = apiKeys.``public key``
-    let secret_key = apiKeys.``secret key``
 
          
     [<Test>]
@@ -25,8 +19,8 @@ module GetBalance =
 
 
     [<Test>]
-    let ``GetBalance`` () =
-
+    let ``GetBalance`` () =        
+        
         let client = Client(public_key, secret_key) :> IClient
 
         let response = client.GetBalance( [|Currency("xrp"); Currency("eur")|])        

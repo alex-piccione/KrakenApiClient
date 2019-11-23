@@ -16,7 +16,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="data\create order ERROR no funds response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="data\extract tickers.py" />
+    <Content Include="data\create market order response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\response API feature disabled.json" />
     <Content Include="data\Balance response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

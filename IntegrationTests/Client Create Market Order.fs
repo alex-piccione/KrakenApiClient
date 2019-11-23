@@ -1,21 +1,14 @@
 ﻿namespace IntegrationTests.Client
 
 open System
-open System.IO
 open NUnit.Framework
 open FsUnit
 
 open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
-open Test_base
-
+open utils
 
 module CreateMarketOrder =
-
-    let apiKeys = ApiKeys()
-
-    let public_key = apiKeys.``public key``
-    let secret_key = apiKeys.``secret key``
 
          
     [<Test>]
@@ -25,16 +18,21 @@ module CreateMarketOrder =
         (fun () -> client.GetBalance([|Currency.BTC|]) |> ignore) |> should throw typeof<Exception>
 
 
-    [<Test>][<Ignore("payment involved")>]
+    [<Test>]   
+    // todo: write custom Ignore rule, example : https://amido.com/blog/conditional-ignore-nunit-and-the-ability-to-conditionally-ignore-a-test/
+    // [<IgnoreIf("payment involved")>]
     let ``CreateMarketOrder `` () =
 
         let client = Client(public_key, secret_key) :> IClient
 
         let pair = CurrencyPair("xrp", "eur")
-        let payAmount = 5m
+        let buyAmount = 30m
 
-        let response = client.CreateMarketOrder(pair, payAmount)
+        let response = client.CreateMarketOrder(pair, OrderAction.Buy, buyAmount)
 
         response |> should not' (be null)
+        response.IsSuccess |> should be True
+        response.Amount |> should equal buyAmount
+        response.OrderIds |> should not' (be Empty)
 
         

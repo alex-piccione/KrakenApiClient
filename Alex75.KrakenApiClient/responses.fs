@@ -21,6 +21,9 @@ type BalanceResponse (isSuccess:bool, error:string, currenciesBalance:IDictionar
     member __.CurrenciesBalance = currenciesBalance
 
 
-type CreateMarketOrderResponse (isSuccess:bool, error:string) =
+type CreateMarketOrderResponse (isSuccess:bool, error:string, orderIds:string[], amount:decimal) =
     inherit Response (isSuccess, error)
-    
+    member __.OrderIds = orderIds
+    member __.Amount = amount
+
+    static member Fail error = CreateMarketOrderResponse(false, error, null, 0m)

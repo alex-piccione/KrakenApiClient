@@ -20,9 +20,10 @@
   <ItemGroup>
     <Content Include="data\GET ticker response.json" />
     <Content Include="data\GET pairs response.json" />
-    <Compile Include="Test base.fs" />
-    <Compile Include="Client GetBalance.fs" />
+    <Compile Include="utils.fs" />
     <Compile Include="Client GetTicker.fs" />
+    <Compile Include="Client GetBalance.fs" />
+    <Compile Include="Client Create Market Order.fs" />
     <Content Include="api keys.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

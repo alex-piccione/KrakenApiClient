@@ -49,3 +49,14 @@ let ``parse_balance`` () =
     balance.["EUR"] |> should equal 501
     balance.["XRP"] |> should equal 0.68765056
     balance.["LTC"] |> should equal 0.0000042500
+
+
+[<Test>]
+let ``parse_order`` () =
+
+    let json = loadApiResponse "create market order response.json"
+    
+    let struct (orderIds, amount) = parser.parse_order(json)
+    
+    orderIds |> should contain "O5PWAY-435NAD-6NAI7P"
+    amount |> should equal 100.00000000

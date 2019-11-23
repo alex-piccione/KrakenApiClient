@@ -80,3 +80,18 @@ let parse_balance(data:string) =
 
     balances
     
+
+let parse_order(jsonString:string) =
+
+    let json = JsonValue.Parse(jsonString)
+    let errors = json.["error"].AsArray()
+
+    if errors.Length > 0 then
+        let error = errors.[0].ToString()
+        failwith error
+
+    let order = json.["result"].["descr"].["order"].ToString()
+    let amount = Decimal.Parse(order.Split(' ').[1])
+    let orderIds = json.["result"].["txid"].AsArray() |> Array.map (fun v -> v.AsString())
+
+    struct (orderIds, amount)

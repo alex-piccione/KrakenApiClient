@@ -27,3 +27,8 @@ type CreateMarketOrderResponse (isSuccess:bool, error:string, orderIds:string[],
     member __.Amount = amount
 
     static member Fail error = CreateMarketOrderResponse(false, error, null, 0m)
+
+
+type OpenOrdersResponse (isSuccess:bool, error:string, orders:Order[]) =
+    inherit Response(isSuccess, error)
+    member __.Orders = orders

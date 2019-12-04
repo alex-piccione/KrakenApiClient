@@ -60,3 +60,37 @@ let ``parse_order`` () =
     
     orderIds |> should contain "O5PWAY-435NAD-6NAI7P"
     amount |> should equal 100.00000000
+
+
+
+[<Test>]
+let ``parse_open_orders when list is empty`` () =
+
+    let json = loadApiResponse "get Open Orders response (empty list).json"
+    
+    let orders = parser.parse_open_orders(json)
+    
+    orders |> should not' (be null)
+    orders |> should be Empty 
+
+
+[<Test>]
+let ``parse_open_orders`` () =
+
+    let json = loadApiResponse "get Open Orders response (one limit order untouched).json"
+    
+    let orders = parser.parse_open_orders(json)
+    
+    orders |> should not' (be null)
+    orders |> should not' (be Empty) 
+
+    orders.Length |> should equal 1
+    let order = orders.[0]
+
+    //order.CreationDate |> should equalWithin (new DateTime(2019,12,04 18,37,00) TimeSpan.FromSeconds(1))
+    order.Id |> should equal "OGD4S7-IISGH-2BS2QI"
+    order.MainCurrency |> should equal (Currency("Xrp"))
+    order.OtherCurrency |> should equal (Currency("eur"))
+    order.Type |> should equal OrderType.Limit
+    order.Side |> should equal OrderSide.Sell
+    order.Price |> should equal 0.30m

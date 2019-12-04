@@ -1,0 +1,34 @@
+﻿{
+  "error": [],
+  "result": {
+    "open": {
+      "OGD4S7-IISGH-2BS2QI": {
+        "refid": null,
+        "userref": 0,
+        "status": "open",
+        "opentm": 1575484650.7296,
+        "starttm": 0,
+        "expiretm": 0,
+        "descr": {
+          "pair": "XRPEUR",
+          "type": "sell",
+          "ordertype": "limit",
+          "price": "0.30000",
+          "price2": "0",
+          "leverage": "none",
+          "order": "sell 250.00000000 XRPEUR @ limit 0.30000",
+          "close": ""
+        },
+        "vol": "250.00000000",
+        "vol_exec": "0.00000000",
+        "cost": "0.00000000",
+        "fee": "0.00000000",
+        "price": "0.00000000",
+        "stopprice": "0.00000000",
+        "limitprice": "0.00000000",
+        "misc": "",
+        "oflags": "fciq"
+      }
+    }
+  }
+}

@@ -6,6 +6,14 @@ open FSharp.Data
 open Alex75.Cryptocurrencies
 
 
+let private load_json_and_check_errors jsonString =
+    let json = JsonValue.Parse(jsonString)    
+    let errors = json.["error"].AsArray()    
+    if errors.Length > 0 then
+        let error = errors.[0].ToString()
+        failwith error
+    json
+
 let parseTicker (pair:CurrencyPair, data:string) =
 
     let json = JsonValue.Parse(data)
@@ -59,14 +67,8 @@ let parseTicker (pair:CurrencyPair, data:string) =
 //}
 
 
-let parse_balance(data:string) =
-
-    let json = JsonValue.Parse(data)
-    let errors =  json.["error"].AsArray()
-
-    if errors.Length > 0 then
-        let error = errors.[0].ToString()
-        failwith error
+let parse_balance(jsonString:string) =
+    let json = load_json_and_check_errors(jsonString)
 
     let balances = Dictionary<string, decimal>()    
 
@@ -81,17 +83,84 @@ let parse_balance(data:string) =
     balances
     
 
-let parse_order(jsonString:string) =
-
-    let json = JsonValue.Parse(jsonString)
-    let errors = json.["error"].AsArray()
-
-    if errors.Length > 0 then
-        let error = errors.[0].ToString()
-        failwith error
+let parse_order(jsonString:string) =    
+    let json = load_json_and_check_errors(jsonString)
 
     let order = json.["result"].["descr"].["order"].ToString()
     let amount = Decimal.Parse(order.Split(' ').[1])
     let orderIds = json.["result"].["txid"].AsArray() |> Array.map (fun v -> v.AsString())
 
     struct (orderIds, amount)
+
+
+let parse_open_orders(jsonString:string) = 
+    let json = load_json_and_check_errors(jsonString)
+
+    let orders = List<Order>()
+    let ordersJson = json.["result"].["open"].Properties()
+    for (orderId, order) in ordersJson do
+        //let status = order.["status"]
+        let timestamp = order.["opentm"].AsDecimal() // 1575484650.7296,
+        let creationDate = DateTimeOffset.FromUnixTimeSeconds(int64 timestamp).DateTime
+        //let creationDate = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime
+        let data = order.["descr"]
+        //let pair = CurrencyPair.parse(data.["pair"].AsString())
+        let orderSide = match data.["type"].AsString() with
+                        | "sell" -> OrderSide.Sell
+                        | "buy" -> OrderSide.Buy
+                        | _ -> failwithf "Order side not recognized: %s" (data.["type"].AsString())
+            
+        let orderType = match data.["ordertype"].AsString() with
+                        | "limit" -> OrderType.Limit
+                        | "market" -> OrderType.Market
+                        | _ -> failwithf "Order type not recognized: %s" (data.["ordertype"].AsString())
+        let orderAmount = Decimal.Parse(order.["vol"].AsString())
+        let priceString = data.["price"].AsString()
+        let price:Nullable<decimal> = Nullable<decimal>(Decimal.Parse(priceString)) // if limit orders      
+     
+        orders.Add (Order(orderId, creationDate, orderType, orderSide, Currency("xrp"), Currency("eur"), orderAmount, price) )
+   
+    orders.ToArray()
+
+         
+
+
+//refid = Referral order transaction id that created this order
+//userref = user reference id
+//status = status of order:
+//    pending = order pending book entry
+//    open = open order
+//    closed = closed order
+//    canceled = order canceled
+//    expired = order expired
+//opentm = unix timestamp of when order was placed
+//starttm = unix timestamp of order start time (or 0 if not set)
+//expiretm = unix timestamp of order end time (or 0 if not set)
+//descr = order description info
+//    pair = asset pair
+//    type = type of order (buy/sell)
+//    ordertype = order type (See Add standard order)
+//    price = primary price
+//    price2 = secondary price
+//    leverage = amount of leverage
+//    order = order description
+//    close = conditional close order description (if conditional close set)
+//vol = volume of order (base currency unless viqc set in oflags)
+//vol_exec = volume executed (base currency unless viqc set in oflags)
+//cost = total cost (quote currency unless unless viqc set in oflags)
+//fee = total fee (quote currency)
+//price = average price (quote currency unless viqc set in oflags)
+//stopprice = stop price (quote currency, for trailing stops)
+//limitprice = triggered limit price (quote currency, when limit based order type triggered)
+//misc = comma delimited list of miscellaneous info
+//    stopped = triggered by stop price
+//    touched = triggered by touch price
+//    liquidated = liquidation
+//    partial = partial fill
+//oflags = comma delimited list of order flags
+//    viqc = volume in quote currency
+//    fcib = prefer fee in base currency (default if selling)
+//    fciq = prefer fee in quote currency (default if buying)
+//    nompp = no market price protection
+
+    

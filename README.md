@@ -15,6 +15,7 @@ Based on _.Net Standard 2.0_
   <dd>Retrieve the owned and available amount for the specified currencies</dd>
   <dt>Create Market Order <img src="./api key lock.svg" height=12></dt>
   <dd>Create an order at the current market price</dd>
+  <dd>List open orders</dd>
 </dl>
 
 

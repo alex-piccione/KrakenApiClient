@@ -16,7 +16,7 @@ type IClient =
     abstract member GetTicker: main:Currency * other:Currency -> TickerResponse
     abstract member GetBalance: currencies:Currency[] -> BalanceResponse
     abstract member CreateMarketOrder: pair:CurrencyPair * action:OrderAction * buyAmount:decimal -> CreateMarketOrderResponse
-
+    abstract member GetOpenOrders: minCreationDate:DateTime -> OpenOrdersResponse
 
 type public Client (public_key:string, secret_key:string) =
     
@@ -127,3 +127,26 @@ type public Client (public_key:string, secret_key:string) =
                 CreateMarketOrderResponse(true, null, orderIds, amount)                
 
             with e -> CreateMarketOrderResponse.Fail e.Message
+
+
+        member __.GetOpenOrders minCreationDate =
+            ensure_keys()
+
+            let url = f"%s/private/OpenOrders" base_url   
+
+            
+            try
+                let nonce = DateTime.Now.Ticks
+                let props = null   
+                // inputs
+                // trades = whether or not to include trades in output (optional.  default = false)
+                //userref = restrict results to given user reference id (optional)
+
+                let content = f"nonce=%i%s" nonce props
+                let responseMessage = (url.WithApi "/0/private/OpenOrders" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
+                let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+                let orders = parser.parse_open_orders(json)                 
+
+                OpenOrdersResponse(true, null, orders)
+
+            with e -> OpenOrdersResponse(false, e.Message, null)

@@ -11,10 +11,10 @@ Based on _.Net Standard 2.0_
 <dl>
   <dt>Get Ticker</dt>
   <dd>Retrieve the ask/bid prices of a specific currency pair</dd>
-  <dt>Get Balance <img src="./api key lock.svg" height=24></dt>
+  <dt>Get Balance <img src="./api key lock.svg" height=12></dt>
   <dd>Retrieve the owned and available amount for the specified currencies</dd>
-  <dt>Create Market Order</dt>
-  <dd>Create an order at teh price market</dd>
+  <dt>Create Market Order <img src="./api key lock.svg" height=12></dt>
+  <dd>Create an order at the current market price</dd>
 </dl>
 
 

@@ -8,15 +8,14 @@ open Flurl.Http
 open Alex75.Cryptocurrencies
 open utils
 
-//[<Enum>]
-type OrderAction = | Buy | Sell
-
 
 type IClient =
     abstract member GetTicker: main:Currency * other:Currency -> TickerResponse
     abstract member GetBalance: currencies:Currency[] -> BalanceResponse
-    abstract member CreateMarketOrder: pair:CurrencyPair * action:OrderAction * buyAmount:decimal -> CreateMarketOrderResponse
-    abstract member GetOpenOrders: minCreationDate:DateTime -> OpenOrdersResponse
+    abstract member CreateMarketOrder: pair:CurrencyPair * action:OrderSide * buyAmount:decimal -> CreateMarketOrderResponse
+    abstract member GetOpenOrders: unit -> OpenOrdersResponse
+    //abstract member Transfer: currency:Currency * amount:decimal * sourceWallet:string * destinationWallet:string -> TransferResponse
+    abstract member WithdrawFunds: currency:Currency * amount:decimal * walletName:string -> WithdrawalResponse
 
 type public Client (public_key:string, secret_key:string) =
     
@@ -94,7 +93,7 @@ type public Client (public_key:string, secret_key:string) =
             with e -> BalanceResponse(false, e.Message, null)
 
 
-        member __.CreateMarketOrder (pair:CurrencyPair, action:OrderAction, buyAmount:decimal) =
+        member __.CreateMarketOrder (pair:CurrencyPair, action:OrderSide, buyAmount:decimal) =
             ensure_keys()
 
             let url = f"%s/private/AddOrder" base_url            
@@ -129,18 +128,17 @@ type public Client (public_key:string, secret_key:string) =
             with e -> CreateMarketOrderResponse.Fail e.Message
 
 
-        member __.GetOpenOrders minCreationDate =
+        member __.GetOpenOrders () =
             ensure_keys()
 
             let url = f"%s/private/OpenOrders" base_url   
-
             
             try
                 let nonce = DateTime.Now.Ticks
                 let props = null   
                 // inputs
                 // trades = whether or not to include trades in output (optional.  default = false)
-                //userref = restrict results to given user reference id (optional)
+                // userref = restrict results to given user reference id (optional)
 
                 let content = f"nonce=%i%s" nonce props
                 let responseMessage = (url.WithApi "/0/private/OpenOrders" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
@@ -150,3 +148,31 @@ type public Client (public_key:string, secret_key:string) =
                 OpenOrdersResponse(true, null, orders)
 
             with e -> OpenOrdersResponse(false, e.Message, null)
+
+
+
+        member __.WithdrawFunds (currency:Currency, amount:decimal, walletName:string) =
+            ensure_keys()
+
+            let url = f"%s/private/Withdraw" base_url
+
+            try
+
+                let nonce = DateTime.Now.Ticks
+                let values = dict([
+                    //("aclass") WTF is "aclass" (asset class) ??
+                    ("asset", currency.LowerCase)
+                    ("amount", amount.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                    ("key", walletName)
+                ])
+
+                let props:string = create_props values
+                let content = f"nonce=%i%s" nonce props
+                let responseMessage = (url.WithApi "/0/private/Withdraw" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
+                let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+
+                let operationId = parser.parse_withdrawal(json)
+
+                WithdrawalResponse(true, null, operationId)
+
+            with e -> WithdrawalResponse(false, e.Message, null)

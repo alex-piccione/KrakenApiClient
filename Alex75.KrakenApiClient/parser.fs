@@ -164,3 +164,6 @@ let parse_open_orders(jsonString:string) =
 //    nompp = no market price protection
 
     
+let parse_withdrawal(jsonString:string) =    
+    let json = load_json_and_check_errors(jsonString)
+    json.["result"].["refid"].AsString()

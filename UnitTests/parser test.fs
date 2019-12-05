@@ -94,3 +94,14 @@ let ``parse_open_orders`` () =
     order.Type |> should equal OrderType.Limit
     order.Side |> should equal OrderSide.Sell
     order.Price |> should equal 0.30m
+
+
+[<Test>]
+let ``parse_withdrawal`` () =
+
+    let json = loadApiResponse "Withdraw Funds response.json"
+    
+    let operationId = parser.parse_withdrawal(json)
+    
+    operationId |> should not' (be null)
+    operationId |> should equal "AIBKMGZ-7GSRPZ-2TDTMQ"

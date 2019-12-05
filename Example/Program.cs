@@ -11,7 +11,7 @@ namespace Example
         {
             Console.WriteLine("Hello World!");
 
-            //IClient client = new Client(); // only public methods
+            //IClient client = new Client(); // only public methods (no keys required)
 
             string publicKey = "";  // use your key
             string privateKey = ""; // use your key
@@ -61,7 +61,7 @@ namespace Example
         {
             var buyAmount = 250; // XRP to buy
 
-            var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderAction.Buy, buyAmount);
+            var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderSide.Buy, buyAmount);
 
             if (orderResponse.IsSuccess)
             {
@@ -90,7 +90,7 @@ namespace Example
 
             decimal payAmount = 50; // EUR
             decimal buyAmount = payAmount / askPrice;
-            var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderAction.Buy, buyAmount);
+            var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderSide.Buy, buyAmount);
 
             if (orderResponse.IsSuccess)
             {
@@ -108,7 +108,7 @@ namespace Example
             if (response.IsSuccess)
             {
                 foreach(var order in response.Orders)
-                    Console.WriteLine($"Order: {order.Id}");
+                    Console.WriteLine($"Order: {order}");
             }
             else
             {

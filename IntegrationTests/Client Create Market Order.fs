@@ -28,7 +28,7 @@ module CreateMarketOrder =
         let pair = CurrencyPair("xrp", "eur")
         let buyAmount = 30m
 
-        let response = client.CreateMarketOrder(pair, OrderAction.Buy, buyAmount)
+        let response = client.CreateMarketOrder(pair, OrderSide.Buy, buyAmount)
 
         response |> should not' (be null)
         response.IsSuccess |> should be True

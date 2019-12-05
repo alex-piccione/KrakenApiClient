@@ -32,3 +32,8 @@ type CreateMarketOrderResponse (isSuccess:bool, error:string, orderIds:string[],
 type OpenOrdersResponse (isSuccess:bool, error:string, orders:Order[]) =
     inherit Response(isSuccess, error)
     member __.Orders = orders
+
+
+type WithdrawalResponse (isSuccess:bool, error:string, operationId:string) =
+    inherit Response(isSuccess, error)
+    member __.OperationId = operationId

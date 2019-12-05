@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.4.1.10" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.4.1.11" />
     <PackageReference Include="FSharp.Configuration" Version="1.5.0" />
     <PackageReference Include="FsUnit" Version="3.8.0" />
     <PackageReference Include="nunit" Version="3.12.0" />
@@ -25,6 +25,7 @@
     <Compile Include="Client GetBalance.fs" />
     <Compile Include="Client Create Market Order.fs" />
     <Compile Include="Client Get Open Orders.fs" />
+    <Compile Include="Client Withdrawal.fs" />
     <Content Include="api keys.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

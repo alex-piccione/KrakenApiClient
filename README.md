@@ -3,6 +3,7 @@
 Simple .Net client for the **Kraken** API (cryptocurrency exchange)  
 
 Based on _.Net Standard 2.0_
+Developed specifically for _XRP_.
 
 [![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient) [![Build Status](https://alex75.visualstudio.com/Kraken%20API%20Client/_apis/build/status/Build%20and%20publish%20Package%20v0.1?branchName=master)](https://alex75.visualstudio.com/Kraken%20API%20Client/_build/latest?definitionId=18&branchName=master)
 
@@ -16,6 +17,8 @@ Based on _.Net Standard 2.0_
   <dt>Create Market Order <img src="./api key lock.svg" height=12></dt>
   <dd>Create an order at the current market price</dd>
   <dd>List open orders</dd>
+  <dt>Withdrawal Crypto <img src="./api key lock.svg" height=12></dt>
+  <dd>Withdrawal cryptocurrency to a registered wallet</dd>
 </dl>
 
 

@@ -23,7 +23,7 @@ module GetOpenOrders =
         
         let client = Client(public_key, secret_key) :> IClient
 
-        let response = client.GetOpenOrders(DateTime.MinValue) 
+        let response = client.GetOpenOrders() 
 
         response |> should not' (be null)
         if not response.IsSuccess then failwith response.Error

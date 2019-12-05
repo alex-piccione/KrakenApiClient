@@ -12,9 +12,9 @@ namespace Example
             Console.WriteLine("Hello World!");
 
             //IClient client = new Client(); // only public methods
-            string publicKey = ""; // use your key
-            string privateKey = ""; // use your key
 
+            string publicKey = "";  // use your key
+            string privateKey = ""; // use your key
             IClient client = new Client(publicKey, privateKey);  // private methods      
 
 
@@ -25,11 +25,37 @@ namespace Example
             //GetBalance(client);
 
             // buy a precise amount of XRP paying in EUR
-            Buy_250_XRP_with_EUR(client);
+            //Buy_250_XRP_with_EUR(client);
 
             // buy XRP with 50 EUR
             //BuyXRP_with_50_EUR(client);
+
+            // get open orders
+            ListOpenOrders(client);
         }
+        
+
+        private static void GetTicker(IClient client)
+        {
+            var response = client.GetTicker(new Currency("xrp"), new Currency("eur"));
+            if (response.IsSuccess)
+                Console.WriteLine($"Ticker: {response.Ticker.Value}");
+            else
+                Console.WriteLine($"Error: {response.Error}");
+        }
+
+        private static void GetBalance(IClient client)
+        {
+            var xrp = new Currency("xrp");
+            var eur = new Currency("eur");
+
+            var response = client.GetBalance(new Currency[] { xrp, eur });
+            if (response.IsSuccess)
+                Console.WriteLine($"Balance. \n\tXRP: {response.CurrenciesBalance[xrp]}  \n\tEUR: {response.CurrenciesBalance[eur]} ");
+            else
+                Console.WriteLine($"Error: {response.Error}");
+        }
+
 
         private static void Buy_250_XRP_with_EUR(IClient client)
         {
@@ -43,7 +69,7 @@ namespace Example
             }
             else
             {
-                Console.WriteLine($"Order fail: {orderResponse.Error}");
+                Console.WriteLine($"Order failed: {orderResponse.Error}");
             }
         }
 
@@ -71,29 +97,24 @@ namespace Example
                 Console.WriteLine($"Order: {orderResponse.OrderIds}");
             }
             else {
-                Console.WriteLine($"Order fail: {orderResponse.Error}");
+                Console.WriteLine($"Order failed: {orderResponse.Error}");
             }
         }
 
-        private static void GetTicker(IClient client)
+        private static void ListOpenOrders(IClient client)
         {
-            var response = client.GetTicker(new Currency("xrp"), new Currency("eur"));
+            var response = client.GetOpenOrders();
+
             if (response.IsSuccess)
-                Console.WriteLine($"Ticker: {response.Ticker.Value}");
+            {
+                foreach(var order in response.Orders)
+                    Console.WriteLine($"Order: {order.Id}");
+            }
             else
-                Console.WriteLine($"Error: {response.Error}");
+            {
+                Console.WriteLine($"ListOpenOrders failed: {response.Error}");
+            }
         }
 
-        private static void GetBalance(IClient client)
-        {
-            var xrp = new Currency("xrp");
-            var eur = new Currency("eur");
-
-            var response = client.GetBalance(new Currency[] { xrp, eur});
-            if (response.IsSuccess) 
-                Console.WriteLine($"Balance. \n\tXRP: {response.CurrenciesBalance[xrp]}  \n\tEUR: {response.CurrenciesBalance[eur]} ");
-            else
-                Console.WriteLine($"Error: {response.Error}");
-        }
     }
 }

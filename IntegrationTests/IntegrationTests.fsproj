@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="Alex75.Cryptocurrencies" Version="0.4.1.11" />
-    <PackageReference Include="FSharp.Configuration" Version="1.5.0" />
     <PackageReference Include="FsUnit" Version="3.8.0" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
@@ -34,5 +33,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Alex75.KrakenApiClient\Alex75.KrakenApiClient.fsproj" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="copy &quot;$(ProjectDir)api keys.secret.yaml&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
 
 </Project>

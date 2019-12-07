@@ -23,7 +23,7 @@ module Withdraw =
         response.IsSuccess |> should be False
 
 
-    [<Test; Category("AFFECT_BALANCE")>]
+    [<Test; Category("AFFECT_BALANCE"); Category("REQUIRE_API_KEY")>]
     let ``Withdraw`` () =        
         
         let client = Client(public_key, secret_key) :> IClient

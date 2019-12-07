@@ -18,7 +18,7 @@ module ListOpenOrders =
         (fun () -> client.GetBalance([|Currency.BTC|]) |> ignore) |> should throw typeof<Exception>
 
 
-    [<Test>]
+    [<Test; Category("REQUIRE_API_KEY")>]
     let ``List Open Orders`` () =        
         
         let client = Client(public_key, secret_key) :> IClient

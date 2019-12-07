@@ -17,7 +17,7 @@ Developed specifically for _XRP_.
   <dt>Create Market Order <img src="./api key lock.svg" height=12 title="API key required"></dt>
   <dd>Create an order at the current market price</dd>
   <dt>List open orders</dt>
-  <dt>Withdrawal Crypto <img src="./api key lock.svg" height=12 alt="API key required"></dt>
+  <dt>Withdrawal Crypto <img src="./api key lock.svg" height=12 title="API key required"></dt>
   <dd>Withdrawal cryptocurrency to a registered wallet. The wallet name must be registered in your Kraken account</dd>
 </dl>
 

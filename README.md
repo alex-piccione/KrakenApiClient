@@ -12,17 +12,25 @@ Developed specifically for _XRP_.
 <dl>
   <dt>Get Ticker</dt>
   <dd>Retrieve the ask/bid prices of a specific currency pair</dd>
-  <dt>Get Balance <img src="./api key lock.svg" height=12></dt>
+  <dt>Get Balance <img src="./api key lock.svg" height=12 title="API key required"></dt>
   <dd>Retrieve the owned and available amount for the specified currencies</dd>
-  <dt>Create Market Order <img src="./api key lock.svg" height=12></dt>
+  <dt>Create Market Order <img src="./api key lock.svg" height=12 title="API key required"></dt>
   <dd>Create an order at the current market price</dd>
   <dt>List open orders</dt>
-  <dt>Withdrawal Crypto <img src="./api key lock.svg" height=12></dt>
-  <dd>Withdrawal cryptocurrency to a registered wallet</dd>
+  <dt>Withdrawal Crypto <img src="./api key lock.svg" height=12 alt="API key required"></dt>
+  <dd>Withdrawal cryptocurrency to a registered wallet. The wallet name must be registered in your Kraken account</dd>
 </dl>
 
 
-## Kraken documentation
+## How to use it
+
+Add the <a href="https://www.nuget.org/packages/Alex75.KrakenApiClient" target="_blank">NuGet package</a>.  
+See the examples in <a href="Example/Program.cs">Examples</a>
+
+
+## For developers
+
+### Kraken documentation
 
 REST API documentation: https://www.kraken.com/features/api  
 WebSocket API documentation: https://www.kraken.com/en-gb/features/websocket-api  
@@ -30,5 +38,7 @@ API support page: https://support.kraken.com/hc/en-us/categories/360000080686-AP
 
 C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
 
-  
+### Known issues 
+
+Nonce
 Nonce value for the key is in seconds/milliseconds ??

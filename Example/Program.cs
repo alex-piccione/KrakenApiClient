@@ -9,7 +9,7 @@ namespace Example
     {
         static void Main()
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Kraken API Client examples\n");
 
             //IClient client = new Client(); // only public methods (no keys required)
 

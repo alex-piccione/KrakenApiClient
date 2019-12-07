@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="pre-build.cmd" />
+    <Exec Command="pre-build.cmd &quot;$(ProjectDir)&quot; &quot;$(TargetDir)&quot;" />
   </Target>
 
 </Project>

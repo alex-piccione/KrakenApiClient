@@ -11,7 +11,7 @@ open utils
 module CreateMarketOrder =
              
 
-    [<Test; Category("AFFECT BALANCE")>]   
+    [<Test; Category("AFFECT_BALANCE")>]   
     // todo: write custom Ignore rule, example : https://amido.com/blog/conditional-ignore-nunit-and-the-ability-to-conditionally-ignore-a-test/
     // [<IgnoreIf("payment involved")>]
     let ``CreateMarketOrder `` () =

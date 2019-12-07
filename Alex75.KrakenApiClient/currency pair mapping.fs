@@ -1,4 +1,4 @@
-﻿module currency_pair_mapping
+﻿module private currency_pair_mapping
 
 /// map of Pair <-> Kraken Pair
 let pair_map = Map<string, string>([ 

@@ -1,4 +1,4 @@
-﻿module currency_mapping
+﻿module private currency_mapping
 
 let currency_map = Map<string, string> ([
     ("ZUSD", "USD")

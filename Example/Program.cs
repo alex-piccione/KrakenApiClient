@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Reflection;
 using Alex75.Cryptocurrencies;
 using Alex75.KrakenApiClient;
 
@@ -32,8 +32,12 @@ namespace Example
 
             // get open orders
             ListOpenOrders(client);
+
+            // withdraw 50 XRP to a registered wallet
+            WithdrawFunds(client);
         }
-        
+
+
 
         private static void GetTicker(IClient client)
         {
@@ -103,7 +107,7 @@ namespace Example
 
         private static void ListOpenOrders(IClient client)
         {
-            var response = client.GetOpenOrders();
+            var response = client.ListOpenOrders();
 
             if (response.IsSuccess)
             {
@@ -113,6 +117,20 @@ namespace Example
             else
             {
                 Console.WriteLine($"ListOpenOrders failed: {response.Error}");
+            }
+        }
+
+        private static void WithdrawFunds(IClient client)
+        {
+            var response = client.Withdraw(Currency.XRP, 50, "Binance");
+
+            if (response.IsSuccess)
+            {
+                Console.WriteLine($"{MethodBase.GetCurrentMethod().Name} competed. Operation ID: {response.OperationId}");
+            }
+            else
+            {
+                Console.WriteLine($"{MethodBase.GetCurrentMethod().Name} failed: {response.Error}");
             }
         }
 

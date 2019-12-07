@@ -77,7 +77,7 @@ let ``parse_open_orders when list is empty`` () =
 [<Test>]
 let ``parse_open_orders`` () =
 
-    let json = loadApiResponse "get Open Orders response (one limit order untouched).json"
+    let json = loadApiResponse "list Open Orders response (one limit order untouched).json"
     
     let orders = parser.parse_open_orders(json)
     

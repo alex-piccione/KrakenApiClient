@@ -37,10 +37,10 @@
     <Content Include="data\GET ticker response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\get Open Orders response %28empty list%29.json">
+    <Content Include="data\list Open Orders response %28empty list%29.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\get Open Orders response %28one limit order untouched%29.json">
+    <Content Include="data\list Open Orders response %28one limit order untouched%29.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="data\Withdraw Funds response.json">

@@ -24,8 +24,8 @@
     <Compile Include="Client GetTicker.fs" />
     <Compile Include="Client GetBalance.fs" />
     <Compile Include="Client Create Market Order.fs" />
-    <Compile Include="Client Get Open Orders.fs" />
-    <Compile Include="Client Withdrawal.fs" />
+    <Compile Include="Client List Open Orders.fs" />
+    <Compile Include="Client Withdraw.fs" />
     <Content Include="api keys.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

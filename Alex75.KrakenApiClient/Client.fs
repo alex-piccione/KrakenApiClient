@@ -9,14 +9,6 @@ open Alex75.Cryptocurrencies
 open utils
 
 
-type IClient =
-    abstract member GetTicker: main:Currency * other:Currency -> TickerResponse
-    abstract member GetBalance: currencies:Currency[] -> BalanceResponse
-    abstract member CreateMarketOrder: pair:CurrencyPair * action:OrderSide * buyAmount:decimal -> CreateMarketOrderResponse
-    abstract member GetOpenOrders: unit -> OpenOrdersResponse
-    //abstract member Transfer: currency:Currency * amount:decimal * sourceWallet:string * destinationWallet:string -> TransferResponse
-    abstract member WithdrawFunds: currency:Currency * amount:decimal * walletName:string -> WithdrawalResponse
-
 type public Client (public_key:string, secret_key:string) =
     
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
@@ -128,7 +120,7 @@ type public Client (public_key:string, secret_key:string) =
             with e -> CreateMarketOrderResponse.Fail e.Message
 
 
-        member __.GetOpenOrders () =
+        member __.ListOpenOrders () =
             ensure_keys()
 
             let url = f"%s/private/OpenOrders" base_url   
@@ -151,7 +143,7 @@ type public Client (public_key:string, secret_key:string) =
 
 
 
-        member __.WithdrawFunds (currency:Currency, amount:decimal, walletName:string) =
+        member __.Withdraw (currency:Currency, amount:decimal, walletName:string) =
             ensure_keys()
 
             let url = f"%s/private/Withdraw" base_url

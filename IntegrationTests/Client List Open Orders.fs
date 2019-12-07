@@ -8,7 +8,7 @@ open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
 open utils
 
-module GetOpenOrders =
+module ListOpenOrders =
 
          
     [<Test>]
@@ -19,11 +19,11 @@ module GetOpenOrders =
 
 
     [<Test>]
-    let ``Get Open Orders`` () =        
+    let ``List Open Orders`` () =        
         
         let client = Client(public_key, secret_key) :> IClient
 
-        let response = client.GetOpenOrders() 
+        let response = client.ListOpenOrders() 
 
         response |> should not' (be null)
         if not response.IsSuccess then failwith response.Error

@@ -9,9 +9,7 @@ open Alex75.Cryptocurrencies
 let private load_json_and_check_errors jsonString =
     let json = JsonValue.Parse(jsonString)    
     let errors = json.["error"].AsArray()    
-    if errors.Length > 0 then
-        let error = errors.[0].ToString()
-        failwith error
+    if errors.Length > 0 then failwith (errors.[0].AsString())
     json
 
 let parseTicker (pair:CurrencyPair, data:string) =
@@ -31,11 +29,6 @@ let parseTicker (pair:CurrencyPair, data:string) =
 
     Ticker(pair, bid, ask, None, None, None)
 
-
-//    if data.Errors.Length <> 0 then
-//        failwith (data.Errors.[0].ToString())
-
-//    let res_1 = data.Result.[0]
 
 //    (*
 //    <pair_name> = pair name

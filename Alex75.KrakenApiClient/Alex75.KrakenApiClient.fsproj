@@ -18,6 +18,7 @@
     <Compile Include="utils.fs" />
     <Compile Include="parser.fs" />
     <Compile Include="responses.fs" />
+    <Compile Include="IClient.fs" />
     <Compile Include="Client.fs" />
   </ItemGroup>
 

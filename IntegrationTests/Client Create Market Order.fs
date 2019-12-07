@@ -9,16 +9,9 @@ open Alex75.Cryptocurrencies
 open utils
 
 module CreateMarketOrder =
+             
 
-         
-    [<Test>]
-    let ``CreateMarketOrder when keys are not defined`` () =
-
-        let client = Client() :> IClient
-        (fun () -> client.GetBalance([|Currency.BTC|]) |> ignore) |> should throw typeof<Exception>
-
-
-    [<Test>]   
+    [<Test; Category("AFFECT BALANCE")>]   
     // todo: write custom Ignore rule, example : https://amido.com/blog/conditional-ignore-nunit-and-the-ability-to-conditionally-ignore-a-test/
     // [<IgnoreIf("payment involved")>]
     let ``CreateMarketOrder `` () =

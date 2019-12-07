@@ -16,7 +16,7 @@ Developed specifically for _XRP_.
   <dd>Retrieve the owned and available amount for the specified currencies</dd>
   <dt>Create Market Order <img src="./api key lock.svg" height=12></dt>
   <dd>Create an order at the current market price</dd>
-  <dd>List open orders</dd>
+  <dt>List open orders</dt>
   <dt>Withdrawal Crypto <img src="./api key lock.svg" height=12></dt>
   <dd>Withdrawal cryptocurrency to a registered wallet</dd>
 </dl>

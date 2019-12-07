@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="pre-build.cmd" />
     <Content Include="data\GET ticker response.json" />
     <Content Include="data\GET pairs response.json" />
     <Compile Include="utils.fs" />
@@ -30,12 +31,14 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup />
+
   <ItemGroup>
     <ProjectReference Include="..\Alex75.KrakenApiClient\Alex75.KrakenApiClient.fsproj" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="copy &quot;$(ProjectDir)api keys.secret.yaml&quot; &quot;$(TargetDir)&quot;" />
+    <Exec Command="pre-build.cmd" />
   </Target>
 
 </Project>

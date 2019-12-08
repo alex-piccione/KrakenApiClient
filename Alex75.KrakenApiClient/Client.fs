@@ -20,28 +20,30 @@ type public Client (public_key:string, secret_key:string) =
         let props = System.Text.StringBuilder()
         for kv in values do
             props.AppendFormat("&{0}={1}", kv.Key, kv.Value) |> ignore 
-        props.ToString()
+        props.ToString()           
+    
+    let get_ticker (main, other) =            
         
+         let kraken_pair = utils.get_kraken_pair main other
+
+         let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB
+                    
+         try
+             let responseMessage = url.GetAsync().Result
+             let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+             let ticker = parser.parseTicker(CurrencyPair(main, other), json)
+             TickerResponse(true, null, Some ticker)
+
+         with e -> TickerResponse(false, e.Message, None)
+
 
     new () = Client(null, null)
-       
-    
+
 
     interface IClient with        
 
-        member __.GetTicker (main, other) =            
-           
-            let kraken_pair = utils.get_kraken_pair main other
-
-            let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB
-                       
-            try
-                let responseMessage = url.GetAsync().Result
-                let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-                let ticker = parser.parseTicker(CurrencyPair(main, other), json)
-                TickerResponse(true, null, Some ticker)
-
-            with e -> TickerResponse(false, e.Message, None)
+        member __.GetTicker (main, other) = get_ticker(main, other)  
+        member __.GetTicker (pair) = get_ticker(pair.Main, pair.Other)
 
         
         member __.GetBalance(currencies:Currency[]) =            

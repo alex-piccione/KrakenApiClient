@@ -2,18 +2,24 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
-    <Version>0.5</Version>
-    <PackageIcon>alex75.krakenapiclient.png</PackageIcon>
-    <PackageIconUrl />
+    <Version>0.5</Version>    
     <Description>Kraken API client for .Net</Description>
     <Authors>Alessandro Piccione</Authors>
+    <PackageIcon>alex75.krakenapiclient.png</PackageIcon>
     <RepositoryUrl>https://github.com/alex75it/KrakenApiClient</RepositoryUrl>
     <PackageTags>XRP cryptocurrency Bitcoin</PackageTags>
     <RepositoryType>Git</RepositoryType>
+    <PackageProjectUrl>https://github.com/alex75it/KrakenApiClient</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="alex75.krakenapiclient.png" />
+    <None Include="alex75.krakenapiclient.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
     <Compile Include="currency mapping.fs" />
     <Compile Include="currency pair mapping.fs" />
     <Compile Include="api response models.fs" />
@@ -23,8 +29,6 @@
     <Compile Include="IClient.fs" />
     <Compile Include="Client.fs" />
   </ItemGroup>
-
-  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="Alex75.Cryptocurrencies" Version="0.4.1.11" />

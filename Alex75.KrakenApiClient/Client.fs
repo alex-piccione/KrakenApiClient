@@ -9,10 +9,14 @@ open Alex75.Cryptocurrencies
 open utils
 
 
-type public Client (public_key:string, secret_key:string) =
-    
-    let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
+
+type public Client (public_key:string, secret_key:string) =  
+        
     let base_url = "https://api.kraken.com/0"
+    let ticker_cache_time = TimeSpan.FromSeconds 5.0
+    let balance_cache_time = TimeSpan.FromSeconds 10.0
+
+    let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
 
     let create_props (values:IDictionary<string, string>) = 
 
@@ -22,19 +26,26 @@ type public Client (public_key:string, secret_key:string) =
             props.AppendFormat("&{0}={1}", kv.Key, kv.Value) |> ignore 
         props.ToString()           
     
-    let get_ticker (main, other) =            
+    let get_ticker (main:Currency, other:Currency) =    
         
-         let kraken_pair = utils.get_kraken_pair main other
+        let pair:CurrencyPair = CurrencyPair(main, other)
+        let cached_ticker = cache.getTicker pair ticker_cache_time
+        
+        match cached_ticker.IsSome with 
+        | true -> TickerResponse(true, null, Some(cached_ticker.Value))
+        | _ -> 
+        
+             let kraken_pair = utils.get_kraken_pair main other
 
-         let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB
+             let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB
                     
-         try
-             let responseMessage = url.GetAsync().Result
-             let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-             let ticker = parser.parseTicker(CurrencyPair(main, other), json)
-             TickerResponse(true, null, Some ticker)
+             try
+                 let responseMessage = url.GetAsync().Result
+                 let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+                 let ticker = parser.parseTicker(pair, json)
+                 TickerResponse(true, null, Some ticker)
 
-         with e -> TickerResponse(false, e.Message, None)
+             with e -> TickerResponse(false, e.Message, None)
 
 
     new () = Client(null, null)
@@ -48,41 +59,47 @@ type public Client (public_key:string, secret_key:string) =
         
         member __.GetBalance(currencies:Currency[]) =            
             ensure_keys()
-            let url = f"%s/private/Balance" base_url
+            let url = f"%s/private/Balance" base_url                           
+
+            (* this works 
+            let request =  WebRequest.Create(url) :?> HttpWebRequest
+                
+            request.ContentType <- "application/x-www-form-urlencoded"
+            request.Method <- "POST"
+            request.Headers.Add("API-Key", public_key)
+            request.Headers.Add("API-Sign", signature)       
+
+            let stream = new System.IO.StreamWriter( request.GetRequestStream() )
+            stream.Write(props)
+            stream.Close() // !!! General unknown error wothout this !!!
+
+            let response = request.GetResponse() :?> HttpWebResponse
+            let statusCode = response.StatusCode
+            let reader = new System.IO.StreamReader( response.GetResponseStream())
+            let json = reader.ReadToEnd()
+            //reader.Close
+            *)
 
             try
-                (* this works 
-                let request =  WebRequest.Create(url) :?> HttpWebRequest
-                
-                request.ContentType <- "application/x-www-form-urlencoded"
-                request.Method <- "POST"
-                request.Headers.Add("API-Key", public_key)
-                request.Headers.Add("API-Sign", signature)       
+                let cached_balance = cache.getBalance balance_cache_time
+                let all_balances = 
+                    match cached_balance.IsSome with
+                    | true -> cached_balance.Value
+                    | _ ->
+                        let mutable nonce:int64 = DateTime.Now.Ticks
+                        let props = null (* &key=value *)                
+                        let content = f"nonce=%i%s" nonce props
+                        let responseMessage = (url.WithApi "/0/private/Balance" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
+                        let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+                        let balance = parser.parse_balance(json) 
+                        cache.setBalance balance balance_cache_time
+                        balance
 
-                let stream = new System.IO.StreamWriter( request.GetRequestStream() )
-                stream.Write(props)
-                stream.Close() // !!! General unknown error wothout this !!!
-
-                let response = request.GetResponse() :?> HttpWebResponse
-                let statusCode = response.StatusCode
-                let reader = new System.IO.StreamReader( response.GetResponseStream())
-                let json = reader.ReadToEnd()
-                //reader.Close
-                *)
-                let mutable nonce:int64 = DateTime.Now.Ticks
-                let props = null (* &key=value *)                
-                let content = f"nonce=%i%s" nonce props
-                let responseMessage = (url.WithApi "/0/private/Balance" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
-                let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-                let balance = parser.parse_balance(json) 
-
-                // to refactor
-                let balance_list = Dictionary<Currency, decimal>()
-                for v in balance do balance_list.Add(Currency(v.Key), v.Value)    
-
-                //let balance_list_2 = List.collect ( fun (k,v) ->  (Currency(k), v) ) <| balance
-
-                BalanceResponse(true, null, balance_list)
+                let wanted_balances = Dictionary<Currency, decimal>()
+                for item in all_balances do 
+                    if currencies.Contains(item.Key) then wanted_balances.Add(item.Key, item.Value)    
+   
+                BalanceResponse(true, null, wanted_balances)
 
             with e -> BalanceResponse(false, e.Message, null)
 

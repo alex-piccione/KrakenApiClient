@@ -40,15 +40,15 @@ let ``parse_balance`` () =
     let balance = parser.parse_balance(json)
     
     balance |> should not' (be null)
-    balance.Keys |> should contain ("USD")
-    balance.Keys |> should contain ("EUR")
-    balance.Keys |> should contain ("XRP")
-    balance.Keys |> should contain ("LTC")
+    balance.Keys |> should contain (Currency("USD"))
+    balance.Keys |> should contain (Currency("EUR"))
+    balance.Keys |> should contain (Currency("XRP"))
+    balance.Keys |> should contain (Currency("LTC"))
 
-    balance.["USD"] |> should equal 0m
-    balance.["EUR"] |> should equal 501
-    balance.["XRP"] |> should equal 0.68765056
-    balance.["LTC"] |> should equal 0.0000042500
+    balance.[Currency("USD")] |> should equal 0m
+    balance.[Currency("EUR")] |> should equal 501
+    balance.[Currency("XRP")] |> should equal 0.68765056
+    balance.[Currency("LTC")] |> should equal 0.0000042500
 
 
 [<Test>]

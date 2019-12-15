@@ -63,7 +63,7 @@ let parseTicker (pair:CurrencyPair, data:string) =
 let parse_balance(jsonString:string) =
     let json = load_json_and_check_errors(jsonString)
 
-    let balances = Dictionary<string, decimal>()    
+    let balances = Dictionary<Currency, decimal>()    
 
     for (kraken_currency, amount) in json.["result"].Properties() do
         
@@ -71,7 +71,7 @@ let parse_balance(jsonString:string) =
                        | (found, mapped_currency) when found -> mapped_currency
                        | _ -> kraken_currency
 
-        balances.Add(currency, amount.AsDecimal())
+        balances.Add(Currency(currency), amount.AsDecimal())
 
     balances
     

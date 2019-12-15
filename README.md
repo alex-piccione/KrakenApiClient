@@ -11,9 +11,11 @@ Developed specifically for _XRP_.
 
 <dl>
   <dt>Get Ticker</dt>
-    <dd>Retrieve the ask/bid prices of a specific currency pair</dd>
+    <dd>Retrieve the ask/bid prices of a specific currency pair.
+    <br>The response is cached for 10 secods.</dd>
   <dt>Get Balance <img src="./api key lock.svg" height=12 title="API key required"></dt>
-    <dd>Retrieve the owned and available amount for the specified currencies</dd>
+    <dd>Retrieve the owned and available amount for the specified currencies.
+    <br>The response is cached for 10 secods.</dd>
   <dt>Create Market Order <img src="./api key lock.svg" height=12 title="API key required"></dt>
     <dd>Create an order at the current market price</dd>
   <dt>List open orders</dt>

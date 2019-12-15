@@ -43,4 +43,5 @@ C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
 
 ### Known issues 
 
-None.
+Raise the error "EAPI:Invalid nonce" too often, expecially in dev/local environments.  
+Synchronizing the system Date&Time does not help.  

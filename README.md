@@ -34,6 +34,8 @@ See the examples in <a href="Example/Program.cs">Examples</a>
 
 ## For developers
 
+Source code on GitHub.
+
 ### Kraken documentation
 
 REST API documentation: https://www.kraken.com/features/api  

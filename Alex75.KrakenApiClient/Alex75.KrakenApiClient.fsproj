@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
     <Version>0.5</Version>    
     <Description>Kraken API client for .Net</Description>
     <Authors>Alessandro Piccione</Authors>
     <PackageIcon>alex75.krakenapiclient.png</PackageIcon>
     <RepositoryUrl>https://github.com/alex75it/KrakenApiClient</RepositoryUrl>
-    <PackageTags>XRP cryptocurrency Bitcoin</PackageTags>
+    <PackageTags>XRP cryptocurrency Ripple Bitcoin</PackageTags>
     <RepositoryType>Git</RepositoryType>
     <PackageProjectUrl>https://github.com/alex75it/KrakenApiClient</PackageProjectUrl>
   </PropertyGroup>
@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.4.1.11" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.5.2.19" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
     <PackageReference Include="FSharp.Data" Version="3.3.2" />
   </ItemGroup>

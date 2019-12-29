@@ -20,5 +20,6 @@ steps:
 - script: |
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
+    echo version -> $(version)
     echo Build.BuildNumber -> $(Build.BuildNumber)
-  displayName: 'Run a multi-line script'
+  displayName: 'Check how to create a nice package version like 0.1.2.3'

@@ -16,6 +16,8 @@ type public Client (public_key:string, secret_key:string) =
     let ticker_cache_time = TimeSpan.FromSeconds 5.0
     let balance_cache_time = TimeSpan.FromSeconds 10.0
 
+    let ticker_cache = new Cache()
+
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
 
     let create_props (values:IDictionary<string, string>) = 
@@ -29,12 +31,11 @@ type public Client (public_key:string, secret_key:string) =
     let get_ticker (main:Currency, other:Currency) =    
         
         let pair:CurrencyPair = CurrencyPair(main, other)
-        let cached_ticker = cache.getTicker pair ticker_cache_time
+        let cached_ticker = ticker_cache.GetTicker pair ticker_cache_time
         
         match cached_ticker.IsSome with 
         | true -> TickerResponse(true, null, Some(cached_ticker.Value))
-        | _ -> 
-        
+        | _ ->         
              let kraken_pair = utils.get_kraken_pair main other
 
              let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB
@@ -43,6 +44,7 @@ type public Client (public_key:string, secret_key:string) =
                  let responseMessage = url.GetAsync().Result
                  let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
                  let ticker = parser.parseTicker(pair, json)
+                 ticker_cache.SetTicker ticker
                  TickerResponse(true, null, Some ticker)
 
              with e -> TickerResponse(false, e.Message, None)

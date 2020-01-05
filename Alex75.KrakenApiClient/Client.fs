@@ -16,7 +16,7 @@ type public Client (public_key:string, secret_key:string) =
     let ticker_cache_time = TimeSpan.FromSeconds 5.0
     let balance_cache_time = TimeSpan.FromSeconds 10.0
 
-    let ticker_cache = new Cache()
+    let ticker_cache = new Cache("kraken")
 
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
 
@@ -44,7 +44,7 @@ type public Client (public_key:string, secret_key:string) =
                  let responseMessage = url.GetAsync().Result
                  let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
                  let ticker = parser.parseTicker(pair, json)
-                 ticker_cache.SetTicker ticker
+                 ticker_cache.SetTicker ticker |> ignore
                  TickerResponse(true, null, Some ticker)
 
              with e -> TickerResponse(false, e.Message, None)

@@ -16,7 +16,7 @@ type public Client (public_key:string, secret_key:string) =
     let ticker_cache_time = TimeSpan.FromSeconds 5.0
     let balance_cache_time = TimeSpan.FromSeconds 10.0
 
-    let ticker_cache = new Cache("kraken")
+    let ticker_cache = new Cache()
 
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
 

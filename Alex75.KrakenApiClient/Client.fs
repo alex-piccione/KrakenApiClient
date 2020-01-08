@@ -44,7 +44,7 @@ type public Client (public_key:string, secret_key:string) =
                  let responseMessage = url.GetAsync().Result
                  let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
                  let ticker = parser.parseTicker(pair, json)
-                 ticker_cache.SetTicker ticker
+                 ticker_cache.SetTicker ticker |> ignore
                  TickerResponse(true, null, Some ticker)
 
              with e -> TickerResponse(false, e.Message, None)

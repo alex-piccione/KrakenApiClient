@@ -1,7 +1,7 @@
 ﻿module utils
 
 open System.IO
-//open FSharp.Configuration // does not work with net core 3.0
+//open FSharp.Configuration // does not work with net core 3.0/3.1
 
 // this pre-build command copy the private secret key file: copy "$(ProjectDir)api keys.secret.yaml" "$(TargetDir)"
 let api_key_file = if File.Exists("api keys.secret.yaml") then "api keys.secret.yaml" else
@@ -18,6 +18,3 @@ for line in File.ReadAllLines(api_key_file) do
     | "secret key" -> secret_key <- values.[1].Trim().Replace("\"", "")
     | _ -> ()
 
-
-// swith to True to run tests that involves real money movements (market orders)
-let runPaidTest = true

@@ -32,9 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.5.2.19" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.7.7" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
-    <PackageReference Include="FSharp.Data" Version="3.3.2" />
+    <PackageReference Include="FSharp.Data" Version="3.3.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
 </Project>

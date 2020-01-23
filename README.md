@@ -1,6 +1,6 @@
 # Kraken API Client
 
-Simple .Net client for the **Kraken** API (cryptocurrency exchange)  
+Simple .Net client for the **Kraken** API (cryptocurrency exchange).  
 Developed specifically for _XRP_.
 
 Target frameworks: _.NET Standard 2.0_ & _.NET Core 3.1_
@@ -12,6 +12,8 @@ Target frameworks: _.NET Standard 2.0_ & _.NET Core 3.1_
 ## Functionalities
 
 <dl>
+  <dt>ListPairs</dt>
+    <dd>List available currency pairs</dd>
   <dt>Get Ticker</dt>
     <dd>Retrieve the ask/bid prices of a specific currency pair.
     <br>The response is cached for a configurable amount of time.</dd>

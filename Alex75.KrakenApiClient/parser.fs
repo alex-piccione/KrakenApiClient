@@ -12,14 +12,47 @@ let private load_json_and_check_errors jsonString =
     if errors.Length > 0 then failwith (errors.[0].AsString())
     json
 
+
+let parsePairs (content:string) =
+    let json = load_json_and_check_errors content
+
+    let pairs = new List<CurrencyPair>()
+    for key, record in json.["result"].Properties() |> Seq.where( fun (key, record) -> not(key.EndsWith(".d"))) // skip "Derivatives"
+        do
+        //if key.EndsWith(".d") then failwithf "%s is wrong!" key
+
+        // fucking Kraken, only "some" currencies has "X" (crypto) or "Z" (fiat) as symbol prefix
+        // other ("USDT") hasn't !
+        // and other are expressed without this convention (XTZ) !
+        // so cannot just use "base" and "quote"
+
+        //let _base = record.["base"].AsString()        
+        //let quote = record.["quote"].AsString()
+         
+
+        //let _base = match record.["base"].AsString() with
+        //            | s when s.StartsWith("X") || s.StartsWith("Z") -> s.Substring(1)
+        //            | s -> s
+
+        //let quote = match record.["quote"].AsString() with
+        //            | s when s.StartsWith("X") || s.StartsWith("Z") -> s.Substring(1)
+        //            | s -> s
+    
+
+        let wsname = record.["wsname"].AsString().Split('/')
+        let _base = utils.normalize_symbol wsname.[0]
+        let quote = utils.normalize_symbol wsname.[1]
+
+        //if _base_1 <> _base then failwithf "%s != %s" _base _base_1
+        //if quote_1 <> quote then failwithf "%s != %s" quote quote_1
+
+        pairs.Add(CurrencyPair(_base, quote))
+    
+
+    pairs
+
 let parseTicker (pair:CurrencyPair, data:string) =
-
-    let json = JsonValue.Parse(data)
-    let errors =  json.["error"].AsArray()
-
-    if errors.Length > 0 then
-        let error = errors.[0].ToString()
-        failwith error
+    let json = load_json_and_check_errors data    
         
     let result = json.["result"]
     let (name, values) = result.Properties().[0]

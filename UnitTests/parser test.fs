@@ -11,7 +11,19 @@ open Alex75.Cryptocurrencies
 let loadApiResponse fileName =
     File.ReadAllText(Path.Combine( "data", fileName))
 
-[<Test>]
+
+
+[<Test; Category("parsing")>]
+let parse_pairs () =
+    let json = loadApiResponse "AssetPairs response.json"
+    let pairs = parser.parsePairs json
+
+    pairs |> should not' (be Null)
+    pairs |> should contain (CurrencyPair("ada", "eth"))
+    pairs |> should contain CurrencyPair.BTC_USD
+
+
+[<Test; Category("parsing")>]
 let parse_ticker () =
 
     let pair = CurrencyPair.XRP_USD
@@ -23,7 +35,7 @@ let parse_ticker () =
     ticker.Bid |> should equal 0.26075000
 
 
-[<Test>]
+[<Test; Category("parsing")>]
 let ``parse_balance when is error``() =
 
     let json = loadApiResponse "Balance response - error.json"
@@ -32,7 +44,7 @@ let ``parse_balance when is error``() =
 
 
 
-[<Test>]
+[<Test; Category("parsing")>]
 let ``parse_balance`` () =
 
     let json = loadApiResponse "Balance response.json"

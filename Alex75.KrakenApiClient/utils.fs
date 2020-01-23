@@ -18,6 +18,17 @@ let get_kraken_pair main other =
     CurrencyPair(kraken_main, kraken_other)
 
 
+let normalize_symbol kraken_value =
+    match kraken_value with 
+    | "XBT" -> "BTC"
+    | s -> s
+
+//let convert_to_kraken_symbol value =
+//    match value.ToUpper() with 
+//    | "BTC" -> "XBT"
+//    | s -> s
+
+
 let sha256_hash (value:string) = 
     System.Security.Cryptography.SHA256Managed.Create().ComputeHash(Encoding.UTF8.GetBytes(value))
 
@@ -44,17 +55,3 @@ type Flurl.Http.IFlurlRequest with
 
 type String with
     member self.WithApi api_path nonce props public_key secret_key = FlurlRequest(Url(self)).WithApi api_path nonce props public_key secret_key
-
-    (*
-let create_signature (api_path:string) (nonce:int64) props secret_key =
-
-    let pathBytes:byte[] = Encoding.UTF8.GetBytes(api_path)
-    let content = f"nonce=%s%s" (nonce.ToString()) props
-    let np = f"%s%s" (nonce.ToString()) content
-    let hash256bytes = sha256_hash(np)
-
-    let zz = Array.append pathBytes hash256bytes
-    let base64DecodedSecret = Convert.FromBase64String secret_key
-    let signature = Convert.ToBase64String( getHash(base64DecodedSecret, zz) )
-    signature
-    *)

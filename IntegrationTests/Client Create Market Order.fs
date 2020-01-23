@@ -8,6 +8,7 @@ open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
 open utils
 
+[<Category("Client")>]
 module CreateMarketOrder =
              
 

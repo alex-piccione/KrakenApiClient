@@ -5,6 +5,7 @@ open FsUnit
 open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
 
+[<Category("Client")>]
 [<TestCase("xrp", "eur")>]
 [<TestCase("xrp", "usd")>]
 [<TestCase("ETH", "usd")>]
@@ -22,7 +23,7 @@ let GetTicker main other =
 
 
 
-[<Test>]
+[<Test; Category("Client")>]
 let ``GetTicker for BTC``() =
 
     let client = Client() :> IClient
@@ -36,7 +37,7 @@ let ``GetTicker for BTC``() =
 
 
 
-[<Test>]
+[<Test; Category("Client")>]
 let ``GetTicker when asset does not exists`` ()  =
     
     let client = Client() :> IClient

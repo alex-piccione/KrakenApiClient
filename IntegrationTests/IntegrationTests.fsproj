@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    
+    <TargetFramework>netcoreapp3.1</TargetFramework>    
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
-    <Version>0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.7.7" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.7.13" />
     <PackageReference Include="FsUnit" Version="3.8.0" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.16.0">
@@ -24,6 +22,7 @@
     <Content Include="data\GET ticker response.json" />
     <Content Include="data\GET pairs response.json" />
     <Compile Include="utils.fs" />
+    <Compile Include="Client ListPairs.fs" />
     <Compile Include="Client GetTicker.fs" />
     <Compile Include="Client GetBalance.fs" />
     <Compile Include="Client Create Market Order.fs" />
@@ -33,8 +32,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <ItemGroup />
 
   <ItemGroup>
     <ProjectReference Include="..\Alex75.KrakenApiClient\Alex75.KrakenApiClient.fsproj" />

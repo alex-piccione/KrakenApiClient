@@ -1,8 +1,13 @@
 ﻿namespace Alex75.KrakenApiClient
 
+open System.Collections.Generic
 open Alex75.Cryptocurrencies
 
+
 type IClient =
+
+    abstract member ListPairs: unit -> ICollection<CurrencyPair>
+
     abstract member GetTicker: main:Currency * other:Currency -> TickerResponse
     abstract member GetTicker: pair:CurrencyPair -> TickerResponse
 

@@ -15,8 +15,9 @@ type public Client (public_key:string, secret_key:string) =
     let base_url = "https://api.kraken.com/0"
     let ticker_cache_time = TimeSpan.FromSeconds 5.0
     let balance_cache_time = TimeSpan.FromSeconds 10.0
+    let assets_cache_time = TimeSpan.FromHours 1.0
 
-    let ticker_cache = new Cache()
+    let cache = new Cache()
 
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
 
@@ -31,7 +32,7 @@ type public Client (public_key:string, secret_key:string) =
     let get_ticker (main:Currency, other:Currency) =    
         
         let pair:CurrencyPair = CurrencyPair(main, other)
-        let cached_ticker = ticker_cache.GetTicker pair ticker_cache_time
+        let cached_ticker = cache.GetTicker pair ticker_cache_time
         
         match cached_ticker.IsSome with 
         | true -> TickerResponse(true, null, Some(cached_ticker.Value))
@@ -44,7 +45,7 @@ type public Client (public_key:string, secret_key:string) =
                  let responseMessage = url.GetAsync().Result
                  let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
                  let ticker = parser.parseTicker(pair, json)
-                 ticker_cache.SetTicker ticker |> ignore
+                 cache.SetTicker ticker |> ignore
                  TickerResponse(true, null, Some ticker)
 
              with e -> TickerResponse(false, e.Message, None)
@@ -53,7 +54,17 @@ type public Client (public_key:string, secret_key:string) =
     new () = Client(null, null)
 
 
-    interface IClient with        
+    interface IClient with  
+
+        member __.ListPairs() =
+            match cache.GetPairs assets_cache_time with
+            | Some pairs -> pairs
+            | _ -> 
+                //https://api.kraken.com/0/public/Assets
+                let pairs = parser.parsePairs ( (f"%s/public/AssetPairs" base_url).GetStringAsync().Result )
+                cache.SetPairs pairs
+                pairs :> ICollection<CurrencyPair>
+
 
         member __.GetTicker (main, other) = get_ticker(main, other)  
         member __.GetTicker (pair) = get_ticker(pair.Main, pair.Other)
@@ -83,7 +94,7 @@ type public Client (public_key:string, secret_key:string) =
             *)
 
             try
-                let cached_balance = cache.getBalance balance_cache_time
+                let cached_balance = cache.GetBalance balance_cache_time
                 let all_balances = 
                     match cached_balance.IsSome with
                     | true -> cached_balance.Value
@@ -94,8 +105,8 @@ type public Client (public_key:string, secret_key:string) =
                         let responseMessage = (url.WithApi "/0/private/Balance" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
                         let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
                         let balance = parser.parse_balance(json) 
-                        cache.setBalance balance balance_cache_time
-                        balance
+                        cache.SetBalance balance
+                        balance :> IDictionary<Currency, decimal>
 
                 let wanted_balances = Dictionary<Currency, decimal>()
                 for item in all_balances do 

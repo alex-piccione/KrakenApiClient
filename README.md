@@ -52,6 +52,6 @@ C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
 None.
 
 
-<div style="float:right">
+<span style="float:right">
 [![HitCount](http://hits.dwyl.io/alex75it/alex75it/KrakenApiClient.svg)](http://hits.dwyl.io/alex75it/alex75it/KrakenApiClient)
-</div>
+</span>

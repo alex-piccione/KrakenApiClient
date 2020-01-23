@@ -6,7 +6,7 @@ Developed specifically for _XRP_.
 Target frameworks: _.NET Standard 2.0_ & _.NET Core 3.1_
 
 
-[![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient)  
+[![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient) 
 [![Build Status](https://alex75.visualstudio.com/Kraken%20API%20Client/_apis/build/status/Build%20and%20publish%20Package%20v0.1?branchName=master)](https://alex75.visualstudio.com/Kraken%20API%20Client/_build/latest?definitionId=18&branchName=master)
 
 ## Functionalities
@@ -52,6 +52,6 @@ C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
 None.
 
 
-<div style="float:right">
+<span style="float:right">
 [![HitCount](http://hits.dwyl.io/alex75it/alex75it/KrakenApiClient.svg)](http://hits.dwyl.io/alex75it/alex75it/KrakenApiClient)
-</div>
+</span>

@@ -1,25 +1,26 @@
-﻿module parser
+﻿module internal parser
+
+[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
 
 open System
 open System.Collections.Generic
 open FSharp.Data
 open Alex75.Cryptocurrencies
+open api.response.models
 
 
-let private load_json_and_check_errors jsonString =
+let private load_result_and_check_errors jsonString =
     let json = JsonValue.Parse(jsonString)    
     let errors = json.["error"].AsArray()    
     if errors.Length > 0 then failwith (errors.[0].AsString())
-    json
-
+    json.["result"]
 
 let parsePairs (content:string) =
-    let json = load_json_and_check_errors content
+    let result = load_result_and_check_errors content
 
     let pairs = new List<CurrencyPair>()
-    for key, record in json.["result"].Properties() |> Seq.where( fun (key, record) -> not(key.EndsWith(".d"))) // skip "Derivatives"
-        do
-        //if key.EndsWith(".d") then failwithf "%s is wrong!" key
+    for key, record in result.Properties() |> Seq.where( fun (key, record) -> not(key.EndsWith(".d"))) // skip "Derivatives"
+        do        
 
         // fucking Kraken, only "some" currencies has "X" (crypto) or "Z" (fiat) as symbol prefix
         // other ("USDT") hasn't !
@@ -36,25 +37,19 @@ let parsePairs (content:string) =
 
         //let quote = match record.["quote"].AsString() with
         //            | s when s.StartsWith("X") || s.StartsWith("Z") -> s.Substring(1)
-        //            | s -> s
-    
+        //            | s -> s    
 
         let wsname = record.["wsname"].AsString().Split('/')
         let _base = utils.normalize_symbol wsname.[0]
         let quote = utils.normalize_symbol wsname.[1]
 
-        //if _base_1 <> _base then failwithf "%s != %s" _base _base_1
-        //if quote_1 <> quote then failwithf "%s != %s" quote quote_1
-
-        pairs.Add(CurrencyPair(_base, quote))
-    
+        pairs.Add(CurrencyPair(_base, quote))    
 
     pairs
 
 let parseTicker (pair:CurrencyPair, data:string) =
-    let json = load_json_and_check_errors data    
-        
-    let result = json.["result"]
+    let result = load_result_and_check_errors data            
+
     let (name, values) = result.Properties().[0]
     
     let ask = values.Item("a").[0].AsDecimal()
@@ -93,37 +88,36 @@ let parseTicker (pair:CurrencyPair, data:string) =
 //}
 
 
-let parse_balance(jsonString:string) =
-    let json = load_json_and_check_errors(jsonString)
+let parseBalance(jsonString:string) =
+    let result = load_result_and_check_errors(jsonString)
 
-    let balances = Dictionary<Currency, decimal>()    
+    let currenciesBalance =
+        result.Properties() 
+        |> Seq.map (fun (kraken_currency, amountJson) -> 
+                        let currency = currency_mapping.get_currency kraken_currency
+                        let ownedAmount = amountJson.AsDecimal()
+                        CurrencyBalance(Currency(currency), ownedAmount, ownedAmount)
+                    )
 
-    for (kraken_currency, amount) in json.["result"].Properties() do
-        
-        let currency = match currency_mapping.currency_map.TryGetValue kraken_currency with
-                       | (found, mapped_currency) when found -> mapped_currency
-                       | _ -> kraken_currency
+    new AccountBalance(currenciesBalance)
 
-        balances.Add(Currency(currency), amount.AsDecimal())
-
-    balances
     
 
-let parse_order(jsonString:string) =    
-    let json = load_json_and_check_errors(jsonString)
+let parseOrder(jsonString:string) =    
+    let result = load_result_and_check_errors(jsonString)
 
-    let order = json.["result"].["descr"].["order"].ToString()
+    let order = result.["descr"].["order"].ToString()
     let amount = Decimal.Parse(order.Split(' ').[1])
-    let orderIds = json.["result"].["txid"].AsArray() |> Array.map (fun v -> v.AsString())
+    let orderIds = result.["txid"].AsArray() |> Array.map (fun v -> v.AsString())
 
     struct (orderIds, amount)
 
 
-let parse_open_orders(jsonString:string) = 
-    let json = load_json_and_check_errors(jsonString)
+let parseOpenOrders(jsonString:string) = 
+    let result = load_result_and_check_errors(jsonString)
 
     let orders = List<Order>()
-    let ordersJson = json.["result"].["open"].Properties()
+    let ordersJson = result.["open"].Properties()
     for (orderId, order) in ordersJson do
         //let status = order.["status"]
         let timestamp = order.["opentm"].AsDecimal() // 1575484650.7296,
@@ -147,9 +141,7 @@ let parse_open_orders(jsonString:string) =
         orders.Add (Order(orderId, creationDate, orderType, orderSide, Currency("xrp"), Currency("eur"), orderAmount, price) )
    
     orders.ToArray()
-
-         
-
+     
 
 //refid = Referral order transaction id that created this order
 //userref = user reference id
@@ -189,7 +181,17 @@ let parse_open_orders(jsonString:string) =
 //    fciq = prefer fee in quote currency (default if buying)
 //    nompp = no market price protection
 
+
+
+let parseClosedOrders (jsonString:string) = 
     
-let parse_withdrawal(jsonString:string) =    
-    let json = load_json_and_check_errors(jsonString)
-    json.["result"].["refid"].AsString()
+    let result = load_result_and_check_errors(jsonString)
+
+    let orders = List<ClosedOrder>()
+
+    orders
+
+    
+let parseWithdrawal(jsonString:string) =    
+    let result = load_result_and_check_errors(jsonString)
+    result.["refid"].AsString()

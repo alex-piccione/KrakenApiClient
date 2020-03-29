@@ -1,6 +1,8 @@
 
+UnitTests/data/F# mapping.fs
+
 secret/*
-*/*\.secret\.*
+**/*secret.*
 
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -335,4 +337,4 @@ ASALocalRun/
 .mfractor/
 
 
-UnitTests/data/F# mapping.fs
+

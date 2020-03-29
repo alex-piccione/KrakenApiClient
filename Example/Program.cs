@@ -14,15 +14,18 @@ namespace Example
             //IClient client = new Client(); // only public methods (no keys required)
 
             string publicKey = "";  // use your key
-            string privateKey = ""; // use your key
+            string privateKey = ""; // use your key                  
             IClient client = new Client(publicKey, privateKey);  // private methods      
 
-
+            
             // get ticker
             GetTicker(client);
 
             // get balance
-            //GetBalance(client);
+            GetBalance(client);
+
+            // see orders
+            SeeOrders(client);
 
             // buy a precise amount of XRP paying in EUR
             //Buy_250_XRP_with_EUR(client);
@@ -31,33 +34,58 @@ namespace Example
             //BuyXRP_with_50_EUR(client);
 
             // get open orders
-            ListOpenOrders(client);
+            //ListOpenOrders(client);
 
             // withdraw 50 XRP to a registered wallet
-            WithdrawFunds(client);
-        }
+            //WithdrawFunds(client);
 
+            Console.ReadKey();
+        }
 
 
         private static void GetTicker(IClient client)
         {
-            var response = client.GetTicker(new Currency("xrp"), new Currency("eur"));
-            if (response.IsSuccess)
-                Console.WriteLine($"Ticker: {response.Ticker.Value}");
-            else
-                Console.WriteLine($"Error: {response.Error}");
+            try
+            {
+                var ticker = client.GetTicker(new CurrencyPair("xrp", "eur"));
+                Console.WriteLine($"Ticker: {ticker}");
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine($"Error: {exc}");
+            }
         }
 
         private static void GetBalance(IClient client)
         {
-            var xrp = new Currency("xrp");
-            var eur = new Currency("eur");
+            try
+            {
+                var balance = client.GetBalance();
 
-            var response = client.GetBalance(new Currency[] { xrp, eur });
+                foreach (var item in balance)
+                    Console.WriteLine($"Curreny: {item.Currency}, Amount: {item.OwnedAmount}, Available: {item.AvailableAmount}");
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine($"Error: {exc}");
+            }
+        }
+
+        private static void SeeOrders(IClient client)
+        {
+            var response = client.ListOpenOrders();
+
             if (response.IsSuccess)
-                Console.WriteLine($"Balance. \n\tXRP: {response.CurrenciesBalance[xrp]}  \n\tEUR: {response.CurrenciesBalance[eur]} ");
+            {
+                var orders = response.Orders;
+                foreach(var order in orders)
+                    Console.WriteLine($"Order: {order}");
+            }
             else
+            {
                 Console.WriteLine($"Error: {response.Error}");
+            }
+
         }
 
 
@@ -79,18 +107,12 @@ namespace Example
 
         private static void BuyXRP_with_50_EUR(IClient client)
         {
-            var ticker = client.GetTicker(Currency.XRP, Currency.EUR);
-
-            if (!ticker.IsSuccess)
-            {
-                Console.WriteLine("Error: " + ticker.Error);
-                return;
-            }
+            var ticker = client.GetTicker(new CurrencyPair(Currency.XRP, Currency.EUR));
 
             // Kraken API does not offer a way to pay a precise amount of "base currency" (EUR) 
             // so we need to calculate the amount of "quote currency" (EUR) based on the current best market ask price
 
-            var askPrice = ticker.Ticker.Value.Ask;
+            var askPrice = ticker.Ask;
 
             decimal payAmount = 50; // EUR
             decimal buyAmount = payAmount / askPrice;

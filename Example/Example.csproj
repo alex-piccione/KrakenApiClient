@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.7.13" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="0.8.6" />
   </ItemGroup>
 
   <ItemGroup>

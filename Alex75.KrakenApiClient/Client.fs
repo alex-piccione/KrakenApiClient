@@ -7,114 +7,81 @@ open System.Collections.Generic
 open Flurl.Http
 open Alex75.Cryptocurrencies
 open utils
-
+open api.response.models
 
 
 type public Client (public_key:string, secret_key:string) =  
         
     let base_url = "https://api.kraken.com/0"
-    let ticker_cache_time = TimeSpan.FromSeconds 5.0
-    let balance_cache_time = TimeSpan.FromSeconds 10.0
-    let assets_cache_time = TimeSpan.FromHours 1.0
-
     let cache = new Cache()
+    let assets_cache_time = TimeSpan.FromHours 6.0
+    let ticker_cache_time = TimeSpan.FromSeconds 10.0
+    let balance_cache_time = TimeSpan.FromSeconds 30.0    
 
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
 
-    let create_props (values:IDictionary<string, string>) = 
-
-        // to refactor
-        let props = System.Text.StringBuilder()
-        for kv in values do
-            props.AppendFormat("&{0}={1}", kv.Key, kv.Value) |> ignore 
-        props.ToString()           
+    let create_content (properties:IDictionary<string, string>) =
+        let nonce = DateTime.Now.Ticks.ToString()
+        //properties.Add("nonce", nonce)
+        let content = properties 
+                        |> Seq.map (fun kv -> sprintf "&%s=%s" kv.Key kv.Value)
+                        |> Seq.fold (+) ("nonce=" + nonce)
+        //let content = f"nonce=%i%s" nonce content
+        let nonce_content = f"%s%s" nonce content
+        (nonce_content, content)
     
-    let get_ticker (main:Currency, other:Currency) =    
-        
-        let pair:CurrencyPair = CurrencyPair(main, other)
-        let cached_ticker = cache.GetTicker pair ticker_cache_time
-        
-        match cached_ticker.IsSome with 
-        | true -> TickerResponse(true, null, Some(cached_ticker.Value))
-        | _ ->         
-             let kraken_pair = utils.get_kraken_pair main other
-
-             let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB
-                    
-             try
-                 let responseMessage = url.GetAsync().Result
-                 let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-                 let ticker = parser.parseTicker(pair, json)
-                 cache.SetTicker ticker |> ignore
-                 TickerResponse(true, null, Some ticker)
-
-             with e -> TickerResponse(false, e.Message, None)
-
 
     new () = Client(null, null)
 
 
-    interface IClient with  
+    interface IClient with
 
-        member __.ListPairs() =
+        // public //
+
+        member this.ListPairs() =
             match cache.GetPairs assets_cache_time with
             | Some pairs -> pairs
             | _ -> 
-                //https://api.kraken.com/0/public/Assets
                 let pairs = parser.parsePairs ( (f"%s/public/AssetPairs" base_url).GetStringAsync().Result )
                 cache.SetPairs pairs
                 pairs :> ICollection<CurrencyPair>
 
+        member this.GetTicker(pair: CurrencyPair): Ticker = 
+            let cached_ticker = cache.GetTicker pair ticker_cache_time
+            match cached_ticker with 
+                | Some ticker -> ticker
+                | _ ->         
+                     let kraken_pair = utils.get_kraken_pair pair.Main pair.Other
+                     //let symbol = get_symbol pair  // use SymbolsMap
 
-        member __.GetTicker (main, other) = get_ticker(main, other)  
-        member __.GetTicker (pair) = get_ticker(pair.Main, pair.Other)
+                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB            
+                    
+                     let responseMessage = url.GetAsync().Result
+                     let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+                     let ticker = parser.parseTicker(pair, json)
+                     cache.SetTicker ticker
+                     ticker
 
-        
-        member __.GetBalance(currencies:Currency[]) =            
+
+
+        // private //
+
+        member this.GetBalance(): AccountBalance = 
             ensure_keys()
-            let url = f"%s/private/Balance" base_url                           
 
-            (* this works 
-            let request =  WebRequest.Create(url) :?> HttpWebRequest
-                
-            request.ContentType <- "application/x-www-form-urlencoded"
-            request.Method <- "POST"
-            request.Headers.Add("API-Key", public_key)
-            request.Headers.Add("API-Sign", signature)       
+            match cache.GetAccountBalance(balance_cache_time) with
+            | Some balance -> balance
+            | _ -> 
+                let url = f"%s/private/Balance" base_url  
+                let nonce_content, content = create_content (dict [])
+                let balances = 
+                    (url.WithApi "/0/private/Balance" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
+                        .EnsureSuccessStatusCode()
+                        |> fun msg -> msg.Content.ReadAsStringAsync().Result
+                        |> parser.parseBalance
 
-            let stream = new System.IO.StreamWriter( request.GetRequestStream() )
-            stream.Write(props)
-            stream.Close() // !!! General unknown error wothout this !!!
-
-            let response = request.GetResponse() :?> HttpWebResponse
-            let statusCode = response.StatusCode
-            let reader = new System.IO.StreamReader( response.GetResponseStream())
-            let json = reader.ReadToEnd()
-            //reader.Close
-            *)
-
-            try
-                let cached_balance = cache.GetBalance balance_cache_time
-                let all_balances = 
-                    match cached_balance.IsSome with
-                    | true -> cached_balance.Value
-                    | _ ->
-                        let mutable nonce:int64 = DateTime.Now.Ticks
-                        let props = null (* &key=value *)                
-                        let content = f"nonce=%i%s" nonce props
-                        let responseMessage = (url.WithApi "/0/private/Balance" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
-                        let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-                        let balance = parser.parse_balance(json) 
-                        cache.SetBalance balance
-                        balance :> IDictionary<Currency, decimal>
-
-                let wanted_balances = Dictionary<Currency, decimal>()
-                for item in all_balances do 
-                    if currencies.Contains(item.Key) then wanted_balances.Add(item.Key, item.Value)    
-   
-                BalanceResponse(true, null, wanted_balances)
-
-            with e -> BalanceResponse(false, e.Message, null)
+                cache.SetAccountBalance balances
+                balances        
 
 
         member __.CreateMarketOrder (pair:CurrencyPair, action:OrderSide, buyAmount:decimal) =
@@ -124,28 +91,22 @@ type public Client (public_key:string, secret_key:string) =
             let kraken_pair = (utils.get_kraken_pair pair.Main pair.Other).AAABBB
 
             try
-
-                let nonce = DateTime.Now.Ticks
-                let values = dict ([
-                    ("pair", kraken_pair)  
-                    ("type", action.ToString().ToLower())
-                    ("ordertype", "market")
+                let values = dict [
+                    "pair", kraken_pair
+                    "type", action.ToString().ToLower()
+                    "ordertype", "market"
                     //("price")
-                    ("volume", buyAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)) // ???? {"error":["EGeneral:Invalid arguments:volume"]}
+                    "volume", buyAmount.ToString(System.Globalization.CultureInfo.InvariantCulture) // ???? {"error":["EGeneral:Invalid arguments:volume"]}
                     //("leverage")
                     //("oflags", "viqc") // volume in quote currency   // no more available !
                     //("validate", "true") // ANY value (also validate=true) will be a simulation, order id not returned
-                ])
+                ]
                 
-                let props:string = create_props values
-
-                // string reqs = string.Format("&pair={0}&type={1}&ordertype={2}&volume={3}&leverage={4}", pair, type, ordertype, volume,leverage);
-                                
-                let content = f"nonce=%i%s" nonce props
-                let responseMessage = (url.WithApi "/0/private/AddOrder" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
+                let nonce_content, content = create_content values
+                let responseMessage = (url.WithApi "/0/private/AddOrder" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
                 let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
 
-                let struct (orderIds, amount) = parser.parse_order(json)
+                let struct (orderIds, amount) = parser.parseOrder(json)
                 
                 CreateMarketOrderResponse(true, null, orderIds, amount)                
 
@@ -158,20 +119,38 @@ type public Client (public_key:string, secret_key:string) =
             let url = f"%s/private/OpenOrders" base_url   
             
             try
-                let nonce = DateTime.Now.Ticks
-                let props = null   
                 // inputs
                 // trades = whether or not to include trades in output (optional.  default = false)
                 // userref = restrict results to given user reference id (optional)
 
-                let content = f"nonce=%i%s" nonce props
-                let responseMessage = (url.WithApi "/0/private/OpenOrders" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
+                let nonce_content, content = create_content (dict [])
+                let responseMessage = (url.WithApi "/0/private/OpenOrders" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
                 let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-                let orders = parser.parse_open_orders(json)                 
+                let orders = parser.parseOpenOrders(json)                 
 
                 OpenOrdersResponse(true, null, orders)
 
             with e -> OpenOrdersResponse(false, e.Message, null)
+
+        member this.ListClosedOrders(): IEnumerable<ClosedOrder> = 
+            ensure_keys()
+                        
+            let url = f"%s/private/ClosedOrders" base_url   
+            //member https://api.kraken.com/0/private/ClosedOrders
+            
+
+            // inputs
+            // trades = whether or not to include trades in output (optional.  default = false)
+            // userref = restrict results to given user reference id (optional)
+
+            let nonce_content, content = create_content (dict [])
+            let responseMessage = (url.WithApi "/0/private/ClosedOrders" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
+            let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+            let orders = parser.parseClosedOrders(json)   
+            orders :> IEnumerable<ClosedOrder>
+        
+        // add an overrride to accept the Kraken custom filter parameters
+        //member this
 
 
 
@@ -181,8 +160,6 @@ type public Client (public_key:string, secret_key:string) =
             let url = f"%s/private/Withdraw" base_url
 
             try
-
-                let nonce = DateTime.Now.Ticks
                 let values = dict([
                     //("aclass") WTF is "aclass" (asset class) ??
                     ("asset", currency.LowerCase)
@@ -190,12 +167,11 @@ type public Client (public_key:string, secret_key:string) =
                     ("key", walletName)
                 ])
 
-                let props:string = create_props values
-                let content = f"nonce=%i%s" nonce props
-                let responseMessage = (url.WithApi "/0/private/Withdraw" nonce props public_key secret_key).PostUrlEncodedAsync(content).Result
+                let nonce_content, content = create_content values
+                let responseMessage = (url.WithApi "/0/private/Withdraw" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
                 let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
 
-                let operationId = parser.parse_withdrawal(json)
+                let operationId = parser.parseWithdrawal(json)
 
                 WithdrawalResponse(true, null, operationId)
 

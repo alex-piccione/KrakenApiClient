@@ -44,6 +44,10 @@ let ``parseBalance when is error``() =
     (fun () -> parser.parseBalance(json) |> ignore) |> should throw typeof<Exception>
 
 
+let shouldHaveCurrency currency (balance:AccountBalance)  =
+    if balance.HasCurrency(currency) then ()
+    else failwithf "Currency \"%s\" not found" currency
+
 
 [<Test>]
 let ``parseBalance`` () =
@@ -53,15 +57,27 @@ let ``parseBalance`` () =
     let balance = parser.parseBalance(json)
     
     balance |> should not' (be null)
-    balance.HasCurrency("usd") |> should be True
-    balance.HasCurrency("eur") |> should be True
-    balance.HasCurrency("xrp") |> should be True
-    balance.HasCurrency("ltc") |> should be True
+    balance |> shouldHaveCurrency "usd"
+    balance |> shouldHaveCurrency "eur"
+    balance |> shouldHaveCurrency "gbp"
 
-    balance.[Currency("USD")].OwnedAmount |> should equal 0m
-    balance.[Currency("EUR")].OwnedAmount |> should equal 501
-    balance.[Currency("XRP")].OwnedAmount |> should equal 0.68765056
+    balance |> shouldHaveCurrency "xrp"
+    balance |> shouldHaveCurrency "btc"
+    balance |> shouldHaveCurrency "ltc"
+    balance |> shouldHaveCurrency "eth"
+    balance |> shouldHaveCurrency "ada"
+    balance |> shouldHaveCurrency "xtz"
+
+    balance.[Currency("USD")].OwnedAmount |> should equal 0.0
+    balance.[Currency("EUR")].OwnedAmount |> should equal 778.9688
+    balance.[Currency("GBP")].OwnedAmount |> should equal 1108.5946
+
+    balance.[Currency("XRP")].OwnedAmount |> should equal 6457.14680403
+    balance.[Currency("BTC")].OwnedAmount |> should equal 0.4500000000
     balance.[Currency("LTC")].OwnedAmount |> should equal 0.0000042500
+    balance.[Currency("ETH")].OwnedAmount |> should equal 0.0000042500
+    balance.[Currency("ADA")].OwnedAmount |> should equal 0.76461705
+    balance.[Currency("XTZ")].OwnedAmount |> should equal 0.0m
 
 
 [<Test>]

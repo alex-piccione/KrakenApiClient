@@ -44,9 +44,7 @@ let ``parseBalance when is error``() =
     (fun () -> parser.parseBalance(json) |> ignore) |> should throw typeof<Exception>
 
 
-let shouldHaveCurrency currency (balance:AccountBalance)  =
-    if balance.HasCurrency(currency) then ()
-    else failwithf "Currency \"%s\" not found" currency
+
 
 
 [<Test>]
@@ -55,29 +53,25 @@ let ``parseBalance`` () =
     let json = loadApiResponse "Balance response.json"
     
     let balance = parser.parseBalance(json)
+
+    let shouldHaveCurrency currency ownedAmount (balance:AccountBalance)  =
+        if balance.HasCurrency(currency) then 
+            match balance.[Currency(currency)].OwnedAmount with 
+            | correct when correct = ownedAmount -> ()
+            | wrong -> failwithf "Currency \"%s\" Owned amount is %f instead of %f" currency wrong ownedAmount   
+        else failwithf "Currency \"%s\" not found" currency      
     
     balance |> should not' (be null)
-    balance |> shouldHaveCurrency "usd"
-    balance |> shouldHaveCurrency "eur"
-    balance |> shouldHaveCurrency "gbp"
+    balance |> shouldHaveCurrency "usd" 0m
+    balance |> shouldHaveCurrency "eur" 778.9688m
+    balance |> shouldHaveCurrency "gbp" 1108.5946m
 
-    balance |> shouldHaveCurrency "xrp"
-    balance |> shouldHaveCurrency "btc"
-    balance |> shouldHaveCurrency "ltc"
-    balance |> shouldHaveCurrency "eth"
-    balance |> shouldHaveCurrency "ada"
-    balance |> shouldHaveCurrency "xtz"
-
-    balance.[Currency("USD")].OwnedAmount |> should equal 0.0
-    balance.[Currency("EUR")].OwnedAmount |> should equal 778.9688
-    balance.[Currency("GBP")].OwnedAmount |> should equal 1108.5946
-
-    balance.[Currency("XRP")].OwnedAmount |> should equal 6457.14680403
-    balance.[Currency("BTC")].OwnedAmount |> should equal 0.4500000000
-    balance.[Currency("LTC")].OwnedAmount |> should equal 0.0000042500
-    balance.[Currency("ETH")].OwnedAmount |> should equal 0.0000042500
-    balance.[Currency("ADA")].OwnedAmount |> should equal 0.76461705
-    balance.[Currency("XTZ")].OwnedAmount |> should equal 0.0m
+    balance |> shouldHaveCurrency "xrp" 6457.14680403m
+    balance |> shouldHaveCurrency "btc" 0.4500000000m
+    balance |> shouldHaveCurrency "ltc" 0.0000042500m
+    balance |> shouldHaveCurrency "eth" 0.0000000200m
+    balance |> shouldHaveCurrency "ada" 0.76461705m
+    balance |> shouldHaveCurrency "xtz" 0m
 
 
 [<Test>]

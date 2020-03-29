@@ -6,7 +6,6 @@ open System
 open System.Collections.Generic
 open FSharp.Data
 open Alex75.Cryptocurrencies
-open api.response.models
 
 
 let private load_result_and_check_errors jsonString =

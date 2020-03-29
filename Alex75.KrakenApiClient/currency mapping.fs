@@ -89,10 +89,17 @@ let private kraken_currency_map = Map<string, string>([
 ])
 
 
-let get_kraken_currency currency = currency_map.[currency]
+let get_kraken_currency currency =    
+    match currency with 
+    | "BTC" -> "XXBT"
+    | _ -> currency_map.[currency]
 
 let get_currency (kraken_currency:string) =
     //let uppercase = kraken_currency.ToUpper()
-    match kraken_currency_map.TryGetValue (kraken_currency.ToUpper()) with
-    | true, currency -> currency
-    | _ -> failwithf "\"%s\" is not a valid Kraken currency" kraken_currency
+
+    match kraken_currency with 
+    | "XXBT" -> "BTC"
+    | _ ->
+        match kraken_currency_map.TryGetValue (kraken_currency.ToUpper()) with
+        | true, currency -> currency
+        | _ -> failwithf "\"%s\" is not a valid Kraken currency" kraken_currency

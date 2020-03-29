@@ -184,12 +184,14 @@ let parseOpenOrders(jsonString:string) =
 
 
 let parseClosedOrders (jsonString:string) = 
+    raise (NotImplementedException())
     
-    let result = load_result_and_check_errors(jsonString)
+    //let result = load_result_and_check_errors(jsonString)
+       
 
-    let orders = List<ClosedOrder>()
+    //let orders = List<ClosedOrder>()
 
-    orders
+    // orders
 
     
 let parseWithdrawal(jsonString:string) =    

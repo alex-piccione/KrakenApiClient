@@ -8,7 +8,7 @@ open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
 open utils
 
-[<Category("Client")>]
+[<Category("Client"); Category("REQUIRES_API_KEY")>]
 module Withdraw =
 
     let registered_XRP_wallet_name = "Binance" 
@@ -24,12 +24,12 @@ module Withdraw =
         response.IsSuccess |> should be False
 
 
-    [<Test; Category("AFFECTS_BALANCE"); Category("REQUIRES_API_KEY")>]
+    [<Test; Category("AFFECTS_BALANCE"); >]
     let ``Withdraw`` () =        
         
         let client = Client(public_key, secret_key) :> IClient
 
-        let response = client.Withdraw(Currency.XRP, 30m, "Binance") 
+        let response = client.Withdraw(Currency.XRP, 5000m, "Binance") 
 
         response |> should not' (be null)
         if not response.IsSuccess then failwith response.Error

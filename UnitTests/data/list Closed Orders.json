@@ -1,0 +1,95 @@
+﻿{
+  "error": [],
+  "result": {
+    "closed": {
+      "AAA5CK-GKYF6-HEMAAA": {
+        "refid": null,
+        "userref": 0,
+        "status": "closed",
+        "reason": null,
+        "opentm": 1585496914.1998,
+        "closetm": 1585496914.2097,
+        "starttm": 0,
+        "expiretm": 0,
+        "descr": {
+          "pair": "XRPEUR",
+          "type": "buy",
+          "ordertype": "market",
+          "price": "0",
+          "price2": "0",
+          "leverage": "none",
+          "order": "buy 2321.93000000 XRPEUR @ market",
+          "close": ""
+        },
+        "vol": "2321.93000000",
+        "vol_exec": "2321.93000000",
+        "cost": "383.52689",
+        "fee": "1.02316",
+        "price": "0.15604",
+        "stopprice": "0.00000000",
+        "limitprice": "0.00000000",
+        "misc": "",
+        "oflags": "fciq"
+      },
+      "BBB6RV-5QQR2-4MNBBB": {
+        "refid": null,
+        "userref": 0,
+        "status": "closed",
+        "reason": null,
+        "opentm": 1585455692.4018,
+        "closetm": 1585455692.4119,
+        "starttm": 0,
+        "expiretm": 0,
+        "descr": {
+          "pair": "XRPEUR",
+          "type": "buy",
+          "ordertype": "market",
+          "price": "0",
+          "price2": "0",
+          "leverage": "none",
+          "order": "buy 212.77700000 XRPEUR @ market",
+          "close": ""
+        },
+        "vol": "212.77700000",
+        "vol_exec": "212.77700000",
+        "cost": "41.78780",
+        "fee": "0.11124",
+        "price": "0.15686",
+        "stopprice": "0.00000000",
+        "limitprice": "0.00000000",
+        "misc": "",
+        "oflags": "fciq"
+      },    
+      "CCCNAE-LFU3E-C33CCC": {
+        "refid": null,
+        "userref": null,
+        "status": "closed",
+        "reason": null,
+        "opentm": 1583988312.2365,
+        "closetm": 1583988312.2461,
+        "starttm": 0,
+        "expiretm": 0,
+        "descr": {
+          "pair": "XRPEUR",
+          "type": "buy",
+          "ordertype": "market",
+          "price": "0",
+          "price2": "0",
+          "leverage": "none",
+          "order": "buy 228.38500000 XRPEUR @ market",
+          "close": ""
+        },
+        "vol": "228.38500000",
+        "vol_exec": "228.38500000",
+        "cost": "42.08237",
+        "fee": "0.11201",
+        "price": "0.17345",
+        "stopprice": "0.00000000",
+        "limitprice": "0.00000000",
+        "misc": "",
+        "oflags": "fciq"
+      }
+    },
+    "count": 3
+  }
+}

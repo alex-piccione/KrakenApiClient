@@ -10,6 +10,7 @@ open utils
 open api.response.models
 
 
+
 type public Client (public_key:string, secret_key:string) =  
         
     let base_url = "https://api.kraken.com/0"
@@ -29,9 +30,33 @@ type public Client (public_key:string, secret_key:string) =
         //let content = f"nonce=%i%s" nonce content
         let nonce_content = f"%s%s" nonce content
         (nonce_content, content)
+
+
+    // copy this example to maintain an updated list of "mapped" Assets and Symbols
+    //let mutable symbolsLoadDate = DateTime.MinValue
+    //let mutable symbolsMap:SymbolsMap = SymbolsMap.Empty()
+    //let updateSymbolsMap () = //lazy( function() -> 
+    //    let response = (f"%s/public/Assets" base_url).AllowAnyHttpStatus().GetAsync().Result
+    //    let content = response.Content.ReadAsStringAsync().Result;
+    //    if not(response.IsSuccessStatusCode) then failwithf "Failed to load Symbols. %s" content
+    //    else 
+    //        symbolsMap <- SymbolsMap(parser.parseAssets content)
+    //        symbolsLoadDate <- DateTime.Now
+   
+    //let lock_symbols = new Object()
+    //let get_symbol pair = 
+    //    if DateTime.Now - symbolsLoadDate > TimeSpan.FromHours(1.0) then
+    //        lock lock_symbols (
+    //            //async { updateSymbol() } |> Async.Start            
+    //            updateSymbolsMap()
+    //            ignore
+    //        )
+    //    symbolsMap.Value.GetSymbol pair
+
     
 
     new () = Client(null, null)
+
 
 
     interface IClient with
@@ -51,10 +76,10 @@ type public Client (public_key:string, secret_key:string) =
             match cached_ticker with 
                 | Some ticker -> ticker
                 | _ ->         
-                     let kraken_pair = utils.get_kraken_pair pair.Main pair.Other
+                     let kraken_pair = utils.get_kraken_pair pair
                      //let symbol = get_symbol pair  // use SymbolsMap
 
-                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair.AAABBB            
+                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair            
                     
                      let responseMessage = url.GetAsync().Result
                      let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
@@ -88,7 +113,7 @@ type public Client (public_key:string, secret_key:string) =
             ensure_keys()
 
             let url = f"%s/private/AddOrder" base_url            
-            let kraken_pair = (utils.get_kraken_pair pair.Main pair.Other).AAABBB
+            let kraken_pair = utils.get_kraken_pair pair
 
             try
                 let values = dict [

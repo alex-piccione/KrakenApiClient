@@ -1,25 +1,35 @@
 ﻿module api.response.models
 
 open System
+open Alex75.Cryptocurrencies
 
 
-//[<AllowNullLiteralAttribute>]
-//type Balance (amount:decimal) =
-//    member __.Amount = amount
+type ClosedOrder(id:String, ``type``:string, side:string, 
+        openTime:DateTime, closeTime:DateTime, status:string, reason:string,
+        buyQuantity:decimal, payQuantity:decimal, price:decimal, fee:decimal) =
 
-//    (*
-//    eb = equivalent balance (combined balance of all currencies)
-//    tb = trade balance (combined balance of all equity currencies)
-//    m = margin amount of open positions
-//    n = unrealized net profit/loss of open positions
-//    c = cost basis of open positions
-//    v = current floating valuation of open positions
-//    e = equity = trade balance + unrealized net profit/loss
-//    mf = free margin = equity - initial margin (maximum margin available to open new positions)
-//    ml = margin level = (equity / initial margin) * 100
-//    *)
+    member this.Id = id
 
-type ClosedOrder(closeDate:DateTime, amount:decimal, price:decimal) =
-    member this.CloseDate = closeDate
-    member this.Amount = amount
+    member this.Type = match ``type`` with  
+                       | "market" -> OrderType.Market 
+                       | "limit" -> OrderType.Limit
+                       | _ -> failwithf "Invalid value for Type: %s" ``type``
+    
+    member this.Side = match side with 
+                       | "buy" -> OrderSide.Buy 
+                       | "sell" -> OrderSide.Sell 
+                       | _ -> failwithf "Invalid value for Side: %s" side
+
+
+    
+
+    member this.OpenTime = openTime
+    member this.CloseTime = closeTime
+    member this.Status = status
+    member this.Reason = reason
+
+    member this.BuyQuantity = buyQuantity
+    member this.PayQuantity = payQuantity
     member this.Price = price
+    member this.Fee = fee
+

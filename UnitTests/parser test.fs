@@ -13,7 +13,6 @@ let loadApiResponse fileName =
     File.ReadAllText(Path.Combine( "data", fileName))
 
 
-
 [<Test>]
 let parsePairs () =
     let json = loadApiResponse "AssetPairs response.json"
@@ -22,6 +21,7 @@ let parsePairs () =
     pairs |> should not' (be Null)
     pairs |> should contain (CurrencyPair("ada", "eth"))
     pairs |> should contain CurrencyPair.BTC_USD
+    pairs |> should contain CurrencyPair.XRP_USD
 
 
 [<Test>]
@@ -117,6 +117,34 @@ let ``parseOpenOrders`` () =
     order.Type |> should equal OrderType.Limit
     order.Side |> should equal OrderSide.Sell
     order.Price |> should equal 0.30m
+
+
+[<Test>]
+let ``parseClosedOrders`` () =
+
+    let json = loadApiResponse "list Closed Orders.json"
+
+    let orders = parser.parseClosedOrders json
+
+    orders |> should not' (be Null)
+    orders.Length |> should equal 3
+
+    let order = orders.[0]
+    order.Id |> should equal "AAA5CK-GKYF6-HEMAAA"
+    order.Type |> should equal OrderType.Market
+    order.Side |> should equal OrderSide.Buy
+
+    let tolerance = TimeSpan.FromMilliseconds(1.)
+
+    order.OpenTime |> should (equalWithin tolerance) (DateTime(2020, 03, 29, 15, 48, 34).AddSeconds(0.1998))  // 199 ms
+    order.CloseTime |> should (equalWithin tolerance) (DateTime(2020, 03, 29, 15, 48, 34).AddSeconds(0.2100))  // 209 ms
+    order.Status |> should equal "closed" 
+    order.Reason |> should equal ""
+  
+    order.BuyQuantity |> should equal 2321.93000000
+    order.PayQuantity |> should equal 383.52689
+    order.Price |> should equal 0.15604
+    order.Fee |> should equal 1.02316
 
 
 [<Test>]

@@ -11,11 +11,10 @@ let f = sprintf
 
 let format_pair (main:Currency) (other:Currency) = f"%s%s" main.UpperCase other.UpperCase
 
-let get_kraken_pair main other =
-    // Kraken use the old symbol XBT for Bitcoin
-    let kraken_main = if main = Currency.BTC then "XBT" else main.UpperCase
-    let kraken_other = if other = Currency.BTC then "XBT" else other.UpperCase
-    CurrencyPair(kraken_main, kraken_other)
+let get_kraken_pair (pair:CurrencyPair) =
+    let kraken_main = currency_mapping.get_kraken_currency pair.Main.UpperCase
+    let kraken_other = currency_mapping.get_kraken_currency pair.Other.UpperCase
+    CurrencyPair(kraken_main, kraken_other).AAABBB
 
 
 (*
@@ -23,12 +22,6 @@ API calls that require currency assets can be referenced using their ISO4217-A3 
 their 3 letter commonly used names in the case of unregistered names,
 or their X-ISO4217-A3 code (see http://www.ifex-project.org/).
 *)
-
-
-let normalize_symbol kraken_value =
-    match kraken_value with 
-    | "XBT" -> "BTC"
-    | s -> s
 
 
 let sha256_hash (value:string) = 

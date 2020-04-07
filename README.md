@@ -9,7 +9,7 @@ Target frameworks: _.NET Standard 2.0_ & _.NET Core 3.1_
 
 
 ## Public functions
-
+ |  | 
 ---                 | ---                                              | ---
 ListPairs           | List available currency pairs                    | 
 Get Ticker          | Retrieve the Ticker of a specific currency pair. | The response is cached for a configurable amount of time.

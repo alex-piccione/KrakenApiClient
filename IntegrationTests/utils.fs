@@ -1,5 +1,6 @@
 ﻿module utils
 
+open System
 open System.IO
 //open FSharp.Configuration // does not work with net core 3.0/3.1
 

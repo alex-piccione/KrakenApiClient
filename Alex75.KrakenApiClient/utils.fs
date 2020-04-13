@@ -11,10 +11,10 @@ let f = sprintf
 
 let format_pair (main:Currency) (other:Currency) = f"%s%s" main.UpperCase other.UpperCase
 
-let get_kraken_pair (pair:CurrencyPair) =
-    let kraken_main = currency_mapping.get_kraken_currency pair.Main.UpperCase
-    let kraken_other = currency_mapping.get_kraken_currency pair.Other.UpperCase
-    CurrencyPair(kraken_main, kraken_other).AAABBB
+//let get_kraken_pair (pair:CurrencyPair) =
+//    let kraken_main = currency_mapping.get_kraken_currency pair.Main.UpperCase
+//    let kraken_other = currency_mapping.get_kraken_currency pair.Other.UpperCase
+//    CurrencyPair(kraken_main, kraken_other).AAABBB
 
 
 (*

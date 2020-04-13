@@ -27,11 +27,12 @@ module GetBalance =
 
         balance |> should not' (be null)
 
-        balance.HasCurrency("xrp") |> should be True
-        let (hasBalance, amount) = balance.TryGetCurrency("xrp")
+        balance.HasCurrency(Currency.XRP) |> should be True
+        let (hasBalance, amount) = balance.TryGetCurrency(Currency.XRP)
         hasBalance |> should be True
 
-        balance.HasCurrency("gbp") |> should be True
+        balance.HasCurrency(Currency.GBP) |> should be True
+        balance.HasCurrency(Currency.BTC) |> should be True
         
 
 

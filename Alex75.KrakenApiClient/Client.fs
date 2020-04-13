@@ -7,8 +7,6 @@ open System.Collections.Generic
 open Flurl.Http
 open Alex75.Cryptocurrencies
 open utils
-open api.response.models
-
 
 
 type public Client (public_key:string, secret_key:string) =  
@@ -29,33 +27,13 @@ type public Client (public_key:string, secret_key:string) =
                         |> Seq.fold (+) ("nonce=" + nonce)
         //let content = f"nonce=%i%s" nonce content
         let nonce_content = f"%s%s" nonce content
-        (nonce_content, content)
+        (nonce_content, content)    
+
+    do
+        currency_mapper.startMapping base_url //|> Async.RunSynchronously
 
 
-    // copy this example to maintain an updated list of "mapped" Assets and Symbols
-    //let mutable symbolsLoadDate = DateTime.MinValue
-    //let mutable symbolsMap:SymbolsMap = SymbolsMap.Empty()
-    //let updateSymbolsMap () = //lazy( function() -> 
-    //    let response = (f"%s/public/Assets" base_url).AllowAnyHttpStatus().GetAsync().Result
-    //    let content = response.Content.ReadAsStringAsync().Result;
-    //    if not(response.IsSuccessStatusCode) then failwithf "Failed to load Symbols. %s" content
-    //    else 
-    //        symbolsMap <- SymbolsMap(parser.parseAssets content)
-    //        symbolsLoadDate <- DateTime.Now
-   
-    //let lock_symbols = new Object()
-    //let get_symbol pair = 
-    //    if DateTime.Now - symbolsLoadDate > TimeSpan.FromHours(1.0) then
-    //        lock lock_symbols (
-    //            //async { updateSymbol() } |> Async.Start            
-    //            updateSymbolsMap()
-    //            ignore
-    //        )
-    //    symbolsMap.Value.GetSymbol pair
-
-    
-
-    new () = Client(null, null)
+    new () = Client(null, null)   
 
 
 
@@ -76,11 +54,8 @@ type public Client (public_key:string, secret_key:string) =
             match cached_ticker with 
                 | Some ticker -> ticker
                 | _ ->         
-                     let kraken_pair = utils.get_kraken_pair pair
-                     //let symbol = get_symbol pair  // use SymbolsMap
-
-                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair            
-                    
+                     let kraken_pair = currency_mapper.getKrakenPair pair
+                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair    
                      let responseMessage = url.GetAsync().Result
                      let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
                      let ticker = parser.parseTicker(pair, json)
@@ -102,18 +77,18 @@ type public Client (public_key:string, secret_key:string) =
                 let balances = 
                     (url.WithApi "/0/private/Balance" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
                         .EnsureSuccessStatusCode()
-                        |> fun msg -> msg.Content.ReadAsStringAsync().Result
-                        |> parser.parseBalance
+                        |> fun msg -> msg.Content.ReadAsStringAsync().Result                        
+                        |> parser.parseBalance <| currency_mapper.getCurrency
 
                 cache.SetAccountBalance balances
                 balances        
 
 
-        member __.CreateMarketOrder (pair:CurrencyPair, action:OrderSide, buyAmount:decimal) =
+        member this.CreateMarketOrder (pair:CurrencyPair, action:OrderSide, buyAmount:decimal) =
             ensure_keys()
 
             let url = f"%s/private/AddOrder" base_url            
-            let kraken_pair = utils.get_kraken_pair pair
+            let kraken_pair = currency_mapper.getKrakenPair pair
 
             try
                 let values = dict [
@@ -138,31 +113,25 @@ type public Client (public_key:string, secret_key:string) =
             with e -> CreateMarketOrderResponse.Fail e.Message
 
 
-        member __.ListOpenOrders () =
+        member this.ListOpenOrders () =
             ensure_keys()
 
             let url = f"%s/private/OpenOrders" base_url   
             
-            try
+            //try
                 // inputs
                 // trades = whether or not to include trades in output (optional.  default = false)
                 // userref = restrict results to given user reference id (optional)
 
-                let nonce_content, content = create_content (dict [])
-                let responseMessage = (url.WithApi "/0/private/OpenOrders" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
-                let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-                let orders = parser.parseOpenOrders(json)                 
+            let nonce_content, content = create_content (dict [])
+            let responseMessage = (url.WithApi "/0/private/OpenOrders" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
+            let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+            parser.parseOpenOrders(json, currency_mapper.parseAltPair) :> ICollection<OpenOrder>               
 
-                OpenOrdersResponse(true, null, orders)
-
-            with e -> OpenOrdersResponse(false, e.Message, null)
-
-        member this.ListClosedOrders(): IEnumerable<ClosedOrder> = 
+        member this.ListClosedOrders() = // ICollection<ClosedOrder> = 
             ensure_keys()
                         
-            let url = f"%s/private/ClosedOrders" base_url   
-            //member https://api.kraken.com/0/private/ClosedOrders
-            
+            let url = f"%s/private/ClosedOrders" base_url               
 
             // inputs
             // trades = whether or not to include trades in output (optional.  default = false)
@@ -171,15 +140,12 @@ type public Client (public_key:string, secret_key:string) =
             let nonce_content, content = create_content (dict [])
             let responseMessage = (url.WithApi "/0/private/ClosedOrders" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
             let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-            let orders = parser.parseClosedOrders(json)   
-            orders :> IEnumerable<ClosedOrder>
+            parser.parseClosedOrders json currency_mapper.parseAltPair :> ICollection<ClosedOrder>            
         
         // add an overrride to accept the Kraken custom filter parameters
-        //member this
+ 
 
-
-
-        member __.Withdraw (currency:Currency, amount:decimal, walletName:string) =
+        member this.Withdraw (currency:Currency, amount:decimal, walletName:string) =
             ensure_keys()
 
             let url = f"%s/private/Withdraw" base_url

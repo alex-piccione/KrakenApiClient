@@ -12,10 +12,14 @@ try:
         pair_name = result[kraken_pair]["altname"]
         pairs_mapping[pair_name] = kraken_pair   
 
-    # create F# file mapping
     with open("F# pairs mapping.fs", "w+") as fw:
         for c,k in pairs_mapping.items():
             fw.write(f'    ("{c}","{k}")\n')
+
+    with open("F# Kraken pairs mapping.fs", "w+") as fw:
+        for c,k in pairs_mapping.items():
+            fw.write(f'    ("{k}","{c}")\n')
+
 
 
     # Currencies mapping 

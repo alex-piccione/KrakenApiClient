@@ -41,8 +41,7 @@ let ``parseBalance when is error``() =
 
     let json = loadApiResponse "Balance response - error.json"
 
-    (fun () -> parser.parseBalance(json) |> ignore) |> should throw typeof<Exception>
-
+    (fun () -> parser.parseBalance json (fun k -> Currency(k))  |> ignore) |> should throw typeof<Exception>
 
 
 
@@ -52,26 +51,37 @@ let ``parseBalance`` () =
 
     let json = loadApiResponse "Balance response.json"
     
-    let balance = parser.parseBalance(json)
+    let normalizeCurrency = fun k -> match k with 
+                                     | "ZUSD" -> Currency.USD
+                                     | "ZEUR" -> Currency.EUR
+                                     | "ZGBP" -> Currency.GBP
+                                     | "XXBT" -> Currency.BTC
+                                     | "XXRP" -> Currency.XRP
+                                     | "XLTC" -> Currency.LTC
+                                     | "XETH" -> Currency.ETH
+                                     | _ -> Currency(k) 
+
+
+    let balance = parser.parseBalance json normalizeCurrency
 
     let shouldHaveCurrency currency ownedAmount (balance:AccountBalance)  =
         if balance.HasCurrency(currency) then 
-            match balance.[Currency(currency)].OwnedAmount with 
+            match balance.[currency].OwnedAmount with 
             | correct when correct = ownedAmount -> ()
-            | wrong -> failwithf "Currency \"%s\" Owned amount is %f instead of %f" currency wrong ownedAmount   
-        else failwithf "Currency \"%s\" not found" currency      
+            | wrong -> failwithf "Currency \"%O\" Owned amount is %f instead of %f" currency wrong ownedAmount   
+        else failwithf "Currency \"%O\" not found" currency      
     
     balance |> should not' (be null)
-    balance |> shouldHaveCurrency "usd" 0m
-    balance |> shouldHaveCurrency "eur" 778.9688m
-    balance |> shouldHaveCurrency "gbp" 1108.5946m
+    balance |> shouldHaveCurrency Currency.USD 0m
+    balance |> shouldHaveCurrency Currency.EUR 778.9688m
+    balance |> shouldHaveCurrency Currency.GBP 1108.5946m
 
-    balance |> shouldHaveCurrency "xrp" 6457.14680403m
-    balance |> shouldHaveCurrency "btc" 0.4500000000m
-    balance |> shouldHaveCurrency "ltc" 0.0000042500m
-    balance |> shouldHaveCurrency "eth" 0.0000000200m
-    balance |> shouldHaveCurrency "ada" 0.76461705m
-    balance |> shouldHaveCurrency "xtz" 0m
+    balance |> shouldHaveCurrency Currency.XRP 6457.14680403m
+    balance |> shouldHaveCurrency Currency.BTC 0.4500000000m
+    balance |> shouldHaveCurrency Currency.LTC 0.0000042500m
+    balance |> shouldHaveCurrency Currency.ETH 0.0000000200m
+    balance |> shouldHaveCurrency Currency.ADA 0.76461705m
+    balance |> shouldHaveCurrency Currency.XTZ 0m
 
 
 [<Test>]
@@ -82,19 +92,20 @@ let ``parseOrder`` () =
     let struct (orderIds, amount) = parser.parseOrder(json)
     
     orderIds |> should contain "O5PWAY-435NAD-6NAI7P"
+    
     amount |> should equal 100.00000000
 
 
 
-[<Test>]
-let ``parseOpenOrders when list is empty`` () =
+//[<Test>]
+//let ``parseOpenOrders when list is empty`` () =
 
-    let json = loadApiResponse "list Open Orders response (empty list).json"
+//    let json = loadApiResponse "list Open Orders response (empty list).json"
     
-    let orders = parser.parseOpenOrders(json)
+//    let orders = parser.parseOpenOrders (json, (fun k -> CurrencyPair(k,k)))
     
-    orders |> should not' (be null)
-    orders |> should be Empty 
+//    orders |> should not' (be null)
+//    orders |> should be Empty 
 
 
 [<Test>]
@@ -102,29 +113,30 @@ let ``parseOpenOrders`` () =
 
     let json = loadApiResponse "list Open Orders response (one limit order untouched).json"
     
-    let orders = parser.parseOpenOrders(json)
+    let normalizePair = fun _ -> CurrencyPair.XRP_EUR
+
+    let orders = parser.parseOpenOrders (json, normalizePair)
     
     orders |> should not' (be null)
-    orders |> should not' (be Empty) 
+    orders |> should not' (be Empty)
 
     orders.Length |> should equal 1
     let order = orders.[0]
 
     //order.CreationDate |> should equalWithin (new DateTime(2019,12,04 18,37,00) TimeSpan.FromSeconds(1))
     order.Id |> should equal "OGD4S7-IISGH-2BS2QI"
-    order.MainCurrency |> should equal (Currency("Xrp"))
-    order.OtherCurrency |> should equal (Currency("eur"))
+    order.Pair |> should equal CurrencyPair.XRP_EUR
     order.Type |> should equal OrderType.Limit
-    order.Side |> should equal OrderSide.Sell
-    order.Price |> should equal 0.30m
-
+    order.Side |> should equal OrderSide.Sell    
+    order.BuyQuantity |> should equal 250.00000000m
+    order.LimitPrice |> should equal 0.30m
 
 [<Test>]
 let ``parseClosedOrders`` () =
 
     let json = loadApiResponse "list Closed Orders.json"
 
-    let orders = parser.parseClosedOrders json
+    let orders = parser.parseClosedOrders json (fun k -> CurrencyPair(k,k))
 
     orders |> should not' (be Null)
     orders.Length |> should equal 3

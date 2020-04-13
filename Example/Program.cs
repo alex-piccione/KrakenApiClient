@@ -25,7 +25,8 @@ namespace Example
             GetBalance(client);
 
             // see orders
-            SeeOrders(client);
+            ListOpenOrders(client);
+            ListClosedOrders(client);
 
             // buy a precise amount of XRP paying in EUR
             //Buy_250_XRP_with_EUR(client);
@@ -71,21 +72,32 @@ namespace Example
             }
         }
 
-        private static void SeeOrders(IClient client)
+        private static void ListOpenOrders(IClient client)
         {
-            var response = client.ListOpenOrders();
-
-            if (response.IsSuccess)
+            try
             {
-                var orders = response.Orders;
-                foreach(var order in orders)
+                var orders = client.ListOpenOrders();
+                foreach (var order in orders)
                     Console.WriteLine($"Order: {order}");
             }
-            else
+            catch(Exception exc)
             {
-                Console.WriteLine($"Error: {response.Error}");
+                Console.WriteLine($"ListOpenOrders failed: {exc}");
             }
+        }
 
+        private static void ListClosedOrders(IClient client)
+        {
+            try
+            {
+                var orders = client.ListClosedOrders();
+                foreach (var order in orders)
+                    Console.WriteLine($"Order: {order}");
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine($"ListClosedOrders failed: {exc}");
+            }
         }
 
 
@@ -124,21 +136,6 @@ namespace Example
             }
             else {
                 Console.WriteLine($"Order failed: {orderResponse.Error}");
-            }
-        }
-
-        private static void ListOpenOrders(IClient client)
-        {
-            var response = client.ListOpenOrders();
-
-            if (response.IsSuccess)
-            {
-                foreach(var order in response.Orders)
-                    Console.WriteLine($"Order: {order}");
-            }
-            else
-            {
-                Console.WriteLine($"ListOpenOrders failed: {response.Error}");
             }
         }
 

@@ -3,7 +3,7 @@
 open System
 open Alex75.Cryptocurrencies
 
-
+(*
 type ClosedOrder(id:String, ``type``:string, side:string, 
         openTime:DateTime, closeTime:DateTime, status:string, reason:string,
         buyQuantity:decimal, payQuantity:decimal, price:decimal, fee:decimal) =
@@ -33,3 +33,4 @@ type ClosedOrder(id:String, ``type``:string, side:string,
     member this.Price = price
     member this.Fee = fee
 
+*)

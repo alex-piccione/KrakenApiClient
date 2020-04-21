@@ -128,7 +128,7 @@ let ``parseOpenOrders`` () =
     order.Pair |> should equal CurrencyPair.XRP_EUR
     order.Type |> should equal OrderType.Limit
     order.Side |> should equal OrderSide.Sell    
-    order.BuyQuantity |> should equal 250.00000000m
+    order.BuyOrSellQuantity |> should equal 250.00000000m
     order.LimitPrice |> should equal 0.30m
 
 [<Test>]
@@ -139,7 +139,7 @@ let ``parseClosedOrders`` () =
     let orders = parser.parseClosedOrders json (fun k -> CurrencyPair(k,k))
 
     orders |> should not' (be Null)
-    orders.Length |> should equal 3
+    orders.Length |> should equal 4
 
     let order = orders.[0]
     order.Id |> should equal "AAA5CK-GKYF6-HEMAAA"
@@ -153,10 +153,16 @@ let ``parseClosedOrders`` () =
     order.Status |> should equal "closed" 
     order.Reason |> should equal ""
   
-    order.BuyQuantity |> should equal 2321.93000000
-    order.PayQuantity |> should equal 383.52689
+    order.BuyOrSellQuantity |> should equal 2321.93000000
+    order.PaidOrReceivedQuantity |> should equal 383.52689
     order.Price |> should equal 0.15604
     order.Fee |> should equal 1.02316
+
+
+    let limitOrder = orders.[3]
+    limitOrder.Id |> should equal "RRRV24-S3RFZ-USXDDD"
+    limitOrder.Fee |> should equal 4.7m
+    limitOrder.PaidOrReceivedQuantity |> should equal 2958.5
 
 
 [<Test>]

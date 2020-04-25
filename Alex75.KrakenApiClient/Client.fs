@@ -17,7 +17,7 @@ type public Client (public_key:string, secret_key:string) =
     let ticker_cache_time = TimeSpan.FromSeconds 10.0
     let balance_cache_time = TimeSpan.FromSeconds 30.0    
 
-    let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
+    let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method requires public and secret keys"
 
     let create_content (properties:IDictionary<string, string>) =
         let nonce = DateTime.UtcNow.Ticks.ToString()

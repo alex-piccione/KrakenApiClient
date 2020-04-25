@@ -2,6 +2,7 @@
 using System.Reflection;
 using Alex75.Cryptocurrencies;
 using Alex75.KrakenApiClient;
+using Microsoft.Extensions.Configuration;
 
 namespace Example
 {
@@ -13,8 +14,13 @@ namespace Example
 
             //IClient client = new Client(); // only public methods (no keys required)
 
-            string publicKey = "";  // use your key
-            string privateKey = ""; // use your key                  
+            var configuration = new ConfigurationBuilder()                
+                .AddUserSecrets("Kraken.fe116236-f58b-49a1-ae3b-8761bdbeb024")
+                .Build();
+
+
+            string publicKey = configuration["public key"];  // use your key
+            string privateKey = configuration["private key"]; // use your key                  
             IClient client = new Client(publicKey, privateKey);  // private methods      
 
             

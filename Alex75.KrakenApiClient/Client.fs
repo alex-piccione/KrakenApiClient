@@ -20,7 +20,7 @@ type public Client (public_key:string, secret_key:string) =
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method require public and secret keys"
 
     let create_content (properties:IDictionary<string, string>) =
-        let nonce = DateTime.Now.Ticks.ToString()
+        let nonce = DateTime.UtcNow.Ticks.ToString()
         //properties.Add("nonce", nonce)
         let content = properties 
                         |> Seq.map (fun kv -> sprintf "&%s=%s" kv.Key kv.Value)
@@ -33,8 +33,7 @@ type public Client (public_key:string, secret_key:string) =
         currency_mapper.startMapping base_url //|> Async.RunSynchronously
 
 
-    new () = Client(null, null)   
-
+    new () = Client(null, null)  
 
 
     interface IClient with

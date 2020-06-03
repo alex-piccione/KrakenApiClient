@@ -59,7 +59,7 @@
         "limitprice": "0.00000000",
         "misc": "",
         "oflags": "fciq"
-      },    
+      },
       "CCCNAE-LFU3E-C33CCC": {
         "refid": null,
         "userref": null,
@@ -86,6 +86,35 @@
         "price": "0.17345",
         "stopprice": "0.00000000",
         "limitprice": "0.00000000",
+        "misc": "",
+        "oflags": "fciq"
+      },
+      "RRRV24-S3RFZ-USXDDD": {
+        "refid": null,
+        "userref": 0,
+        "status": "closed",
+        "reason": null,
+        "opentm": 1587075152.5137,
+        "closetm": 1587077816.8421,
+        "starttm": 0,
+        "expiretm": 0,
+        "descr": {
+          "pair": "XBTEUR",
+          "type": "sell",
+          "ordertype": "limit",
+          "price": "6574.5",
+          "price2": "0",
+          "leverage": "none",
+          "order": "sell 0.45000000 XBTEUR @ limit 6574.5",
+          "close": ""
+        },
+        "vol": "0.45000000",
+        "vol_exec": "0.45000000",
+        "cost": "2958.5",
+        "fee": "4.7",
+        "price": "6574.4",
+        "stopprice": "0.00000",
+        "limitprice": "0.00000",
         "misc": "",
         "oflags": "fciq"
       }

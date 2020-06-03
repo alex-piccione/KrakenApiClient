@@ -139,7 +139,7 @@ let ``parseClosedOrders`` () =
     let orders = parser.parseClosedOrders json (fun k -> CurrencyPair(k,k))
 
     orders |> should not' (be Null)
-    orders.Length |> should equal 3
+    orders.Length |> should equal 4
 
     let order = orders.[0]
     order.Id |> should equal "AAA5CK-GKYF6-HEMAAA"
@@ -157,6 +157,12 @@ let ``parseClosedOrders`` () =
     order.PaidOrReceivedQuantity |> should equal 383.52689
     order.Price |> should equal 0.15604
     order.Fee |> should equal 1.02316
+
+
+    let limitOrder = orders.[3]
+    limitOrder.Id |> should equal "RRRV24-S3RFZ-USXDDD"
+    limitOrder.Fee |> should equal 4.7m
+    limitOrder.PaidOrReceivedQuantity |> should equal 2958.5
 
 
 [<Test>]

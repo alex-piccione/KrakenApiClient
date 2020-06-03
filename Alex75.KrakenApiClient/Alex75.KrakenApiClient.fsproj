@@ -10,6 +10,7 @@
     <PackageTags>XRP cryptocurrency Ripple Bitcoin</PackageTags>
     <RepositoryType>Git</RepositoryType>
     <PackageProjectUrl>https://github.com/alex75it/KrakenApiClient</PackageProjectUrl>
+    <UserSecretsId>Kraken.fe116236-f58b-49a1-ae3b-8761bdbeb024</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

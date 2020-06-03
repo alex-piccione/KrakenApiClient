@@ -2,20 +2,19 @@
 
 open System
 open System.IO
+open Microsoft.Extensions.Configuration
+open Alex75.KrakenApiClient
+
 //open FSharp.Configuration // does not work with net core 3.0/3.1
 
-// this pre-build command copy the private secret key file: copy "$(ProjectDir)api keys.secret.yaml" "$(TargetDir)"
-let api_key_file = if File.Exists("api keys.secret.yaml") then "api keys.secret.yaml" else
-                   if File.Exists("api keys.yaml") then "api keys.yaml" else
-                   failwith "api key file not found"
 
 
-let mutable public_key = ""
-let mutable secret_key = ""
-for line in File.ReadAllLines(api_key_file) do
-    let values = line.Split(":")
-    match values.[0] with
-    | "public key" -> public_key <- values.[1].Trim().Replace("\"", "")
-    | "secret key" -> secret_key <- values.[1].Trim().Replace("\"", "")
-    | _ -> ()
+let configuration =
+    ConfigurationBuilder()
+        .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352")
+        .Build()
 
+let publicKey = configuration.["public key"]
+let secretKey = configuration.["secret key"]
+
+let client = Client(publicKey, secretKey) :> IClient

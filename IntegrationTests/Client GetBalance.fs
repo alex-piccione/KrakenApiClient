@@ -4,25 +4,16 @@ open System
 open NUnit.Framework
 open FsUnit
 
-open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
 open utils
 
 [<Category("Client")>]
 module GetBalance =
-
-         
-    //[<Test>]
-    //let ``GetBalance when keys are not defined`` () =
-
-    //    let client = Client() :> IClient
-    //    (fun () -> client.GetBalance([|Currency.BTC|]) |> ignore) |> should throw typeof<Exception>
+            
 
     [<Test; Category("REQUIRES_API_KEY")>]
     let ``GetBalance()`` () =   
         
-        let client = Client(public_key, secret_key) :> IClient
-
         let balance = client.GetBalance()        
 
         balance |> should not' (be null)
@@ -32,8 +23,7 @@ module GetBalance =
         hasBalance |> should be True
 
         balance.HasCurrency(Currency.GBP) |> should be True
-        balance.HasCurrency(Currency.BTC) |> should be True
-        
+        balance.HasCurrency(Currency.BTC) |> should be True        
 
 
     //[<Test; Category("REQUIRES_API_KEY")>]

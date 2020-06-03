@@ -12,7 +12,6 @@ module ListOpenOrders =
 
     [<Test>]
     let ``List Open Orders`` () =      
-        let client = Client(public_key, secret_key) :> IClient
         let orders = client.ListOpenOrders() 
         orders |> should not' (be null)     
 

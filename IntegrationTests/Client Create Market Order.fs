@@ -17,8 +17,6 @@ module CreateMarketOrder =
     // [<IgnoreIf("payment involved")>]
     let ``CreateMarketOrder`` () =
 
-        let client = Client(public_key, secret_key) :> IClient
-
         let pair = CurrencyPair("xrp", "eur")
         let buyAmount = 30m
 

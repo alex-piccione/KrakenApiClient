@@ -111,16 +111,20 @@ namespace Example
         {
             var buyAmount = 250; // XRP to buy
 
-            var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderSide.Buy, buyAmount);
+            //var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderSide.Buy, buyAmount);
 
-            if (orderResponse.IsSuccess)
-            {
-                Console.WriteLine($"Order: {orderResponse.OrderIds}");
-            }
-            else
-            {
-                Console.WriteLine($"Order failed: {orderResponse.Error}");
-            }
+            //if (orderResponse.IsSuccess)
+            //{
+            //    Console.WriteLine($"Order: {orderResponse.OrderIds}");
+            //}
+            //else
+            //{
+            //    Console.WriteLine($"Order failed: {orderResponse.Error}");
+            //}
+
+            var order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Buy, CurrencyPair.XRP_EUR, buyAmount));
+
+            Console.WriteLine($"Order: {order.reference}");      
         }
 
         private static void BuyXRP_with_50_EUR(IClient client)
@@ -134,15 +138,9 @@ namespace Example
 
             decimal payAmount = 50; // EUR
             decimal buyAmount = payAmount / askPrice;
-            var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderSide.Buy, buyAmount);
+            var order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Buy, CurrencyPair.XRP_EUR, buyAmount));
 
-            if (orderResponse.IsSuccess)
-            {
-                Console.WriteLine($"Order: {orderResponse.OrderIds}");
-            }
-            else {
-                Console.WriteLine($"Order failed: {orderResponse.Error}");
-            }
+            Console.WriteLine($"Order: {order.reference}");
         }
 
         private static void WithdrawFunds(IClient client)

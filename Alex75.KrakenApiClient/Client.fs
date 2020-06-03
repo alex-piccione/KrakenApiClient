@@ -36,6 +36,35 @@ type public Client (public_key:string, secret_key:string) =
     new () = Client(null, null)  
 
 
+    member this.CreateMarketOrder (pair:CurrencyPair, action:OrderSide, buyAmount:decimal) =
+        ensure_keys()
+
+        let url = f"%s/private/AddOrder" base_url            
+        let kraken_pair = currency_mapper.getKrakenPair pair
+
+        //try
+        let values = dict [
+            "pair", kraken_pair
+            "type", action.ToString().ToLower()
+            "ordertype", "market"
+            //("price")
+            "volume", buyAmount.ToString(System.Globalization.CultureInfo.InvariantCulture) // ???? {"error":["EGeneral:Invalid arguments:volume"]}
+            //("leverage")
+            //("oflags", "viqc") // volume in quote currency   // no more available !
+            //("validate", "true") // ANY value (also validate=true) will be a simulation, order id not returned
+        ]
+            
+        let nonce_content, content = create_content values
+        let responseMessage = (url.WithApi "/0/private/AddOrder" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
+        let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
+
+        let struct (orderIds, amount) = parser.parseOrder(json)
+            
+        CreateMarketOrderResponse(true, null, orderIds, amount)                
+
+        //with e -> CreateMarketOrderResponse.Fail e.Message
+
+
     interface IClient with
 
         // public //
@@ -61,8 +90,6 @@ type public Client (public_key:string, secret_key:string) =
                      cache.SetTicker ticker
                      ticker
 
-
-
         // private //
 
         member this.GetBalance(): AccountBalance = 
@@ -80,36 +107,7 @@ type public Client (public_key:string, secret_key:string) =
                         |> parser.parseBalance <| currency_mapper.getCurrency
 
                 cache.SetAccountBalance balances
-                balances        
-
-
-        member this.CreateMarketOrder (pair:CurrencyPair, action:OrderSide, buyAmount:decimal) =
-            ensure_keys()
-
-            let url = f"%s/private/AddOrder" base_url            
-            let kraken_pair = currency_mapper.getKrakenPair pair
-
-            try
-                let values = dict [
-                    "pair", kraken_pair
-                    "type", action.ToString().ToLower()
-                    "ordertype", "market"
-                    //("price")
-                    "volume", buyAmount.ToString(System.Globalization.CultureInfo.InvariantCulture) // ???? {"error":["EGeneral:Invalid arguments:volume"]}
-                    //("leverage")
-                    //("oflags", "viqc") // volume in quote currency   // no more available !
-                    //("validate", "true") // ANY value (also validate=true) will be a simulation, order id not returned
-                ]
-                
-                let nonce_content, content = create_content values
-                let responseMessage = (url.WithApi "/0/private/AddOrder" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
-                let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-
-                let struct (orderIds, amount) = parser.parseOrder(json)
-                
-                CreateMarketOrderResponse(true, null, orderIds, amount)                
-
-            with e -> CreateMarketOrderResponse.Fail e.Message
+                balances           
 
 
         member this.ListOpenOrders () =
@@ -142,7 +140,18 @@ type public Client (public_key:string, secret_key:string) =
             parser.parseClosedOrders json currency_mapper.parseAltPair :> ICollection<ClosedOrder>            
         
         // add an overrride to accept the Kraken custom filter parameters
- 
+
+        // Place Order
+
+        member this.CreateMarketOrder (request:CreateOrderRequest): CreateOrderResult =
+            let result = this.CreateMarketOrder(request.Pair, request.Side, request.BuyOrSellQuantity)
+            if result.IsSuccess then {reference=String.Join(",", result.OrderIds); price=0m}
+            else failwith result.Error
+
+
+        member this.CreateLimitOrder(arg1: CreateOrderRequest): string = 
+            raise (System.NotImplementedException())
+
 
         member this.Withdraw (currency:Currency, amount:decimal, walletName:string) =
             ensure_keys()

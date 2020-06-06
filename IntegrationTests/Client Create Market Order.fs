@@ -15,7 +15,7 @@ module CreateMarketOrder =
     // [<IgnoreIf("payment involved")>]
     let ``CreateMarketOrder`` () =
 
-        let pair = CurrencyPair("xrp", "eur")
+        let pair = CurrencyPair("xrp", "gbp")
         let buyAmount = 30m
 
         let order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Sell, pair, buyAmount))

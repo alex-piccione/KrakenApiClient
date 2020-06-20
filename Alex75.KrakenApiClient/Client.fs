@@ -109,6 +109,12 @@ type public Client (public_key:string, secret_key:string) =
                 cache.SetAccountBalance balances
                 balances           
 
+        member this.ListOpenOrdersIsAvailable(): bool = true
+
+        member this.ListOpenOrders_2(pairs: CurrencyPair[]): OpenOrder [] = 
+            (this :> IApiClientPrivate).ListOpenOrders().ToArray()
+            |> Array.filter (fun order -> Array.contains order.Pair pairs)
+
 
         member this.ListOpenOrders () =
             ensure_keys()

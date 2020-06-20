@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.4" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.5" />
   </ItemGroup>
 
   <ItemGroup>

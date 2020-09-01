@@ -21,6 +21,6 @@ module CreateMarketOrder =
         let order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Sell, pair, buyAmount))
 
         order |> should not' (be null)
-        order.reference |> should not' (be NullOrEmptyString)
+        order.Reference |> should not' (be NullOrEmptyString)
 
         

@@ -12,16 +12,13 @@ namespace Example
         {
             Console.WriteLine("Kraken API Client examples\n");
 
-            //IClient client = new Client(); // only public methods (no keys required)
-
             var configuration = new ConfigurationBuilder()                
                 .AddUserSecrets("Kraken.fe116236-f58b-49a1-ae3b-8761bdbeb024")
                 .Build();
 
-
-            string publicKey = configuration["public key"];  // use your key
-            string privateKey = configuration["private key"]; // use your key                  
-            IClient client = new Client(publicKey, privateKey);  // private methods      
+            string publicKey = configuration["public key"];  
+            string privateKey = configuration["private key"];                  
+            IClient client = new Client(publicKey, privateKey);   
 
             
             // get ticker
@@ -36,6 +33,8 @@ namespace Example
 
             // buy a precise amount of XRP paying in EUR
             //Buy_250_XRP_with_EUR(client);
+
+            CreateLimitOrder(client);
 
             // buy XRP with 50 EUR
             //BuyXRP_with_50_EUR(client);
@@ -124,7 +123,7 @@ namespace Example
 
             var order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Buy, CurrencyPair.XRP_EUR, buyAmount));
 
-            Console.WriteLine($"Order: {order.reference}");      
+            Console.WriteLine($"Order: {order.Reference}");      
         }
 
         private static void BuyXRP_with_50_EUR(IClient client)
@@ -140,7 +139,26 @@ namespace Example
             decimal buyAmount = payAmount / askPrice;
             var order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Buy, CurrencyPair.XRP_EUR, buyAmount));
 
-            Console.WriteLine($"Order: {order.reference}");
+            Console.WriteLine($"Order: {order.Reference}");
+        }
+
+
+        private static void CreateLimitOrder(IClient client)
+        {
+            var pair = CurrencyPair.XRP_EUR;
+            var payAmount = 500; //500 EUR
+
+
+            var marketPrice = client.GetTicker(pair).Bid;
+            var price = marketPrice - (marketPrice * .04m); // -4%
+            var xrpQuantity = payAmount / price;
+
+            //xrpQuantity = xrpQuantity / 10;
+
+            var orderRequest = CreateOrderRequest.Limit(OrderSide.Buy, pair, xrpQuantity, price);
+
+            var orderId = client.CreateLimitOrder(orderRequest);
+            Console.WriteLine($"Order: {orderId}");
         }
 
         private static void WithdrawFunds(IClient client)

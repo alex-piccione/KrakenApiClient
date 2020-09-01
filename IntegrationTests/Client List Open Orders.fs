@@ -16,6 +16,6 @@ module ListOpenOrders =
 
     [<Test>]
     let ``List Open Orders with spefified pairs`` () =      
-        let orders = client.ListOpenOrders_2([|CurrencyPair.ADA_XRP;CurrencyPair.XRP_EUR|]) 
+        let orders = client.ListOpenOrdersOfCurrencies([|CurrencyPair.ADA_XRP;CurrencyPair.XRP_EUR|]) 
         orders |> should not' (be null)     
 

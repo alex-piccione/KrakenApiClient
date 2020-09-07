@@ -130,7 +130,7 @@ type public Client (public_key:string, secret_key:string) =
 
 
         member this.ListOpenOrdersOfCurrenciesIsAvailable = true
-        member this.ListOpenOrdersOfCurrencies(pairs: CurrencyPair[]): OpenOrder [] = 
+        member this.ListOpenOrdersOfCurrencies(pairs: CurrencyPair[]) =
             (this :> IApiClientListOrders).ListOpenOrders()
             |> Array.filter (fun order -> Array.contains order.Pair pairs)
 

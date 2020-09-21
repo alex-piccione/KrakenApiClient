@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Alex75.Cryptocurrencies;
 using Alex75.KrakenApiClient;
 using Example_of_use;
+using System.Data;
+using System.Runtime.InteropServices;
 
 namespace Example
 {
@@ -34,9 +36,13 @@ namespace Example
 
             //trader.CreateLimitOrder_Buy_Sell(CurrencyPair.XRP_GBP, 400, 0.5m, 2.5m);
 
+            //Buy_withAmount(client, CurrencyPair.XRP_GBP, 600, 0.05m);
+
             // see orders
             ListOpenOrders(client);
             ListClosedOrders(client);
+
+
 
             // buy a precise amount of XRP paying in EUR
             //Buy_250_XRP_with_EUR(client);
@@ -58,15 +64,24 @@ namespace Example
 
         private static void GetTicker(IClient client)
         {
+            Console.WriteLine("\n# Tickers #\n");
+
             var pairs = new CurrencyPair[] { 
                 CurrencyPair.XRP_EUR, 
-                CurrencyPair.XRP_GBP 
+                CurrencyPair.XRP_GBP,
+                CurrencyPair.ADA_EUR,
             };
+
+            Console.WriteLine(" Pair       | Bid        | Ask        ");
+            Console.WriteLine(" -----------+------------+------------");
 
             try
             {
                 foreach (var pair in pairs)
-                    Console.WriteLine($"Ticker: {client.GetTicker(pair)}");
+                {
+                    var ticker = client.GetTicker(pair);
+                    Console.WriteLine($" {ticker.Pair.Slashed,-10} | {ticker.Bid,-10} | {ticker.Ask,-10} ");
+                }
             }
             catch (Exception exc)
             {
@@ -82,7 +97,7 @@ namespace Example
             {                
                 var balance = client.GetBalance();
                 Console.WriteLine(" Currency | Owned           | Available       ");
-                Console.WriteLine(" -------- | --------------- | --------------- ");
+                Console.WriteLine(" ---------+-----------------+---------------- ");
 
                 foreach (var item in balance)
                     Console.WriteLine($" {item.Currency,-8} | {item.OwnedAmount,+15} | {item.AvailableAmount,+15} ");
@@ -101,8 +116,8 @@ namespace Example
             {
                 var orders = client.ListOpenOrders();
                 
-                Console.WriteLine(" Date             | Pair       | Type    | Side | Amount          | Note             ");
-                Console.WriteLine(" ---------------- | ---------- | ------- | ---- | --------------- | ---------------- ");
+                Console.WriteLine(" Date             | Pair       | Type    | Side | Amount          | Note                       ");
+                Console.WriteLine(" -----------------+------------+---------+------+-----------------+--------------------------- ");
                 foreach (var order in orders)
                     Console.WriteLine($" {order.OpenTime:g} | {order.Pair.Dashed,-10} | {order.Type,-7} | {order.Side, -4} | {order.BuyOrSellQuantity,15} | {order.Id} Price:{order.LimitPrice} ");
             }
@@ -133,10 +148,8 @@ namespace Example
         }
 
 
-        private static void Buy_250_XRP_with_EUR(IClient client)
+        private static void Buy(IClient client, CurrencyPair pair, decimal quantity)
         {
-            var buyAmount = 250; // XRP to buy
-
             //var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderSide.Buy, buyAmount);
 
             //if (orderResponse.IsSuccess)
@@ -148,25 +161,32 @@ namespace Example
             //    Console.WriteLine($"Order failed: {orderResponse.Error}");
             //}
 
-            var order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Buy, CurrencyPair.XRP_EUR, buyAmount));
+            var orderRequest = CreateOrderRequest.Market(OrderSide.Buy, pair, quantity);
+            var order = client.CreateMarketOrder(orderRequest);
 
-            Console.WriteLine($"Order: {order.Reference}");      
+            Console.WriteLine($"Order Ref.: {order.Reference} Price: {order.Price}");      
         }
 
-        private static void BuyXRP_with_50_EUR(IClient client)
+        private static void Buy_withAmount(IClient client, CurrencyPair pair, decimal payAmount, decimal addPercentage)
         {
-            var ticker = client.GetTicker(new CurrencyPair(Currency.XRP, Currency.EUR));
+            var ticker = client.GetTicker(pair);
+            var availableAmount = client.GetBalance().GetCurrency(pair.Quote).AvailableAmount;
+
+            if (payAmount > availableAmount)
+                throw new Exception($"Available amount ({availableAmount}) is lower than order {payAmount}");
 
             // Kraken API does not offer a way to pay a precise amount of "base currency" (EUR) 
             // so we need to calculate the amount of "quote currency" (EUR) based on the current best market ask price
 
-            var askPrice = ticker.Ask;
+            var marketPrice = ticker.Bid;
+            var orderPrice = marketPrice - (marketPrice * addPercentage / 100m);
+            decimal buyAmount = payAmount / orderPrice;
+            var orderRequest = CreateOrderRequest.Limit(OrderSide.Buy, pair, buyAmount, orderPrice);
 
-            decimal payAmount = 50; // EUR
-            decimal buyAmount = payAmount / askPrice;
-            var order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Buy, CurrencyPair.XRP_EUR, buyAmount));
+            //var order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Buy, pair, buyAmount));
+            var order = client.CreateLimitOrder(orderRequest);
 
-            Console.WriteLine($"Order: {order.Reference}");
+            Console.WriteLine($"Limit Order Ref.: {order}  Price: {orderPrice}");
         }
 
 

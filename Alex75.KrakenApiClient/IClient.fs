@@ -3,6 +3,7 @@
 open Alex75.Cryptocurrencies
 
 type IClient =
+    inherit IApiClient
     inherit IApiClientPrivate
     //inherit IApiClientWithInfo
     inherit IApiClientMakeOrders

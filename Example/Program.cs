@@ -6,8 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Alex75.Cryptocurrencies;
 using Alex75.KrakenApiClient;
 using Example_of_use;
-using System.Data;
-using System.Runtime.InteropServices;
 
 namespace Example
 {
@@ -18,7 +16,6 @@ namespace Example
             Console.WriteLine("Kraken API Client examples\n");
 
             var configuration = new ConfigurationBuilder()                
-                //.AddUserSecrets("Kraken.fe116236-f58b-49a1-ae3b-8761bdbeb024")
                 .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352")
                 .Build();
 

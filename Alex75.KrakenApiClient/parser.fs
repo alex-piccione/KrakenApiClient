@@ -112,6 +112,8 @@ let parseOrder(jsonString:string) =
 let parseOrderType value =  match value with
                             | "limit" -> OrderType.Limit
                             | "market" -> OrderType.Market
+                            | "stop-loss" -> OrderType.StopLoss
+                            | "take-profit" -> OrderType.TakeProfit
                             | x -> failwithf "Order type not recognized: %s" x
 
 let parseOrderSide value = match value with

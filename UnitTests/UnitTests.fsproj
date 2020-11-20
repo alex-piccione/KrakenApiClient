@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.3.15" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.3.16" />
     <PackageReference Include="FsUnit" Version="4.0.2" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">

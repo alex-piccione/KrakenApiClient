@@ -113,7 +113,9 @@ let parseOrderType value =  match value with
                             | "limit" -> OrderType.Limit
                             | "market" -> OrderType.Market
                             | "stop-loss" -> OrderType.StopLoss
-                            | "take-profit" -> OrderType.TakeProfit
+                            | "stop-loss-limit" -> OrderType.StopLossLimit
+                            | "take-profit" -> OrderType.TakeProfit                            
+                            | "take-profit-limit" -> OrderType.TakeProfitLimit
                             | x -> failwithf "Order type not recognized: %s" x
 
 let parseOrderSide value = match value with

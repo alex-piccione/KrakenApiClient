@@ -36,7 +36,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="data\response API feature disabled.json" />
-    <Content Include="data\_Balance response.json">
+    <Content Include="data\Balance response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="data\Balance response - error.json">

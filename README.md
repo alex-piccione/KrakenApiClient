@@ -46,5 +46,5 @@ C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
   
   
 
-[![HitCount](http://hits.dwyl.io/alex75it/alex75it/KrakenApiClient.svg)](http://hits.dwyl.io/alex75it/alex75it/KrakenApiClient)
+[![HitCount](http://hits.dwyl.io/alex-piccione/alex-piccione/KrakenApiClient.svg)](http://hits.dwyl.io/alex-piccione/alex-piccione/KrakenApiClient)
 

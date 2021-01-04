@@ -15,4 +15,6 @@ module ListClosedOrders =
 
         orders |> should not' (be null) 
         orders |> should not' (be Empty)  
+
+        orders.[0].Status |> should not' (be Empty)
     

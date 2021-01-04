@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY"
 
     - name: Pack NuGet
       run: | 

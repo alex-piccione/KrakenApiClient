@@ -10,7 +10,8 @@ open Alex75.Cryptocurrencies
 
 
 let loadApiResponse fileName =
-    File.ReadAllText(Path.Combine( "data", fileName))
+    let path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+    File.ReadAllText(Path.Combine(path, "data", fileName))
 
 
 [<Test>]

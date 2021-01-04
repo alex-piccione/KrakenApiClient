@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>    
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ProjectType>Library</ProjectType>
+    <AssemblyType>Library</AssemblyType>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
     <UserSecretsId>Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352</UserSecretsId>
@@ -21,13 +23,13 @@
 
   <ItemGroup>
     <Compile Include="utils.fs" />
+    <Compile Include="Client Withdraw.fs" />
     <Compile Include="Client ListPairs.fs" />
     <Compile Include="Client GetTicker.fs" />
     <Compile Include="Client GetBalance.fs" />
     <Compile Include="Client Create Market Order.fs" />
     <Compile Include="Client List Open Orders.fs" />
     <Compile Include="Client List Closed Orders.fs" />
-    <Compile Include="Client Withdraw.fs" />
   </ItemGroup>
 
   <ItemGroup>

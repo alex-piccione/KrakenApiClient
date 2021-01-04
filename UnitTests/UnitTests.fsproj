@@ -61,6 +61,7 @@
     <Compile Include="currency_mapper test.fs" />
     <Compile Include="currency_mapper not initialized test.fs" />
     <Compile Include="parser test.fs" />
+    <Compile Include="__this is a library__.fs" />
   </ItemGroup>
 
   <ItemGroup>

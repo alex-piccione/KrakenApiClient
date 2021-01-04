@@ -1,0 +1,68 @@
+# it works also without "resources" but when chaange the repository name in GitHub it will be lost
+resources:
+  #containers: 
+  repositories:
+  - repository: GitHub
+    type: github
+    name: alex-piccione/KrakenApiClient
+    endpoint: alex-piccione 
+    # GitHub service connection name (defined in Project Settings > GitHub connections)
+
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  version: "1.0"
+  project file: "Alex75.KrakenApiClient/Alex75.KrakenApiClient.fsproj"
+  build number: $[counter(variables.version, 1)] 
+  package version: "$(version).$(build number)"
+  package version long: "$(version).$(Build.BuildNumber)" 
+
+
+jobs:
+
+- job: Build
+  displayName: "Build & Test"
+  steps: 
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs: 
+        projects: "$(project file)"
+        arguments: --configuration Release
+
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        projects: "**/*Tests.*proj"
+        arguments: >
+          --configuration Release
+          --filter "TestCategory!=AFFECTS_BALANCE & TestCategory!=REQUIRES_API_KEY
+
+- job: Package
+  dependsOn: Build
+  steps:
+    - task: DotNetCoreCLI@2
+      displayName: Create package
+      inputs:
+        command: pack
+        arguments: --configuration Release
+        packagesToPack: "$(project file)"
+        versioningScheme: byEnvVar
+        versionEnvVar: "package version"
+
+    - bash: echo Created package version "$(package version)"
+    
+    - task: NuGetCommand@2
+      displayName: Publish package
+      inputs:
+        command: push
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'Nuget Alex75'
+
+

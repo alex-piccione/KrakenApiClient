@@ -60,6 +60,7 @@ let ``parseBalance`` () =
                                      | "XXRP" -> Currency.XRP
                                      | "XLTC" -> Currency.LTC
                                      | "XETH" -> Currency.ETH
+                                     | "DOT" -> Currency.DOT
                                      | _ -> Currency(k) 
 
 
@@ -67,7 +68,7 @@ let ``parseBalance`` () =
 
     let shouldHaveCurrency currency ownedAmount (balance:AccountBalance)  =
         if balance.HasCurrency(currency) then 
-            match balance.[currency].OwnedAmount with 
+            match balance.[currency].Total with 
             | correct when correct = ownedAmount -> ()
             | wrong -> failwithf "Currency \"%O\" Owned amount is %f instead of %f" currency wrong ownedAmount   
         else failwithf "Currency \"%O\" not found" currency      
@@ -83,6 +84,7 @@ let ``parseBalance`` () =
     balance |> shouldHaveCurrency Currency.ETH 0.0000000200m
     balance |> shouldHaveCurrency Currency.ADA 0.76461705m
     balance |> shouldHaveCurrency Currency.XTZ 0m
+    balance |> shouldHaveCurrency Currency.DOT 662.24614826m
 
 
 [<Test>]

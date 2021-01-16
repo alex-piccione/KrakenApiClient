@@ -30,7 +30,7 @@
     <Compile Include="Client Withdraw.fs" />
     <Compile Include="Client ListPairs.fs" />
     <Compile Include="Client GetTicker.fs" />
-    <Compile Include="Client GetBalance.fs" />
+    <Compile Include="Client GetBalance.test.fs" />
     <Compile Include="Client Create Market Order.fs" />
     <Compile Include="Client List Open Orders.fs" />
     <Compile Include="Client List Closed Orders.fs" />

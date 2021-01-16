@@ -4,8 +4,8 @@
 
 (*
 A map of currencies and pairs will be updated continuosly in the background.
-Every time the map is update "lastUpdate" field is updated.
-If it fails for a specific number of times the first time it raise an error. Not on successive failures.
+Every time the map is updated the "lastUpdate" field is updated with current date and time.
+If it fails the first time it raises an error. Not on successive failures.
 *)
 
 open System
@@ -47,7 +47,9 @@ module private mapper =
         member this.getKrakenPair (pair:CurrencyPair) = krakenPairMap.[pair.AAA_BBB]  
 
         /// given the Kraken currency returns the standard currency (for balance). ZEUR -> EUR
-        member this.getCurrency (krakenCurrency:string) = Currency(krakenCurrenciesMap.[krakenCurrency])
+        member this.getCurrency (krakenCurrency:string) = 
+            if not(krakenCurrenciesMap.ContainsKey krakenCurrency) then failwithf "Kraken currencies map does not contain \"%s\"" krakenCurrency
+            Currency(krakenCurrenciesMap.[krakenCurrency])
 
         /// given an "altname" (orders list) returns the standard pair. XRPEUR -> XRP/EUR
         member this.getPairFromAltName altName = krakenAltNamePairMap.[altName]            

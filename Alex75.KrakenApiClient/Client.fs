@@ -30,8 +30,7 @@ type public Client (public_key:string, secret_key:string) =
         (nonce_content, content)    
 
     do
-        currency_mapper.startMapping base_url //|> Async.RunSynchronously
-
+        currency_mapper.startMapping base_url    
 
     new () = Client(null, null)  
 
@@ -42,7 +41,6 @@ type public Client (public_key:string, secret_key:string) =
         let url = f"%s/private/AddOrder" base_url            
         let kraken_pair = currency_mapper.getKrakenPair pair
 
-        //try
         let values = dict [
             "pair", kraken_pair
             "type", match side with 
@@ -109,7 +107,9 @@ type public Client (public_key:string, secret_key:string) =
                         |> parser.parseBalance <| currency_mapper.getCurrency
 
                 cache.SetAccountBalance balances
-                balances    
+                balances 
+                
+
                 
 
         member this.ListOpenOrdersIsAvailable = true

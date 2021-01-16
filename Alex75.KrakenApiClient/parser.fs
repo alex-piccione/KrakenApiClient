@@ -85,18 +85,69 @@ let parseTicker (pair:CurrencyPair, data:string) =
 //}
 
 
+
+/// Find Stacking balances (code ends with "*.S") and add the amount to the currency balances
+//let consolidateBalance balances =
+
+//    // map non-stacking currencies
+//    let mapped = 
+//        Map(balances 
+//        |> Seq.filter (fun (b:CurrencyBalance) -> not(b.Currency.LowerCase.Contains('.'))) 
+//        |> Seq.map (fun (b:CurrencyBalance) -> b.Currency, b ) 
+//        )
+
+//    let stackingBalances =
+//        balances 
+//        //|> Seq.filter (fun (b:CurrencyBalance) -> not(b.Currency.LowerCase.Contains('.'))) 
+//        |> Seq.map (fun b -> match Currency(b.Currency.UpperCase.Split('.')) with                             
+//                             | c::"S" -> Some(b.Currency, b.Total)
+//                             | [] -> None
+//                                if mapped.ContainsKey currency then
+//                                    mapped.[currency] <- mapped.[currency].AddStacking(b.Total)
+    
+//    let stackingList = stackingBalances []
+
+    
+
+
 let parseBalance jsonString normalizeCurrency = 
     let result = load_result_and_check_errors jsonString
 
-    let currenciesBalance =
-        result.Properties() 
-        |> Seq.map (fun (kraken_currency, amountJson) -> 
-                        let currency:Currency = normalizeCurrency kraken_currency 
-                        let ownedAmount = amountJson.AsDecimal()
-                        CurrencyBalance(currency, ownedAmount, ownedAmount)
-                    )
+    let parse (kraken_currency, amountJson) =
+        let amount = (amountJson:JsonValue).AsDecimal()
+        match (kraken_currency:string).Split('.') with
+        | [|code|] -> "", normalizeCurrency kraken_currency , amount
+        | [|code;"S"|] -> "stacking", normalizeCurrency code , amount
+        | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
 
-    new AccountBalance(currenciesBalance)
+    let parsed = result.Properties() |> Seq.map parse
+
+    let stackingMap = Map( parsed 
+                           |> Seq.filter (fun (kind,_,_) -> kind = "stacking") 
+                           |> Seq.map (fun (kind,currency,amount) -> currency, amount) 
+    )
+
+    let balances = parsed 
+                   |> Seq.choose (fun (kind,currency:Currency,amount) -> 
+                                      match kind with 
+                                      | "" -> Some(
+                                                let balance = CurrencyBalance(currency, amount, amount)
+                                                if stackingMap.ContainsKey currency then balance.AddStacking stackingMap.[currency]
+                                                else balance
+                                                )                                            
+                                      | _ -> None )
+
+    new AccountBalance(balances)
+  
+    //let currenciesBalance =
+    //    result.Properties() 
+    //    |> Seq.map (fun (kraken_currency, amountJson) -> 
+    //                    let currency:Currency = normalizeCurrency kraken_currency 
+    //                    let ownedAmount = amountJson.AsDecimal()
+    //                    CurrencyBalance(currency, ownedAmount, ownedAmount)
+    //                )  
+
+    //new AccountBalance(currenciesBalance)
 
     
 

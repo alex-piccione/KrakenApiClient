@@ -33,7 +33,9 @@ See the examples in <a href="Example/Program.cs">Examples</a>
 
 ## For developers
 
-Source code on GitHub.
+Source code on GitHub.  
+Deployment was before on MS DevOps but after the change of GitHub name it was impossible to restore a permission for the repository.  
+Deployment on GitHub use a much cleaner script with only 1 "layer" of inermediate machine.  
 
 ### Kraken documentation
 

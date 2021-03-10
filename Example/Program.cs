@@ -1,30 +1,28 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Microsoft.Extensions.Configuration;
-
-using Alex75.Cryptocurrencies;
+﻿using Alex75.Cryptocurrencies;
 using Alex75.KrakenApiClient;
 using Example_of_use;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace Example
 {
     class Program
     {
-        static void Main()
-        {
+        static void Main() {
             Console.WriteLine("Kraken API Client examples\n");
 
-            var configuration = new ConfigurationBuilder()                
+            var configuration = new ConfigurationBuilder()
                 .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352")
                 .Build();
 
-            string publicKey = configuration["public key"];  
-            string privateKey = configuration["secret key"];                  
+            string publicKey = configuration["public key"];
+            string privateKey = configuration["secret key"];
             IClient client = new Client(publicKey, privateKey);
 
             var trader = new Trader(client);
-            
+
             // get ticker
             GetTicker(client);
 
@@ -34,17 +32,22 @@ namespace Example
             //trader.CreateLimitOrder_Buy_Sell(CurrencyPair.XRP_GBP, 400, 0.5m, 2.5m);
 
             //Buy_withAmount(client, CurrencyPair.XRP_GBP, 600, 0.05m);
+            var pairs = client.ListPairs();
+
+            // CreateLimitOrderWith(client, OrderSide.Buy, new CurrencyPair("EWT", "EUR"), 100, 15.0m);
 
             // see orders
             ListOpenOrders(client);
             ListClosedOrders(client);
 
 
+            // buy a precise amount of XRP paying in EUR
+
 
             // buy a precise amount of XRP paying in EUR
             //Buy_250_XRP_with_EUR(client);
 
-            
+
 
             // buy XRP with 50 EUR
             //BuyXRP_with_50_EUR(client);
@@ -58,13 +61,11 @@ namespace Example
             Console.ReadKey();
         }
 
-
-        private static void GetTicker(IClient client)
-        {
+        private static void GetTicker(IClient client) {
             Console.WriteLine("\n# Tickers #\n");
 
-            var pairs = new CurrencyPair[] { 
-                CurrencyPair.XRP_EUR, 
+            var pairs = new CurrencyPair[] {
+                CurrencyPair.XRP_EUR,
                 CurrencyPair.XRP_GBP,
                 CurrencyPair.ADA_EUR,
             };
@@ -72,64 +73,53 @@ namespace Example
             Console.WriteLine(" Pair       | Bid        | Ask        ");
             Console.WriteLine(" -----------+------------+------------");
 
-            try
-            {
-                foreach (var pair in pairs)
-                {
+            try {
+                foreach (var pair in pairs) {
                     var ticker = client.GetTicker(pair);
                     Console.WriteLine($" {ticker.Pair.Slashed,-10} | {ticker.Bid,-10} | {ticker.Ask,-10} ");
                 }
             }
-            catch (Exception exc)
-            {
+            catch (Exception exc) {
                 Console.WriteLine($"GetTicker Error: {exc}");
             }
         }
 
-        private static void GetBalance(IClient client)
-        {
+        private static void GetBalance(IClient client) {
             Console.WriteLine($"\n# Balance #\n");
 
-            try
-            {                
+            try {
                 var balance = client.GetBalance();
-                Console.WriteLine(" Currency | Owned           | Available       ");
+                Console.WriteLine(" Currency | Total           | Free       ");
                 Console.WriteLine(" ---------+-----------------+---------------- ");
 
                 foreach (var item in balance)
-                    Console.WriteLine($" {item.Currency,-8} | {item.OwnedAmount,+15} | {item.AvailableAmount,+15} ");
+                    Console.WriteLine($" {item.Currency,-8} | {item.Total,+15} | {item.Free,+15} ");
             }
-            catch (Exception exc)
-            {
+            catch (Exception exc) {
                 Console.WriteLine($"GetBalance Error: {exc}");
             }
         }
 
-        private static void ListOpenOrders(IClient client)
-        {
+        private static void ListOpenOrders(IClient client) {
             Console.WriteLine($"\n# Open Orders #\n");
 
-            try
-            {
+            try {
                 var orders = client.ListOpenOrders();
-                
+
                 Console.WriteLine(" Date             | Pair       | Type    | Side | Amount          | Note                       ");
                 Console.WriteLine(" -----------------+------------+---------+------+-----------------+--------------------------- ");
                 foreach (var order in orders)
-                    Console.WriteLine($" {order.OpenTime:g} | {order.Pair.Dashed,-10} | {order.Type,-7} | {order.Side, -4} | {order.BuyOrSellQuantity,15} | {order.Id} Price:{order.LimitPrice} ");
+                    Console.WriteLine($" {order.OpenTime:g} | {order.Pair.Dashed,-10} | {order.Type,-7} | {order.Side,-4} | {order.BuyOrSellQuantity,15} | {order.Id} Price:{order.LimitPrice} ");
             }
-            catch(Exception exc)
-            {
+            catch (Exception exc) {
                 Console.WriteLine($"ListOpenOrders Error: {exc}");
             }
         }
 
-        private static void ListClosedOrders(IClient client)
-        {
+        private static void ListClosedOrders(IClient client) {
             Console.WriteLine($"\n# Closed Orders #\n");
 
-            try
-            {
+            try {
                 var orders = client.ListClosedOrders();
 
                 Console.WriteLine(" Opened           | Closed           | Pair       | Type    | Side | Amount          | Note                ");
@@ -138,15 +128,13 @@ namespace Example
                 foreach (var order in orders.Take(10))
                     Console.WriteLine($" {order.OpenTime:g} | {order.CloseTime:g} | {order.Pair.Dashed,+10} | {order.Type,-7} | {order.Side,-4} | {order.BuyOrSellQuantity,15} | {order.Id} Price:{order.Price} ");
             }
-            catch (Exception exc)
-            {
+            catch (Exception exc) {
                 Console.WriteLine($"ListClosedOrders failed: {exc}");
             }
         }
 
 
-        private static void Buy(IClient client, CurrencyPair pair, decimal quantity)
-        {
+        private static void Buy(IClient client, CurrencyPair pair, decimal quantity) {
             //var orderResponse = client.CreateMarketOrder(CurrencyPair.XRP_EUR, OrderSide.Buy, buyAmount);
 
             //if (orderResponse.IsSuccess)
@@ -161,13 +149,12 @@ namespace Example
             var orderRequest = CreateOrderRequest.Market(OrderSide.Buy, pair, quantity);
             var order = client.CreateMarketOrder(orderRequest);
 
-            Console.WriteLine($"Order Ref.: {order.Reference} Price: {order.Price}");      
+            Console.WriteLine($"Order Ref.: {order.Reference} Price: {order.Price}");
         }
 
-        private static void Buy_withAmount(IClient client, CurrencyPair pair, decimal payAmount, decimal addPercentage)
-        {
+        private static void Buy_withAmount(IClient client, CurrencyPair pair, decimal payAmount, decimal addPercentage) {
             var ticker = client.GetTicker(pair);
-            var availableAmount = client.GetBalance().GetCurrency(pair.Quote).AvailableAmount;
+            var availableAmount = client.GetBalance().GetCurrency(pair.Quote).Free;
 
             if (payAmount > availableAmount)
                 throw new Exception($"Available amount ({availableAmount}) is lower than order {payAmount}");
@@ -177,6 +164,9 @@ namespace Example
 
             var marketPrice = ticker.Bid;
             var orderPrice = marketPrice - (marketPrice * addPercentage / 100m);
+
+            var decimals = 2;
+            orderPrice = Math.Round(orderPrice, decimals);
             decimal buyAmount = payAmount / orderPrice;
             var orderRequest = CreateOrderRequest.Limit(OrderSide.Buy, pair, buyAmount, orderPrice);
 
@@ -186,9 +176,7 @@ namespace Example
             Console.WriteLine($"Limit Order Ref.: {order}  Price: {orderPrice}");
         }
 
-
-        private static void CreateLimitOrder(IClient client)
-        {
+        private static void CreateLimitOrder(OrderSide buy, IClient client) {
             var pair = CurrencyPair.XRP_EUR;
             var payAmount = 500; //500 EUR
 
@@ -204,20 +192,29 @@ namespace Example
             Console.WriteLine($"Order: {orderId}");
         }
 
+        // var quantity = Math.Round(1000/15.ToInvariantString);
 
-        private static void WithdrawFunds(IClient client)
-        {
-            var response = client.Withdraw(Currency.XRP, 50, "Binance");
+        private static void CreateLimitOrderWith(IClient client, OrderSide side, CurrencyPair pair, decimal quantityToPay, decimal price) {
+            decimal quantityToOrder = Math.Round(quantityToPay / price, 0);
 
-            if (response.IsSuccess)
-            {
+            var orderDeciamls = client.ListPairs().First(p => p == pair).OrderDecimals.Value;
+            var orderPrice = Math.Round(price, orderDeciamls);
+
+            var orderRequest = CreateOrderRequest.Limit(side, pair, quantityToOrder, orderPrice);
+
+            var orderId = client.CreateLimitOrder(orderRequest);
+            Console.WriteLine($"Order: {orderId}");
+        }
+
+        private static void WithdrawFunds(IClient client) {
+            var response = client.Withdraw(Alex75.Cryptocurrencies.Currency.XRP, 50, "Binance");
+
+            if (response.IsSuccess) {
                 Console.WriteLine($"{MethodBase.GetCurrentMethod().Name} competed. Operation ID: {response.OperationId}");
             }
-            else
-            {
+            else {
                 Console.WriteLine($"{MethodBase.GetCurrentMethod().Name} failed: {response.Error}");
             }
         }
-
     }
 }

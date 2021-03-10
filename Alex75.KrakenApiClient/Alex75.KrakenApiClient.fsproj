@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
-    <Version>1.0</Version>    
+    <Version>1.0</Version>
     <Description>Kraken API client for .Net</Description>
     <Authors>Alessandro Piccione</Authors>
     <PackageIcon>alex75.krakenapiclient.png</PackageIcon>

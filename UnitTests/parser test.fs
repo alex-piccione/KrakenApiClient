@@ -24,6 +24,11 @@ let parsePairs () =
     pairs |> should contain CurrencyPair.BTC_USD
     pairs |> should contain CurrencyPair.XRP_USD
 
+    pairs |> should contain (CurrencyPair("ewt", "eur"))
+    let ewt_eur = pairs.Find( fun p -> p = CurrencyPair("ewt", "eur") )
+    ewt_eur.OrderDecimals.IsSome |> should be True
+    ewt_eur.OrderDecimals.Value |> should equal 3
+
 
 [<Test>]
 let parseTicker () =

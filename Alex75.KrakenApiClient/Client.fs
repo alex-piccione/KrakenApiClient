@@ -73,7 +73,8 @@ type public Client (public_key:string, secret_key:string) =
             match cache.GetPairs assets_cache_time with
             | Some pairs -> pairs
             | _ -> 
-                let pairs = parser.parsePairs ( (f"%s/public/AssetPairs" base_url).GetStringAsync().Result )
+                let responseContent = (f"%s/public/AssetPairs" base_url).GetStringAsync().Result
+                let pairs = parser.parsePairs responseContent
                 cache.SetPairs pairs
                 pairs :> ICollection<CurrencyPair>
 

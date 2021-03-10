@@ -40,7 +40,9 @@ let parsePairs (content:string) =
         let base_ = mapBTC wsname.[0]
         let quote = mapBTC wsname.[1]
 
-        pairs.Add(CurrencyPair(base_, quote))    
+        let orderDecimals = Some( record.["pair_decimals"].AsInteger())
+
+        pairs.Add(CurrencyPair(base_, quote, orderDecimals))    
 
     pairs
 

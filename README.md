@@ -16,13 +16,12 @@ Get Ticker          | Retrieve the Ticker of a specific currency pair. | The res
 
 
 **Private** | &nbsp; | &nbsp;
----                  | ---                                                          | ---
-Get Balance          | Retrieve the owned and available amount  
-                       of every currencies.                                         | 
-Create Market Order  | Create an order at the current market price                  | 
-List open orders     | List all the open orders                                     | 
-List closed orders   | List all the closed order                                    |
-Withdrawal Crypto    | Withdrawal cryptocurrency to a registered wallet.            | The _wallet name_ must be registered in your Kraken account in advance.
+---                  | ---                                                                | ---
+Get Balance          | Retrieve the owned and available amount <br/>of every currencies.  | 
+Create Market Order  | Create an order at the current market price                        | 
+List open orders     | List all the open orders                                           | 
+List closed orders   | List all the closed order                                          |
+Withdrawal Crypto    | Withdrawal cryptocurrency to a registered wallet.                  | The _wallet name_ must be registered in advance
 
 
 ## How to use it

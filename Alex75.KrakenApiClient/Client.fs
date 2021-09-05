@@ -10,12 +10,12 @@ open utils
 
 
 type public Client (public_key:string, secret_key:string) =  
-        
+
     let base_url = "https://api.kraken.com/0"
     let cache = new Cache()
     let assets_cache_time = TimeSpan.FromHours 6.0
     let ticker_cache_time = TimeSpan.FromSeconds 10.0
-    let balance_cache_time = TimeSpan.FromSeconds 30.0    
+    let balance_cache_time = TimeSpan.FromSeconds 30.0
 
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method requires public and secret keys"
 
@@ -82,9 +82,9 @@ type public Client (public_key:string, secret_key:string) =
             let cached_ticker = cache.GetTicker pair ticker_cache_time
             match cached_ticker with 
                 | Some ticker -> ticker
-                | _ ->         
+                | _ ->
                      let kraken_pair = currency_mapper.getKrakenPair pair
-                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair    
+                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair
                      let responseMessage = url.GetAsync().Result
                      let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
                      let ticker = parser.parseTicker(pair, json)
@@ -109,15 +109,13 @@ type public Client (public_key:string, secret_key:string) =
 
                 cache.SetAccountBalance balances
                 balances 
-                
 
-                
 
         member this.ListOpenOrdersIsAvailable = true
         member this.ListOpenOrders () =
             ensure_keys()
 
-            let url = f"%s/private/OpenOrders" base_url   
+            let url = f"%s/private/OpenOrders" base_url
             
             //to try
                 // inputs
@@ -139,8 +137,8 @@ type public Client (public_key:string, secret_key:string) =
         member this.ListClosedOrdersIsAvailable = true
         member this.ListClosedOrders() = 
             ensure_keys()
-                        
-            let url = f"%s/private/ClosedOrders" base_url               
+
+            let url = f"%s/private/ClosedOrders" base_url
 
             // inputs
             // trades = whether or not to include trades in output (optional.  default = false)

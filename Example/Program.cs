@@ -29,12 +29,12 @@ namespace Example
             // get balance
             GetBalance(client);
 
-            //trader.CreateLimitOrder_Buy_Sell(CurrencyPair.XRP_GBP, 400, 0.5m, 2.5m);
+            //trader.CreateLimitOrder_Buy_Sell(CurrencyPair.XRP_USDT, 1000, 1.15057m, 2.5m);
 
             //Buy_withAmount(client, CurrencyPair.XRP_GBP, 600, 0.05m);
             var pairs = client.ListPairs();
 
-            // CreateLimitOrderWith(client, OrderSide.Buy, new CurrencyPair("EWT", "EUR"), 100, 15.0m);
+            //CreateLimitOrderWith(client, OrderSide.Buy, new CurrencyPair("XRP", "USDT"), 1000, 1.1507m);
 
             // see orders
             ListOpenOrders(client);

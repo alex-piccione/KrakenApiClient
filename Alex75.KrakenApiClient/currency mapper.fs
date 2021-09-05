@@ -15,7 +15,6 @@ open utils
 open Alex75.Cryptocurrencies
 open System.Collections.Generic
 
-
 module private mapper =
 
     /// parameter:pairs = Seq of (krakenSymbol, krakenPairAltName, quote, base)
@@ -23,16 +22,14 @@ module private mapper =
         let krakenCurrenciesMap = Map( assets |> Seq.map ( fun (k, c) -> match k with
                                                                          | "XXBT" -> (k,"BTC")
                                                                          | _ -> (k,c)
-                                                                      ))       
-        
+                                                                      ))
 
         // create a key:value map wherre the key is the kraken pair altname (used in order list) and the value is the standard currency pair
         let krakenAltNamePairMap = 
-            Map( pairs             
+            Map( pairs
             |> Seq.map( fun (krakenPair, krakenAltName, krakenBase_, krakenQuote) -> 
                             (krakenAltName, CurrencyPair(krakenCurrenciesMap.[krakenBase_], krakenCurrenciesMap.[krakenQuote]))                        
             ))
-
 
         // create a key:value map where the key is the standard pair and the value is the Kraken symbol
         let krakenPairMap = 
@@ -41,7 +38,6 @@ module private mapper =
             |> Seq.map( fun (krakenPair, krakenAltName, krakenBase_, krakenQuote) ->
                             (CurrencyPair(krakenCurrenciesMap.[krakenBase_], krakenCurrenciesMap.[krakenQuote]).AAA_BBB, krakenPair) 
             ))
-   
 
         /// given the standard pair returns the Kraken symbol (pair) (make order). XRP/EUR -> XXRPZEUR
         member this.getKrakenPair (pair:CurrencyPair) = krakenPairMap.[pair.AAA_BBB]  
@@ -53,9 +49,6 @@ module private mapper =
 
         /// given an "altname" (orders list) returns the standard pair. XRPEUR -> XRP/EUR
         member this.getPairFromAltName altName = krakenAltNamePairMap.[altName]            
-    
-        
-            
 
 
     let mapTTL = TimeSpan.FromHours(6.0)  // 6 hours
@@ -82,7 +75,7 @@ module private mapper =
 
 
     let updateMap baseUrl =  
-        lock LOCK ( fun () ->            
+        lock LOCK ( fun () ->
             async {
                 if lastUpdate.IsNone || (DateTime.Now - lastUpdate.Value) > TimeSpan.FromMinutes(10.) then
                     let mutable run = 0
@@ -105,8 +98,7 @@ let startMapping baseUrl =
     timer.AutoReset <- true
     timer.Elapsed.Add (fun e -> mapper.updateMap(baseUrl) |> Async.RunSynchronously)
     mapper.updateMap(baseUrl) |> Async.RunSynchronously // initial call
-
- 
+     
 
 /// return the Kraken pair from a common pair
 let getKrakenPair pair =

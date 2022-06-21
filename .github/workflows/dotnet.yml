@@ -6,7 +6,7 @@ on:
     branches: [ master ]
 
 env:  
-  VERSION_BASE: 1.0.${{github.run_number}} 
+  VERSION: 1.0.${{github.run_number}} 
   PROJECT_FOLDER: Alex75.KrakenApiClient
   NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
 
@@ -29,8 +29,8 @@ jobs:
         if [[ $(( github.event_name )) == "push" && $(( github.ref )) == "refs/heads/master" ]]; then
           suffix=""
         fi
-        echo version - $VERSION_BAS$suffix
-        echo ::set-output name=version::$VERSION_BAS$suffix
+        echo version - $VERSION$suffix
+        echo ::set-output name=version::$VERSION$suffix
         #$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
     - name: Install dependencies
       run: dotnet restore

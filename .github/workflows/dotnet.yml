@@ -34,10 +34,8 @@ jobs:
       run: dotnet test --no-restore --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY"
 
     - name: Pack NuGet
-      run: | 
-        echo GITHUB_REF_NAME ${ GITHUB_REF_NAME }
-        echo ${{ github.event_name }}   github.event_name== 'push' && github.ref == 'refs/heads/main'
-        echo is alpha $alpha
+      run: |         
+        echo ${{ github.event_name }} ${{ github.ref }} #  github.event_name== 'push' && github.ref == 'refs/heads/main'
         echo create package $VERSION
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$VERSION
     - name: Publish NuGet

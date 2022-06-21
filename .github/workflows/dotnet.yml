@@ -35,7 +35,9 @@ jobs:
 
     - name: Pack NuGet
       run: | 
+        echo GITHUB_REF_NAME ${{ GITHUB_REF_NAME }}
+        echo is alpha $alpha
         echo create package $VERSION
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$VERSION
-    - name: Publish NuGet
-      run: dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg  --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+    #- name: Publish NuGet
+    #  run: dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg  --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json

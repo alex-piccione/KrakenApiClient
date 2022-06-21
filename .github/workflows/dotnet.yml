@@ -42,7 +42,7 @@ jobs:
     - name: Pack NuGet
       run: |         
         final_version=${{ steps.package_version.outputs.version }}
-        echo create package $version
+        echo create package $final_version
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$final_version
     - name: Publish NuGet
       run: |        
@@ -52,7 +52,7 @@ jobs:
         #fi
         #echo $VERSION$suffix
         echo publish package
-        dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg  --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+        dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
 
 # how to pass values from step to step
 # https://stackoverflow.com/questions/57819539/github-actions-how-to-share-a-calculated-value-between-job-steps

@@ -5,8 +5,7 @@ Developed mainly for _XRP_.
 Target frameworks: _.NET Standard 2.0_ & _.NET Core 3.1_
 
 [![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient) 
-[![Build Status](https://alex75.visualstudio.com/Kraken%20API%20Client/_apis/build/status/Build%20and%20publish%20Package%20v0.1?branchName=master)](https://alex75.visualstudio.com/Kraken%20API%20Client/_build/latest?definitionId=18&branchName=master)
-
+![Build Status](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/dotnet.yml/badge.svg)
 
 ## Functionalities
 
@@ -17,12 +16,13 @@ Get Ticker          | Retrieve the Ticker of a specific currency pair. | The res
 
 
 **Private** | &nbsp; | &nbsp;
----                 | ---                                               | ---
-Get Balance         | Retrieve the owned and available amount of every currencies. | 
-Create Market Order | Create an order at the current market price       | 
-List open orders    | List all the open orders                          | 
-List closed orders  | List all the closed order                         |
-Withdrawal Crypto   | Withdrawal cryptocurrency to a registered wallet. | The _wallet name_ must be registered in your Kraken account in advance.
+---                  | ---                                                                | ---
+Get Balance          | Retrieve the owned and available amount <br/>of every currencies.  | 
+Create Market Order  | Create an order at the current market price                        | 
+Create Limit Order   | Create an order with a specified price                             | 
+List open orders     | List all the open orders                                           | 
+List closed orders   | List all the closed order                                          |
+Withdrawal Crypto    | Withdrawal cryptocurrency to a registered wallet.                  | The _wallet name_ must be registered in advance
 
 
 ## How to use it

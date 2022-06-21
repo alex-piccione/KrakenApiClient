@@ -28,8 +28,9 @@ jobs:
 #        dotnet user-secrets --id ${{ secrets.USER_SECRETS_ID }} set "API secret" ${{ secrets.KEY_SECRET }}
     - name: test
       run: |
-        echo github.event_name 
-        echo github.ref
+        echo github.event_name  ((github.event_name )) [[github.event_name]]
+        print github.event_name
+        echo github.ref  ((github.ref))
         echo github.head_ref
         echo github.base_ref
         echo 

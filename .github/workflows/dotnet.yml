@@ -22,25 +22,25 @@ jobs:
       with:
         dotnet-version: '6.0.x'
 
-    - name: define package version
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Run Tests
+      run: dotnet test --no-restore --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY"
+
+    - name: Define NuGet package version
       id: package_version
       run: |        
         suffix="-alpha"
-        echo github.event_name::${{ github.event_name }}
-        echo github.ref::${{ github.ref }}
+        #echo github.event_name::${{ github.event_name }}
+        #echo github.ref::${{ github.ref }}
         if [[ ${{ github.event_name }} == "push" && ${{ github.ref }} == "refs/heads/master" ]]; then
           suffix=""
         fi
         echo version:: $VERSION$suffix
         echo ::set-output name=version::$VERSION$suffix
         #$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY"
-
     - name: Pack NuGet
       run: |         
         final_version=${{ steps.package_version.outputs.version }}
@@ -48,11 +48,6 @@ jobs:
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$final_version
     - name: Publish NuGet
       run: |        
-        #suffix="-alpha"
-        #if [[ $(( github.event_name )) == "push" && $(( github.ref )) == "refs/heads/master" ]]; then
-        #  suffix=""
-        #fi
-        #echo $VERSION$suffix
         echo publish package
         dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
 

@@ -29,7 +29,7 @@ jobs:
         if [[ $(( github.event_name )) == "push" && $(( github.ref )) == "refs/heads/master" ]]; then
           suffix=""
         fi
-        echo version - $VERSION$suffix
+        echo version:: $VERSION$suffix
         echo ::set-output name=version::$VERSION$suffix
         #$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
     - name: Install dependencies
@@ -41,9 +41,9 @@ jobs:
 
     - name: Pack NuGet
       run: |         
-        version=${{ steps.package_version.outputs.version }}
+        final_version=${{ steps.package_version.outputs.version }}
         echo create package $version
-        dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$VERSION
+        dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$final_version
     - name: Publish NuGet
       run: |        
         #suffix="-alpha"
@@ -51,8 +51,7 @@ jobs:
         #  suffix=""
         #fi
         #echo $VERSION$suffix
-        version=${{ steps.package_version.outputs.version }}
-        echo publish package $VERSION
+        echo publish package
         dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg  --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
 
 # how to pass values from step to step

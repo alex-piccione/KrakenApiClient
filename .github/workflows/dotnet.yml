@@ -6,7 +6,8 @@ on:
     branches: [ master ]
 
 env:  
-  VERSION: 1.0.${{github.run_number}}
+  VERSION: 1.0.${{github.run_number}} 
+  VERSION_SUFFIX: "-alpha"
   PROJECT_FOLDER: Alex75.KrakenApiClient
   NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
 
@@ -26,17 +27,23 @@ jobs:
 #        dotnet user-secrets list --id ${{ secrets.USER_SECRETS_ID }}
 #        dotnet user-secrets --id ${{ secrets.USER_SECRETS_ID }} set "API name" ${{ secrets.KEY_NAME }}
 #        dotnet user-secrets --id ${{ secrets.USER_SECRETS_ID }} set "API secret" ${{ secrets.KEY_SECRET }}
-    - name: test
+    - name: action check
+      run: | 
+        echo github.event.action - ${{ github.event.action }}
+        echo github.head_ref     - ${{ github.head_ref }}
+    - name: set suffix
+      #if: github.event_name != 'push'
+      #shell: bash
+      #run: echo "::set-env name=VERSION_SUFFIX::$(echo ${GITHUB_REF#refs/heads/})"
+      #run: echo "::set-env name=VERSION_SUFFIX::"
       run: |
-        echo github.event_name  [[github.event_name]]
-        echo $github.event_name
-        print github.event_name
-        echo github.ref  ((github.ref))
-        echo github.head_ref
-        echo github.base_ref
-        echo 
+        echo github.event.action - ${{ github.event.action }}
+        echo github.ref          - ${{ github.ref }}
+        echo github.base_ref     - ${{ github.base_ref }}
+        echo github.head_ref     - ${{ github.head_ref }}
+        echo github.event_name   - ${{ github.event_name }}
         suffix="-alpha"
-        if [[ github.event_name == "push" ]]; then
+        if [[ ${{ github.event_name }} == "push" ]]; then
           suffix=""
         fi
         echo $VERSION$suffix

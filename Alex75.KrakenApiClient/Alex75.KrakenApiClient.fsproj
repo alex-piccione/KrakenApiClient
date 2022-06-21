@@ -7,7 +7,7 @@
     <Authors>Alessandro Piccione</Authors>
     <PackageIcon>alex75.krakenapiclient.png</PackageIcon>
     <RepositoryUrl>https://github.com/alex-piccione/KrakenApiClient</RepositoryUrl>
-    <PackageTags>XRP cryptocurrency Ripple Bitcoin</PackageTags>
+    <PackageTags>Kraken cryptocurrency XRP Bitcoin</PackageTags>
     <RepositoryType>Git</RepositoryType>
     <PackageProjectUrl>https://github.com/alex-piccione/KrakenApiClient</PackageProjectUrl>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -15,12 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="README.md" />
-    <None Include="alex75.krakenapiclient.png">
+    <EmbeddedResource Include="README.md" />
+    <EmbeddedResource Include="alex75.krakenapiclient.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
   </ItemGroup>
   
   <ItemGroup>

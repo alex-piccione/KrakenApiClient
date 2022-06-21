@@ -39,10 +39,10 @@ jobs:
         echo create package $VERSION
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$VERSION
     - name: Publish NuGet
-      run: |
-        suffix=""
-        if [[ "1" == "1" ]]; then
-          suffix="-alpha"
+      run: |        
+        suffix="-alpha"
+        if [[ github.event_name == "push" ]]; then
+          suffix=""
         fi
         echo $VERSION$suffix
     #  run: dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg  --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json

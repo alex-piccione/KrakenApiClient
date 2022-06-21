@@ -6,10 +6,9 @@ on:
     branches: [ master ]
 
 env:  
-  VERSION: 1.0.${{github.run_number}} 
+  VERSION: 1.0.${{github.run_number}}
   PROJECT_FOLDER: Alex75.KrakenApiClient
   NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
-  IS_ALPHA: 
 
 jobs:
   build:
@@ -41,5 +40,11 @@ jobs:
         echo is alpha $alpha
         echo create package $VERSION
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$VERSION
-    #- name: Publish NuGet
+    - name: Publish NuGet
+      run: |
+        suffix=""
+        if [[ "1" == "1" ]]; then
+          suffix="-alpha"
+        fi
+        echo $VERSION$suffix
     #  run: dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg  --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json

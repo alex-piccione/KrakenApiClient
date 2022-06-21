@@ -9,5 +9,5 @@ type IClient =
     inherit IApiClientMakeOrders
     inherit IApiClientListOrders
     //inherit IApiClientWithdrawals
-          
+
     abstract member Withdraw: currency:Currency * amount:decimal * walletName:string -> WithdrawalResponse

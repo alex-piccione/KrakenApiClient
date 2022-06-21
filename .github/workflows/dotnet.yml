@@ -27,23 +27,14 @@ jobs:
 #        dotnet user-secrets list --id ${{ secrets.USER_SECRETS_ID }}
 #        dotnet user-secrets --id ${{ secrets.USER_SECRETS_ID }} set "API name" ${{ secrets.KEY_NAME }}
 #        dotnet user-secrets --id ${{ secrets.USER_SECRETS_ID }} set "API secret" ${{ secrets.KEY_SECRET }}
-    - name: action check
-      run: | 
-        echo github.event.action - ${{ github.event.action }}
-        echo github.head_ref     - ${{ github.head_ref }}
     - name: set suffix
       #if: github.event_name != 'push'
       #shell: bash
       #run: echo "::set-env name=VERSION_SUFFIX::$(echo ${GITHUB_REF#refs/heads/})"
       #run: echo "::set-env name=VERSION_SUFFIX::"
-      run: |
-        echo github.event.action - ${{ github.event.action }}
-        echo github.ref          - ${{ github.ref }}
-        echo github.base_ref     - ${{ github.base_ref }}
-        echo github.head_ref     - ${{ github.head_ref }}
-        echo github.event_name   - ${{ github.event_name }}
+      run: |        
         suffix="-alpha"
-        if [[ ${{ github.event_name }} == "push" ]]; then
+        if [[ $(( github.event_name )) == "push" && $(( github.ref )) == "refs/heads/master" ]]; then
           suffix=""
         fi
         echo $VERSION$suffix
@@ -62,7 +53,7 @@ jobs:
     - name: Publish NuGet
       run: |        
         suffix="-alpha"
-        if [[ github.event_name == "push" ]]; then
+        if [[ $(( github.event_name )) == "push" && $(( github.ref )) == "refs/heads/master" ]]; then
           suffix=""
         fi
         echo $VERSION$suffix

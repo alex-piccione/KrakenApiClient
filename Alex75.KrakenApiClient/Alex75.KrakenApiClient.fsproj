@@ -10,10 +10,12 @@
     <PackageTags>XRP cryptocurrency Ripple Bitcoin</PackageTags>
     <RepositoryType>Git</RepositoryType>
     <PackageProjectUrl>https://github.com/alex-piccione/KrakenApiClient</PackageProjectUrl>
+	  <PackageReadmeFile>readme.md</PackageReadmeFile>
     <UserSecretsId>Kraken.fe116236-f58b-49a1-ae3b-8761bdbeb024</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="README.md" />
     <None Include="alex75.krakenapiclient.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

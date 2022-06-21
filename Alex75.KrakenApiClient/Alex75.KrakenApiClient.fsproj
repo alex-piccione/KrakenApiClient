@@ -15,10 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README.md" />
+    <Content Include="README.md" />
     <None Include="alex75.krakenapiclient.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   

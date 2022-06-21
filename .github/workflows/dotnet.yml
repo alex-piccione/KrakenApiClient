@@ -26,6 +26,18 @@ jobs:
 #        dotnet user-secrets list --id ${{ secrets.USER_SECRETS_ID }}
 #        dotnet user-secrets --id ${{ secrets.USER_SECRETS_ID }} set "API name" ${{ secrets.KEY_NAME }}
 #        dotnet user-secrets --id ${{ secrets.USER_SECRETS_ID }} set "API secret" ${{ secrets.KEY_SECRET }}
+    - name: test
+      run: |
+        echo github.event_name 
+        echo github.ref
+        echo github.head_ref
+        echo github.base_ref
+        echo 
+        suffix="-alpha"
+        if [[ github.event_name == "push" ]]; then
+          suffix=""
+        fi
+        echo $VERSION$suffix
     - name: Install dependencies
       run: dotnet restore
     - name: Build

@@ -35,7 +35,8 @@ jobs:
 
     - name: Pack NuGet
       run: | 
-        echo GITHUB_REF_NAME ${{ GITHUB_REF_NAME }}
+        echo GITHUB_REF_NAME $GITHUB_REF_NAME
+        echo ${{ github.event_name }}   github.event_name== 'push' && github.ref == 'refs/heads/main'
         echo is alpha $alpha
         echo create package $VERSION
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$VERSION

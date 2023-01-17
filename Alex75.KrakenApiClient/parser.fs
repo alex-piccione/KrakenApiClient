@@ -7,10 +7,9 @@ open System.Collections.Generic
 open FSharp.Data
 open Alex75.Cryptocurrencies
 
-
 let load_result_and_check_errors jsonString =
-    let json = JsonValue.Parse(jsonString)    
-    let errors = json.["error"].AsArray()    
+    let json = JsonValue.Parse(jsonString)
+    let errors = json.["error"].AsArray()
     if errors.Length > 0 then failwith (errors.[0].AsString())
     json.["result"]
 
@@ -18,6 +17,10 @@ let parseUnixTime_old (unixTime) = new DateTime(1970, 1,1) + TimeSpan.FromSecond
 let parseUnixTime unixTime = DateTimeOffset.FromUnixTimeMilliseconds(int64(unixTime*1000m)).DateTime
 
 let mapBTC currency = if currency = "XBT" then "BTC" else currency
+
+let test (): (string * decimal) =
+
+    ("test", 1.0m)
 
 /// Creates a map <Kraken currency>:<currency>
 let parseAssets (jsonString) =
@@ -30,7 +33,7 @@ let parsePairs (content:string) =
 
     let pairs = new List<CurrencyPair>()
     for key, record in result.Properties() |> Seq.where( fun (key, record) -> not(key.EndsWith(".d"))) // skip "Derivatives"
-        do    
+        do
 
         // must be used with a continuosly updated list
         //let _base = currency_mapping.get_currency (record.["base"].AsString())
@@ -42,63 +45,62 @@ let parsePairs (content:string) =
 
         let orderDecimals = Some( record.["pair_decimals"].AsInteger())
 
-        pairs.Add(CurrencyPair(base_, quote, orderDecimals))    
+        pairs.Add(CurrencyPair(base_, quote, orderDecimals))
 
     pairs
 
 let parseTicker (pair:CurrencyPair, data:string) =
-    let result = load_result_and_check_errors data            
+    let result = load_result_and_check_errors data
 
     let (name, values) = result.Properties().[0]
-    
+
     let ask = values.["a"].[0].AsDecimal()
     let bid = values.["b"].[0].AsDecimal()
 
     Ticker(pair, bid, ask, None, None, None)
 
-
-let parseBalance jsonString normalizeCurrency = 
+let parseBalance jsonString normalizeCurrency =
     let result = load_result_and_check_errors jsonString
 
     let parse (kraken_currency, amountJson) =
         let amount = (amountJson:JsonValue).AsDecimal()
         match (kraken_currency:string).Split('.') with
-        | [|code|] -> "", normalizeCurrency kraken_currency , amount
-        | [|code;"S"|] -> "stacking", normalizeCurrency code , amount
+        | [|code|] -> "normal", normalizeCurrency kraken_currency , amount
+        | [|code;"S"|] -> // manage stacking tickers, like "CCC.S" and "CCC28.S"
+            let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code 
+            "stacking", normalizeCurrency newCode , amount
         | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
 
-    let parsed = result.Properties() |> Seq.map parse
+    let parsed:seq<(string * Currency * decimal)> = result.Properties() |> Seq.map parse
 
-    let stackingMap = Map( parsed 
-                           |> Seq.filter (fun (kind,_,_) -> kind = "stacking") 
-                           |> Seq.map (fun (kind,currency,amount) -> currency, amount) 
+    let stackingMap = Map( parsed
+                           |> Seq.filter (fun (kind,_,_) -> kind = "stacking")
+                           |> Seq.map (fun (kind,currency,amount) -> currency, amount)
     )
 
-    let balances = parsed 
-                   |> Seq.choose (fun (kind,currency:Currency,amount) -> 
-                                      match kind with 
-                                      | "" -> Some(
+    let balances = parsed
+                   |> Seq.choose (fun (kind,currency:Currency,amount) ->
+                                      match kind with
+                                      | "normal" -> Some(
                                                 let balance = CurrencyBalance(currency, amount, amount)
                                                 if stackingMap.ContainsKey currency then balance.AddStacking stackingMap.[currency]
                                                 else balance
-                                                )                                            
+                                                )
                                       | _ -> None )
-    
+
     let getStackingBalance (currency:Currency, amount) =
         if balances |> Seq.exists (fun balance -> balance.Currency = currency)
-        then None 
-        else Some(CurrencyBalance.Zero(currency).AddStacking amount)        
+        then None
+        else Some(CurrencyBalance.Zero(currency).AddStacking amount)
 
-    let stackingBalances = 
+    let stackingBalances =
         stackingMap
-        |> Map.toSeq 
+        |> Map.toSeq
         |> Seq.choose getStackingBalance
 
     new AccountBalance(Seq.append balances stackingBalances)
 
-    
-
-let parseOrder(jsonString:string) =    
+let parseOrder(jsonString:string) =
     let result = load_result_and_check_errors(jsonString)
 
     let order = result.["descr"].["order"].ToString()
@@ -112,7 +114,7 @@ let parseOrderType value =  match value with
                             | "market" -> OrderType.Market
                             | "stop-loss" -> OrderType.StopLoss
                             | "stop-loss-limit" -> OrderType.StopLossLimit
-                            | "take-profit" -> OrderType.TakeProfit                            
+                            | "take-profit" -> OrderType.TakeProfit
                             | "take-profit-limit" -> OrderType.TakeProfitLimit
                             | x -> failwithf "Order type not recognized: %s" x
 
@@ -120,29 +122,25 @@ let parseOrderSide value = match value with
                            | "sell" -> OrderSide.Sell
                            | "buy" -> OrderSide.Buy
                            | x -> failwithf "Order side not recognized: %s" x
-        
-    
 
-let parseOpenOrders(jsonString:string, normalizePair) = 
+let parseOpenOrders(jsonString:string, normalizePair) =
     let result = load_result_and_check_errors(jsonString)
 
     let readOrder (id, json:JsonValue) =
-        let descr = json.["descr"]        
-        let orderSide = parseOrderSide(descr.["type"].AsString())            
+        let descr = json.["descr"]
+        let orderSide = parseOrderSide(descr.["type"].AsString())
         let orderType = parseOrderType(descr.["ordertype"].AsString())
-        
+
         let openTime = parseUnixTime(json.["opentm"].AsDecimal()) // 1575484650.7296,
         let pair = normalizePair(descr.["pair"].AsString())    // this is (illogically) the altname !!!
         let vol = json.["vol"].AsDecimal()   // ???
         //let vol_exec = json.["vol_exec"].AsDecimal()   // ???
-                
+
         let limitPrice = if orderType = OrderType.Limit then descr.["price"].AsDecimal() else 0m
 
         OpenOrder(id, orderType, orderSide, openTime, pair, vol, limitPrice)
 
     result.["open"].Properties() |> Array.map readOrder
-
-   
 
 //refid = Referral order transaction id that created this order
 //userref = user reference id
@@ -186,13 +184,13 @@ let startDate = DateTime(1970, 1, 1)
 let parseDate dateNumber = startDate + TimeSpan.FromSeconds(float(dateNumber))
 //DateTimeOffset.FromUnixTimeSeconds
 
-let parseClosedOrders (jsonString:string) normalizePair =      
+let parseClosedOrders (jsonString:string) normalizePair =
     let result = load_result_and_check_errors(jsonString)
-       
-    let readOrder (name, json:JsonValue) = 
+
+    let readOrder (name, json:JsonValue) =
         let id = name
-        let descr = json.["descr"]        
-        let orderSide = parseOrderSide(descr.["type"].AsString())            
+        let descr = json.["descr"]
+        let orderSide = parseOrderSide(descr.["type"].AsString())
         let orderType = parseOrderType(descr.["ordertype"].AsString())
 
         let openTime = parseDate(json.["opentm"].AsDecimal())
@@ -202,7 +200,7 @@ let parseClosedOrders (jsonString:string) normalizePair =
 
         let amount = 0m
         let price = json.["price"].AsDecimal()
-        
+
         let pair = normalizePair(descr.["pair"].AsString())
         let vol = json.["vol"].AsDecimal()
         //let vol_exec = json.["vol_exec"].AsDecimal()  // not used
@@ -210,12 +208,11 @@ let parseClosedOrders (jsonString:string) normalizePair =
         //let buyQuantity = Math.Min(vol, vol_exec)
 
         let payQuantity = json.["cost"].AsDecimal()
-        let fee = json.["fee"].AsDecimal()                
+        let fee = json.["fee"].AsDecimal()
 
         let note = sprintf "Status: %s, Reason: %s" status reason
 
         ClosedOrder(id, orderType, orderSide, openTime, closeTime, status, reason, pair, buyQuantity, payQuantity, price, fee, note)
-
 
     result.["closed"].Properties() |> Array.map readOrder
 
@@ -255,7 +252,6 @@ let parseClosedOrders (jsonString:string) normalizePair =
          },
     *)
 
-    
-let parseWithdrawal(jsonString:string) =    
+let parseWithdrawal(jsonString:string) =
     let result = load_result_and_check_errors(jsonString)
     result.["refid"].AsString()

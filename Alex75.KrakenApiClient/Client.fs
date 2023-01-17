@@ -8,62 +8,59 @@ open Flurl.Http
 open Alex75.Cryptocurrencies
 open utils
 
+type public Client (public_key:string, secret_key:string) =
 
-type public Client (public_key:string, secret_key:string) =  
-        
     let base_url = "https://api.kraken.com/0"
     let cache = new Cache()
     let assets_cache_time = TimeSpan.FromHours 6.0
     let ticker_cache_time = TimeSpan.FromSeconds 10.0
-    let balance_cache_time = TimeSpan.FromSeconds 30.0    
+    let balance_cache_time = TimeSpan.FromSeconds 30.0
 
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method requires public and secret keys"
 
     let create_content (properties:IDictionary<string, string>) =
         let nonce = DateTime.UtcNow.Ticks.ToString()
         //properties.Add("nonce", nonce)
-        let content = properties 
+        let content = properties
                         |> Seq.map (fun kv -> sprintf "&%s=%s" kv.Key kv.Value)
                         |> Seq.fold (+) ("nonce=" + nonce)
         //let content = f"nonce=%i%s" nonce content
         let nonce_content = f"%s%s" nonce content
-        (nonce_content, content)    
+        (nonce_content, content)
 
     do
-        currency_mapper.startMapping base_url    
+        currency_mapper.startMapping base_url
 
-    new () = Client(null, null)  
-
+    new () = Client(null, null)
 
     member this.CreateMarketOrder (pair:CurrencyPair, side:OrderSide, buyAmount:decimal) =
         ensure_keys()
 
-        let url = f"%s/private/AddOrder" base_url            
+        let url = f"%s/private/AddOrder" base_url
         let kraken_pair = currency_mapper.getKrakenPair pair
 
         let values = dict [
             "pair", kraken_pair
-            "type", match side with 
+            "type", match side with
                     | OrderSide.Buy -> "buy"
                     | OrderSide.Sell -> "sell"
-            "ordertype", "market" 
+            "ordertype", "market"
             //("price")
             "volume", buyAmount.ToString(System.Globalization.CultureInfo.InvariantCulture) // ???? {"error":["EGeneral:Invalid arguments:volume"]}
             //("leverage")
             //("oflags", "viqc") // volume in quote currency   // no more available !
             //("validate", "true") // ANY value (also validate=true) will be a simulation, order id not returned
         ]
-            
+
         let nonce_content, content = create_content values
         let responseMessage = (url.WithApi "/0/private/AddOrder" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
         let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
 
         let struct (orderIds, amount) = parser.parseOrder(json)
-            
-        CreateMarketOrderResponse(true, null, orderIds, amount)                
+
+        CreateMarketOrderResponse(true, null, orderIds, amount)
 
         //with e -> CreateMarketOrderResponse.Fail e.Message
-
 
     interface IClient with
 
@@ -72,19 +69,19 @@ type public Client (public_key:string, secret_key:string) =
         member this.ListPairs() =
             match cache.GetPairs assets_cache_time with
             | Some pairs -> pairs
-            | _ -> 
+            | _ ->
                 let responseContent = (f"%s/public/AssetPairs" base_url).GetStringAsync().Result
                 let pairs = parser.parsePairs responseContent
                 cache.SetPairs pairs
                 pairs :> ICollection<CurrencyPair>
 
-        member this.GetTicker(pair: CurrencyPair): Ticker = 
+        member this.GetTicker(pair: CurrencyPair): Ticker =
             let cached_ticker = cache.GetTicker pair ticker_cache_time
-            match cached_ticker with 
+            match cached_ticker with
                 | Some ticker -> ticker
-                | _ ->         
+                | _ ->
                      let kraken_pair = currency_mapper.getKrakenPair pair
-                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair    
+                     let url = f"%s/public/Ticker?pair=%s" base_url kraken_pair
                      let responseMessage = url.GetAsync().Result
                      let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
                      let ticker = parser.parseTicker(pair, json)
@@ -93,32 +90,29 @@ type public Client (public_key:string, secret_key:string) =
 
         // private //
 
-        member this.GetBalance(): AccountBalance = 
+        member this.GetBalance(): AccountBalance =
             ensure_keys()
 
             match cache.GetAccountBalance(balance_cache_time) with
             | Some balance -> balance
-            | _ -> 
-                let url = f"%s/private/Balance" base_url  
+            | _ ->
+                let url = f"%s/private/Balance" base_url
                 let nonce_content, content = create_content (dict [])
-                let balances = 
+                let balances =
                     (url.WithApi "/0/private/Balance" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
                         .EnsureSuccessStatusCode()
-                        |> fun msg -> msg.Content.ReadAsStringAsync().Result                        
+                        |> fun msg -> msg.Content.ReadAsStringAsync().Result
                         |> parser.parseBalance <| currency_mapper.getCurrency
 
                 cache.SetAccountBalance balances
-                balances 
-                
-
-                
+                balances
 
         member this.ListOpenOrdersIsAvailable = true
         member this.ListOpenOrders () =
             ensure_keys()
 
-            let url = f"%s/private/OpenOrders" base_url   
-            
+            let url = f"%s/private/OpenOrders" base_url
+
             //to try
                 // inputs
                 // trades = whether or not to include trades in output (optional.  default = false)
@@ -127,20 +121,18 @@ type public Client (public_key:string, secret_key:string) =
             let nonce_content, content = create_content (dict [])
             let responseMessage = (url.WithApi "/0/private/OpenOrders" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
             let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-            parser.parseOpenOrders(json, currency_mapper.parseAltPair)   
-
+            parser.parseOpenOrders(json, currency_mapper.parseAltPair)
 
         member this.ListOpenOrdersOfCurrenciesIsAvailable = true
         member this.ListOpenOrdersOfCurrencies(pairs: CurrencyPair[]) =
             (this :> IApiClientListOrders).ListOpenOrders()
             |> Array.filter (fun order -> Array.contains order.Pair pairs)
 
-
         member this.ListClosedOrdersIsAvailable = true
-        member this.ListClosedOrders() = 
+        member this.ListClosedOrders() =
             ensure_keys()
-                        
-            let url = f"%s/private/ClosedOrders" base_url               
+
+            let url = f"%s/private/ClosedOrders" base_url
 
             // inputs
             // trades = whether or not to include trades in output (optional.  default = false)
@@ -149,13 +141,12 @@ type public Client (public_key:string, secret_key:string) =
             let nonce_content, content = create_content (dict [])
             let responseMessage = (url.WithApi "/0/private/ClosedOrders" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
             let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-            parser.parseClosedOrders json currency_mapper.parseAltPair           
-        
+            parser.parseClosedOrders json currency_mapper.parseAltPair
+
         // todo: add an override to accept the Kraken custom filter parameters
 
         member this.ListClosedOrdersOfCurrenciesIsAvailable = false
         member this.ListClosedOrdersOfCurrencies(pairs:CurrencyPair[]) = failwith "Use ListClosedOrders"
-
 
         // Place Order
 
@@ -164,12 +155,10 @@ type public Client (public_key:string, secret_key:string) =
             if result.IsSuccess then CreateOrderResult(String.Join(",", result.OrderIds), 0m)
             else failwith result.Error
 
-
-        member this.CreateLimitOrder(request: CreateOrderRequest): string = 
+        member this.CreateLimitOrder(request: CreateOrderRequest): string =
             ensure_keys()
-            let url = f"%s/private/AddOrder" base_url            
+            let url = f"%s/private/AddOrder" base_url
             let kraken_pair = currency_mapper.getKrakenPair request.Pair
-
 
             let price = request.LimitPrice.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)
             let precision = 5
@@ -178,17 +167,17 @@ type public Client (public_key:string, secret_key:string) =
 
             let values = dict [
                 "pair", kraken_pair
-                "type", match request.Side with 
+                "type", match request.Side with
                         | OrderSide.Buy -> "buy"
                         | OrderSide.Sell -> "sell"
-                "ordertype", "limit" 
-                "price", priceString 
+                "ordertype", "limit"
+                "price", priceString
                 "volume", request.BuyOrSellQuantity.ToString(System.Globalization.CultureInfo.InvariantCulture) // ???? {"error":["EGeneral:Invalid arguments:volume"]}
                 //("leverage")
                 //("oflags", "viqc") // volume in quote currency   // no more available !
                 //("validate", "true") // ANY value (also validate=true) will be a simulation, order id not returned
             ]
-                       
+
             let nonce_content, content = create_content values
             let responseMessage = (url.WithApi "/0/private/AddOrder" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
             let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
@@ -196,7 +185,6 @@ type public Client (public_key:string, secret_key:string) =
             //{"error":["EOrder:Invalid price:XXRPZEUR price can only be specified up to 5 decimals."]}
 
             "??" // todo: parser.parseLimitOrder(json)
-
 
         member this.Withdraw (currency:Currency, amount:decimal, walletName:string) =
             ensure_keys()

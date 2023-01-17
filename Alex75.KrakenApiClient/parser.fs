@@ -18,6 +18,10 @@ let parseUnixTime unixTime = DateTimeOffset.FromUnixTimeMilliseconds(int64(unixT
 
 let mapBTC currency = if currency = "XBT" then "BTC" else currency
 
+let test (): (string * decimal) =
+
+    ("test", 1.0m)
+
 /// Creates a map <Kraken currency>:<currency>
 let parseAssets (jsonString) =
     let result = load_result_and_check_errors jsonString
@@ -61,11 +65,13 @@ let parseBalance jsonString normalizeCurrency =
     let parse (kraken_currency, amountJson) =
         let amount = (amountJson:JsonValue).AsDecimal()
         match (kraken_currency:string).Split('.') with
-        | [|code|] -> "", normalizeCurrency kraken_currency , amount
-        | [|code;"S"|] -> "stacking", normalizeCurrency code , amount   // TODO: manage XXX28 bounded tickers
+        | [|code|] -> "normal", normalizeCurrency kraken_currency , amount
+        | [|code;"S"|] -> // manage stacking tickers, like "CCC.S" and "CCC28.S"
+            let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code 
+            "stacking", normalizeCurrency newCode , amount
         | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
 
-    let parsed = result.Properties() |> Seq.map parse
+    let parsed:seq<(string * Currency * decimal)> = result.Properties() |> Seq.map parse
 
     let stackingMap = Map( parsed
                            |> Seq.filter (fun (kind,_,_) -> kind = "stacking")
@@ -75,7 +81,7 @@ let parseBalance jsonString normalizeCurrency =
     let balances = parsed
                    |> Seq.choose (fun (kind,currency:Currency,amount) ->
                                       match kind with
-                                      | "" -> Some(
+                                      | "normal" -> Some(
                                                 let balance = CurrencyBalance(currency, amount, amount)
                                                 if stackingMap.ContainsKey currency then balance.AddStacking stackingMap.[currency]
                                                 else balance

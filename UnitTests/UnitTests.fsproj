@@ -39,6 +39,7 @@
     <Content Include="data\Balance response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="data\Balance response 2.json" />
     <Content Include="data\Balance response - error.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -60,7 +61,8 @@
     </Content>
     <Compile Include="currency_mapper test.fs" />
     <Compile Include="currency_mapper not initialized test.fs" />
-    <Compile Include="parser test.fs" />
+    <Compile Include="parser.test.fs" />
+    <Compile Include="parser get balance.test.fs" />
     <Compile Include="__this is a library__.fs" />
   </ItemGroup>
 

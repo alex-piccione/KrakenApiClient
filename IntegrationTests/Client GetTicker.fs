@@ -8,9 +8,7 @@ open FsUnit
 open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
 
-
-
-let client = Client() :> IClient   
+let client = Client() :> IClient
 
 [<TestCase("xrp", "eur")>]
 [<TestCase("xrp", "usd")>]
@@ -21,9 +19,6 @@ let GetTicker (main:string, other:string) =
     ticker |> should not' (be null)
     ticker.Pair |> should equal (pair)
 
-
 [<Test>]
-let ``GetTicker when asset does not exists`` ()  =  
+let ``GetTicker when asset does not exists`` ()  =
     (fun () -> client.GetTicker(CurrencyPair("usd", "eth")) |> ignore ) |> should throw typeof<Exception>
-
-    

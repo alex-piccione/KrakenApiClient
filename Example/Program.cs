@@ -1,26 +1,25 @@
-﻿using System;
-using System.Reflection;
-using Alex75.Cryptocurrencies;
+﻿using Alex75.Cryptocurrencies;
 using Alex75.KrakenApiClient;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Reflection;
 
 namespace Example
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             Console.WriteLine("Kraken API Client examples\n");
 
-            var configuration = new ConfigurationBuilder()                
-                .AddUserSecrets("Kraken.fe116236-f58b-49a1-ae3b-8761bdbeb024")
+            var configuration = new ConfigurationBuilder()
+                .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352")
                 .Build();
 
-            string publicKey = configuration["public key"];  
-            string privateKey = configuration["private key"];                  
-            IClient client = new Client(publicKey, privateKey);   
+            string publicKey = configuration["public key"];
+            string privateKey = configuration["secret key"];
+            IClient client = new Client(publicKey, privateKey);
 
-            
             // get ticker
             GetTicker(client);
 
@@ -34,7 +33,7 @@ namespace Example
             // buy a precise amount of XRP paying in EUR
             //Buy_250_XRP_with_EUR(client);
 
-            CreateLimitOrder(client);
+            //CreateLimitOrder(client);
 
             // buy XRP with 50 EUR
             //BuyXRP_with_50_EUR(client);
@@ -47,7 +46,6 @@ namespace Example
 
             Console.ReadKey();
         }
-
 
         private static void GetTicker(IClient client)
         {
@@ -85,7 +83,7 @@ namespace Example
                 foreach (var order in orders)
                     Console.WriteLine($"Order: {order}");
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Console.WriteLine($"ListOpenOrders failed: {exc}");
             }
@@ -105,7 +103,6 @@ namespace Example
             }
         }
 
-
         private static void Buy_250_XRP_with_EUR(IClient client)
         {
             var buyAmount = 250; // XRP to buy
@@ -123,14 +120,14 @@ namespace Example
 
             var order = client.CreateMarketOrder(CreateOrderRequest.Market(OrderSide.Buy, CurrencyPair.XRP_EUR, buyAmount));
 
-            Console.WriteLine($"Order: {order.Reference}");      
+            Console.WriteLine($"Order: {order.Reference}");
         }
 
         private static void BuyXRP_with_50_EUR(IClient client)
         {
             var ticker = client.GetTicker(new CurrencyPair(Currency.XRP, Currency.EUR));
 
-            // Kraken API does not offer a way to pay a precise amount of "base currency" (EUR) 
+            // Kraken API does not offer a way to pay a precise amount of "base currency" (EUR)
             // so we need to calculate the amount of "quote currency" (EUR) based on the current best market ask price
 
             var askPrice = ticker.Ask;
@@ -142,12 +139,10 @@ namespace Example
             Console.WriteLine($"Order: {order.Reference}");
         }
 
-
         private static void CreateLimitOrder(IClient client)
         {
             var pair = CurrencyPair.XRP_EUR;
             var payAmount = 500; //500 EUR
-
 
             var marketPrice = client.GetTicker(pair).Bid;
             var price = marketPrice - (marketPrice * .04m); // -4%
@@ -174,6 +169,5 @@ namespace Example
                 Console.WriteLine($"{MethodBase.GetCurrentMethod().Name} failed: {response.Error}");
             }
         }
-
     }
 }

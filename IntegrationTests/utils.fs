@@ -1,13 +1,10 @@
 ﻿module utils
 
 open System
-open System.IO
 open Microsoft.Extensions.Configuration
 open Alex75.KrakenApiClient
 
 //open FSharp.Configuration // does not work with net core 3.0/3.1
-
-
 
 let configuration =
     ConfigurationBuilder()

@@ -25,6 +25,7 @@ or their X-ISO4217-A3 code (see http://www.ifex-project.org/).
 
 
 let sha256_hash (value:string) = 
+    //(new System.Security.Cryptography.HMACSHA256()).ComputeHash(Encoding.UTF8.GetBytes(value))
     System.Security.Cryptography.SHA256Managed.Create().ComputeHash(Encoding.UTF8.GetBytes(value))
 
 let getHash (keyBytes:byte[], messageBytes:byte[]) =

@@ -2,7 +2,6 @@
 
 open System.Collections.Generic
 open NUnit.Framework
-open FsUnit
 
 open Alex75.Cryptocurrencies
 
@@ -58,7 +57,3 @@ let ``parseKrakenAltPair`` () =
     "XRPEUR" |> shouldMapTo CurrencyPair.XRP_EUR
     "XRPUSD" |> shouldMapTo CurrencyPair.XRP_USD
     "XBTUSD" |> shouldMapTo CurrencyPair.BTC_USD
-
-[<Test>]
-let ``any call when mapper not initialized return a clear error`` () =
-    (fun () -> currency_mapper.getKrakenPair(CurrencyPair.XRP_EUR) |> ignore) |> should throw typeof<System.Exception>

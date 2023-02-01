@@ -15,7 +15,9 @@ open utils
 open Alex75.Cryptocurrencies
 open System.Collections.Generic
 
-module private mapper =
+module internal mapper =
+
+    [<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
 
     /// parameter:pairs = Seq of (krakenSymbol, krakenPairAltName, quote, base)
     type Mapping (pairs:seq<(string * string * string * string)>, assets:seq<(string * string)>) =
@@ -101,9 +103,10 @@ let startMapping baseUrl =
 /// return the Kraken pair from a common pair
 let getKrakenPair pair =
     try
-        match mapper.mapping with
-        | Some m -> m.getKrakenPair pair
-        | None -> raise (Exception("Assets and Pairs mapping not ready", mapper.lastError.Value))
+        match mapper.mapping, mapper.lastError with
+        | Some m, _ -> m.getKrakenPair pair
+        | None, Some e -> raise (Exception("Assets and Pairs mapping not ready", e))
+        | None, None -> raise (Exception("Assets and Pairs mapping not ready"))
     with | :? KeyNotFoundException -> failwithf "The pair \"%O\" is not valid" pair
 
 let getCurrency krakenCurrency =

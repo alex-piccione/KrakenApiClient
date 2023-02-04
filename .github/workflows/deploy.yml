@@ -1,5 +1,4 @@
 name: Deploy Master or PR
-
 on:
   push:
     branches: [ master ]

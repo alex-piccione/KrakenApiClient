@@ -17,7 +17,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{065B71BF-149F-4EBF-92E6-3BD5519A5D9B}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\deploy.yml = .github\workflows\deploy.yml
-		.github\workflows\test branch.yml = .github\workflows\test branch.yml
 	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "KrakenApiClient", "src\KrakenApiClient\KrakenApiClient.fsproj", "{F8B8663E-2059-4065-A481-3375E2D609E7}"

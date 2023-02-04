@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/Tests/UnitTests/currency_mapper.test.fs
 ﻿module UnitTests.currency_mapper.main
+========
+﻿module UnitTests.currency_mapper_test
+>>>>>>>> master:src/Tests/UnitTests/currency_mapper test.fs
 
 open System.Collections.Generic
 open NUnit.Framework

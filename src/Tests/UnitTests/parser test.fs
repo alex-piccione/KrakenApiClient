@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/Tests/UnitTests/parser.test.fs
 ﻿module UnitTests.parser.main
+========
+﻿module UnitTests.parser
+>>>>>>>> master:src/Tests/UnitTests/parser test.fs
 
 open System
 open System.IO

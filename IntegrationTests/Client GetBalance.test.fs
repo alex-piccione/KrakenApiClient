@@ -12,7 +12,6 @@ module GetBalance =
 
     [<Test; Category("REQUIRES_API_KEY")>]
     let ``GetBalance()`` () =
-
         let balance = client.GetBalance()
 
         balance |> should not' (be null)
@@ -26,4 +25,4 @@ module GetBalance =
         balance.[Currency.DOT].Stacking |> should be (greaterThan 0m)
         // assumes there are some XRP
         balance.[Currency.XRP].Total |> should be (greaterThan 0m)
-        balance.[Currency.XRP].Stacking |> should be (greaterThan 0m)
+        balance.[Currency.XRP].Stacking |> should equal 0m

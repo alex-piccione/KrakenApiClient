@@ -10,7 +10,6 @@ open Alex75.Cryptocurrencies
 let assembly = Assembly.GetExecutingAssembly()
 
 let readResource resourceName =
-    //let assembly =  Assembly.GetExecutingAssembly()
     let resourceFullName = $"{assembly.GetName().Name}.data.{resourceName}"
     let names = assembly.GetManifestResourceNames()
     if not(Array.contains resourceFullName names) then failwith $@"Cannot find ""{resourceName}"" in the embedded resources"
@@ -25,7 +24,7 @@ let loadApiResponse fileName =
 
 [<Test>]
 let parsePairs () =
-    let json = loadApiResponse "AssetPairs response.json"
+    let json = readResource "AssetPairs response.json"
     let pairs = parser.parsePairs json
 
     pairs |> should not' (be Null)
@@ -52,7 +51,7 @@ let parseTicker () =
 [<Test>]
 let ``parseOrder`` () =
 
-    let json = loadApiResponse "create market order response.json"
+    let json = readResource "create market order response.json"
 
     let struct (orderIds, amount) = parser.parseOrder(json)
 

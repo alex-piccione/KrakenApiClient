@@ -1,5 +1,4 @@
-﻿[<NUnit.Framework.Category("parsing")>]
-module UnitTests.parser
+﻿module UnitTests.parser
 
 open System
 open System.IO

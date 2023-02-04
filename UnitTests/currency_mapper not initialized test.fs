@@ -1,5 +1,4 @@
-﻿[<NUnit.Framework.Category("mapping")>]
-module currency_mapper_not_initialized_test
+﻿module UnitTests.currency_mapper_not_initialized_test
 
 open NUnit.Framework
 open FsUnit

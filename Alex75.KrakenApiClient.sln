@@ -3,26 +3,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Alex75.KrakenApiClient", "Alex75.KrakenApiClient\Alex75.KrakenApiClient.fsproj", "{720DAAF9-782F-42F5-B12D-FD56A279B104}"
-EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "IntegrationTests", "IntegrationTests\IntegrationTests.fsproj", "{7A35234F-57E7-4983-A107-3A6412BE7506}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "UnitTests", "UnitTests\UnitTests.fsproj", "{F0F5D65C-4237-4441-86D1-13640FED87C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "Example\Example.csproj", "{43B0E58F-9E51-4880-90D8-E095206B2FC8}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83BAB588-21D5-49A5-BCE1-D5B96D7B3AAE}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
-		.github\workflows\deploy master.yml = .github\workflows\deploy master.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E764D212-E5D1-4CBB-B3BA-8D1BE01C5027}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{065B71BF-149F-4EBF-92E6-3BD5519A5D9B}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\deploy branch.yml = .github\workflows\deploy branch.yml
 		.github\workflows\deploy master.yml = .github\workflows\deploy master.yml
 	EndProjectSection
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Alex75.KrakenApiClient", "src\Alex75.KrakenApiClient\Alex75.KrakenApiClient.fsproj", "{F8B8663E-2059-4065-A481-3375E2D609E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples", "src\Examples\Examples.csproj", "{08F49AC0-E11A-4F81-AEC5-6D7079970A5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,10 +30,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{720DAAF9-782F-42F5-B12D-FD56A279B104}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{720DAAF9-782F-42F5-B12D-FD56A279B104}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{720DAAF9-782F-42F5-B12D-FD56A279B104}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{720DAAF9-782F-42F5-B12D-FD56A279B104}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A35234F-57E7-4983-A107-3A6412BE7506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A35234F-57E7-4983-A107-3A6412BE7506}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A35234F-57E7-4983-A107-3A6412BE7506}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -42,10 +38,14 @@ Global
 		{F0F5D65C-4237-4441-86D1-13640FED87C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0F5D65C-4237-4441-86D1-13640FED87C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0F5D65C-4237-4441-86D1-13640FED87C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43B0E58F-9E51-4880-90D8-E095206B2FC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43B0E58F-9E51-4880-90D8-E095206B2FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43B0E58F-9E51-4880-90D8-E095206B2FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43B0E58F-9E51-4880-90D8-E095206B2FC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8B8663E-2059-4065-A481-3375E2D609E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8B8663E-2059-4065-A481-3375E2D609E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8B8663E-2059-4065-A481-3375E2D609E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8B8663E-2059-4065-A481-3375E2D609E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08F49AC0-E11A-4F81-AEC5-6D7079970A5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08F49AC0-E11A-4F81-AEC5-6D7079970A5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08F49AC0-E11A-4F81-AEC5-6D7079970A5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08F49AC0-E11A-4F81-AEC5-6D7079970A5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

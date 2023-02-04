@@ -1,5 +1,4 @@
-﻿[<NUnit.Framework.Category("mapping")>]
-module currency_mapper_test
+﻿module UnitTests.currency_mapper_test
 
 open System.Collections.Generic
 open NUnit.Framework

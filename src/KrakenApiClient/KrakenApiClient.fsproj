@@ -5,16 +5,17 @@
     <Version>1.0</Version>
     <Description>Kraken API client for .Net</Description>
     <Authors>Alessandro Piccione</Authors>
-    <PackageIcon>alex75.krakenapiclient.png</PackageIcon>
-    <RepositoryUrl>https://github.com/alex-piccione/KrakenApiClient</RepositoryUrl>
+    <PackageId>Alex75.KrakenApiClient</PackageId>
+    <PackageIcon>logo.png</PackageIcon>
     <PackageTags>Kraken cryptocurrency XRP Bitcoin</PackageTags>
+    <RepositoryUrl>https://github.com/alex-piccione/KrakenApiClient</RepositoryUrl>    
     <RepositoryType>Git</RepositoryType>
     <PackageProjectUrl>https://github.com/alex-piccione/KrakenApiClient</PackageProjectUrl>
     <UserSecretsId>Kraken.fe116236-f58b-49a1-ae3b-8761bdbeb024</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="alex75.krakenapiclient.png">
+    <EmbeddedResource Include="logo.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

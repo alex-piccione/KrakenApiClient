@@ -22,7 +22,7 @@ Create Market Order  | Create an order at the current market price              
 Create Limit Order   | Create an order with a specified price                             | 
 List open orders     | List all the open orders                                           | 
 List closed orders   | List all the closed order                                          |
-Withdrawal Crypto    | Withdrawal cryptocurrency to a registered wallet.                  | The _wallet name_ must be registered in advance
+Withdraw Crypto      | Withdraw cryptocurrency to a registered wallet.                    | The _wallet name_ must be registered in advance
 
 
 ## How to use it

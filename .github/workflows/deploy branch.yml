@@ -2,7 +2,7 @@ name: Build Branch
 on:
   push:
     #branches: ["feature/*", "fix/*"]
-    branches: "*"
+    branches: "feature/*"
   pull_request:
     branches: ["feature/*", "fix/*"]
 
@@ -28,20 +28,3 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Run Tests
       run: dotnet test --no-restore --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY"
-
-    - name: Define NuGet package version
-      run: |
-        suffix="-alpha"
-        if [[ ${{ github.event_name }} == "push" && ${{ github.ref }} == "refs/heads/master" ]]; then
-          suffix=""
-        fi
-        echo version:: $VERSION$suffix
-        echo "NUGET_PACKAGE_VERSION=$VERSION$suffix" >> $GITHUB_ENV
-    - name: Pack NuGet
-      run: |
-        echo create package $NUGET_PACKAGE_VERSION
-        dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$NUGET_PACKAGE_VERSION
-    - name: Publish NuGet
-      run: |
-        echo publish package
-        dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json

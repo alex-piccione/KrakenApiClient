@@ -28,7 +28,7 @@ Withdraw Crypto      | Withdraw cryptocurrency to a registered wallet.          
 ## How to use it
 
 Add the <a href="https://www.nuget.org/packages/Alex75.KrakenApiClient" target="_blank">NuGet package</a>.  
-See the examples in <a href="Example/Program.cs">Examples</a>
+See the examples in <a href="Examples/Program.cs">Examples</a>
 
 
 ## For developers
@@ -45,8 +45,4 @@ API support page: https://support.kraken.com/hc/en-us/categories/360000080686-AP
 
 C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
 
-  
-  
-
-[![HitCount](http://hits.dwyl.io/alex-piccione/alex-piccione/KrakenApiClient.svg)](http://hits.dwyl.io/alex-piccione/alex-piccione/KrakenApiClient)
-
+ 

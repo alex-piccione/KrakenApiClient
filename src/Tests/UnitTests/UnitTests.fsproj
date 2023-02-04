@@ -8,42 +8,45 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.4.107" />
-    <PackageReference Include="FsUnit" Version="5.0.0" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.14" />
+    <PackageReference Include="FsUnit" Version="5.2.0" />
     <PackageReference Include="nunit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1">
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="data\extract mappings.py" />
-    <Content Include="data\AssetPairs response.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\Assets response.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\create order ERROR no funds response.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="data\AssetPairs response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\Assets response %28not used%29.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="data\create limit order.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\create market order response.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="data\create market order response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\create order response - Error for No funds.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\create order response - Error for Volume.json" />
     <Content Include="data\response API feature disabled.json" />
-    <Content Include="data\Balance response.json">
+    <EmbeddedResource Include="data\Balance response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\Balance response 2.json" />
+    <EmbeddedResource Include="data\Balance response 3.json" />
+    <EmbeddedResource Include="data\Balance response - error.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="data\Balance response - error.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <Content Include="data\response for invalid api key.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="data\GET pairs response.json" />
     <Content Include="data\GET ticker response.json">
@@ -58,9 +61,10 @@
     <Content Include="data\Withdraw Funds response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Include="currency_mapper test.fs" />
-    <Compile Include="currency_mapper not initialized test.fs" />
-    <Compile Include="parser test.fs" />
+    <Compile Include="currency_mapper.test.fs" />
+    <Compile Include="currency_mapper not initialized.test.fs" />
+    <Compile Include="parser.test.fs" />
+    <Compile Include="parser get balance.test.fs" />
     <Compile Include="__this is a library__.fs" />
   </ItemGroup>
 
@@ -69,7 +73,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="6.0.5" />
+    <PackageReference Update="FSharp.Core" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

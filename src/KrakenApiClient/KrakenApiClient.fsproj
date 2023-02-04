@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/alex-piccione/KrakenApiClient</RepositoryUrl>    
     <RepositoryType>Git</RepositoryType>
     <PackageProjectUrl>https://github.com/alex-piccione/KrakenApiClient</PackageProjectUrl>
-    <UserSecretsId>Kraken.fe116236-f58b-49a1-ae3b-8761bdbeb024</UserSecretsId>
+    <UserSecretsId>Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,14 +33,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.4.107" />
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.14" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
-    <PackageReference Include="FSharp.Data" Version="4.2.8" />
+    <PackageReference Include="FSharp.Data" Version="5.0.2" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="6.0.5" />
+    <PackageReference Update="FSharp.Core" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

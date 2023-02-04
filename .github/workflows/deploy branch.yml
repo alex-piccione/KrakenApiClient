@@ -1,12 +1,13 @@
 name: Build
 on:
   push:
-    branches: [ feature/*, fix/* ]
+    branches: ["feature/*", "fix/*"]
   pull_request:
-    branches: [ feature/*, fix/* ]
+    branches: ["feature/*", "fix/*"]
 
 env:  
   VERSION: 1.0.${{github.run_number}}-${{ github.ref_name }} 
+  SUFFIX: alpha
   PROJECT_FOLDER: src/Alex75.KrakenApiClient
   NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
 
@@ -16,8 +17,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+    - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.0.x'
 
@@ -44,7 +44,3 @@ jobs:
       run: |
         echo publish package
         dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
-
-# how to pass values from step to step
-# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
-# https://stackoverflow.com/questions/57819539/github-actions-how-to-share-a-calculated-value-between-job-steps

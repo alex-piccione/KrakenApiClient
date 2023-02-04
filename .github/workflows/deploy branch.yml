@@ -6,7 +6,9 @@ on:
     branches: ["feature/*", "fix/*"]
 
 env:
-  PROJECT_FOLDER: src/Alex75.KrakenApiClient
+  PROJECT_FOLDER: src/KrakenApiClient
+  KRAKEN_READ_PUBLIC_KEY: ${{secrets.KRAKEN_READ_PUBLIC_KEY}}
+  KRAKEN_READ_SECRET_KEY: ${{secrets.KRAKEN_READ_SECRET_KEY}}
 
 jobs:
   build:

@@ -1,4 +1,4 @@
-name: Build
+name: Build Master
 on:
   push:
     branches: [ master ]
@@ -7,7 +7,7 @@ on:
 
 env:  
   VERSION: 1.0.${{github.run_number}} 
-  PROJECT_FOLDER: Alex75.KrakenApiClient
+  PROJECT_FOLDER: src/KrakenApiClient
   NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
 
 jobs:
@@ -16,8 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v2.1.0
+    - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.0.x'
 

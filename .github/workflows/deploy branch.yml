@@ -2,7 +2,8 @@ name: Build Branch
 on:
   push:
     #branches: ["feature/*", "fix/*"]
-    branches: "feature/*"
+    #branches: "feature/*"
+    branches: ["*", "!master", "!main"]
   pull_request:
     branches: ["feature/*", "fix/*"]
 

@@ -1,7 +1,10 @@
-name: Build Branch
+name: Test Branch
 on:
   push:
     branches: ["feature/**", "fix/**"]
+  pull_request: 
+    branches: ["!*"]
+    
   #pull_request:
   #  branches: ["feature/*", "fix/*"]
 

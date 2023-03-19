@@ -49,15 +49,21 @@ let parseTicker () =
     ticker.Bid |> should equal 0.26075000
 
 [<Test>]
-let ``parseOrder`` () =
-
+let ``parseCreateOrder for Market order`` () =
     let json = readResource "create market order response.json"
-
-    let struct (orderIds, amount) = parser.parseOrder(json)
-
+    let struct (orderIds, amount) = parser.parseCreateOrder(json)
     orderIds |> should contain "O5PWAY-435NAD-6NAI7P"
-
     amount |> should equal 100.00000000
+
+[<Test>]
+let ``parseOrder for Limit order`` () =
+    let json = readResource "create limit order response.json"
+    let struct (orderIds, amount) = parser.parseCreateOrder(json)
+    orderIds |> should contain "OIDW6A-5TZUS-6P7ZPN"
+    amount |> should equal 100.00000000
+
+
+
 
 //[<Test>]
 //let ``parseOpenOrders when list is empty`` () =

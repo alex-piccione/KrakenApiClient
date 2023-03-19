@@ -103,7 +103,7 @@ let internal parseBalance jsonString normalizeCurrency =
 
     new AccountBalance(Seq.append balances stackingBalances)
 
-let internal parseOrder(jsonString:string) =
+let internal parseCreateOrder(jsonString:string) =
     let result = load_result_and_check_errors(jsonString)
 
     let order = result["descr"].["order"].ToString()

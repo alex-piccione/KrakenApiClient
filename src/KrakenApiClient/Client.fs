@@ -56,7 +56,7 @@ type public Client (public_key:string, secret_key:string) =
         let responseMessage = (url.WithApi "/0/private/AddOrder" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
         let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
 
-        let struct (orderIds, amount) = parser.parseOrder(json)
+        let struct (orderIds, amount) = parser.parseCreateOrder(json)
 
         CreateMarketOrderResponse(true, null, orderIds, amount)
 
@@ -184,7 +184,8 @@ type public Client (public_key:string, secret_key:string) =
 
             //{"error":["EOrder:Invalid price:XXRPZEUR price can only be specified up to 5 decimals."]}
 
-            "??" // todo: parser.parseLimitOrder(json)
+            let struct (orderIds, _) = parser.parseCreateOrder(json)
+            String.Join(", ", orderIds)
 
         member this.Withdraw (currency:Currency, amount:decimal, walletName:string) =
             ensure_keys()

@@ -72,7 +72,7 @@ let ``parseOrder`` () =
 [<Test>]
 let ``parseOpenOrders`` () =
 
-    let json = loadApiResponse "list Open Orders response (one limit order untouched).json"
+    let json = readResource "list Open Orders response (one limit order untouched).json"
 
     let normalizePair = fun _ -> CurrencyPair.XRP_EUR
 
@@ -95,7 +95,7 @@ let ``parseOpenOrders`` () =
 [<Test>]
 let ``parseClosedOrders`` () =
 
-    let json = loadApiResponse "list Closed Orders.json"
+    let json = readResource "list Closed Orders.json"
 
     let orders = parser.parseClosedOrders json (fun k -> CurrencyPair(k,k))
 

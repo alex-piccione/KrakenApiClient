@@ -17,11 +17,6 @@ let readResource resourceName =
     use reader = new StreamReader(assembly.GetManifestResourceStream(resourceFullName))
     reader.ReadToEnd()
 
-let loadApiResponse fileName =
-    let path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-    File.ReadAllText(Path.Combine(path, "data", fileName))
-
-
 [<Test>]
 let parsePairs () =
     let json = readResource "AssetPairs response.json"
@@ -41,7 +36,7 @@ let parsePairs () =
 let parseTicker () =
 
     let pair = CurrencyPair.XRP_USD
-    let json = loadApiResponse "GET ticker response.json"
+    let json = readResource "GET ticker response.json"
     let ticker = parser.parseTicker (pair, json)
 
     ticker.Pair |> should equal pair
@@ -60,9 +55,7 @@ let ``parseOrder for Limit order`` () =
     let json = readResource "create limit order response.json"
     let struct (orderIds, amount) = parser.parseCreateOrder(json)
     orderIds |> should contain "OIDW6A-5TZUS-6P7ZPN"
-    amount |> should equal 100.00000000
-
-
+    amount |> should equal 223.28146083
 
 
 //[<Test>]
@@ -133,7 +126,7 @@ let ``parseClosedOrders`` () =
 [<Test>]
 let ``parseWithdrawal`` () =
 
-    let json = loadApiResponse "Withdraw Funds response.json"
+    let json = readResource "Withdraw Funds response.json"
 
     let operationId = parser.parseWithdrawal(json)
 

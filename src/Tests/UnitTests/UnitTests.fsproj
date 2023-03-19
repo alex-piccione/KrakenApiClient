@@ -29,9 +29,9 @@
     <EmbeddedResource Include="data\create market order response.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Content Include="data\create limit order response.json">
+    <EmbeddedResource Include="data\create limit order response.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="data\create order response - Error for No funds.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -48,19 +48,19 @@
     <Content Include="data\response for invalid api key.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\GET pairs response.json" />
-    <Content Include="data\GET ticker response.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="data\_not_used_GET pairs response.json" />
+    <EmbeddedResource Include="data\GET ticker response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="data\list Open Orders response %28one limit order untouched%29.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="data\list Closed Orders.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Content Include="data\Withdraw Funds response.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="data\Withdraw Funds response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Compile Include="currency_mapper.test.fs" />
     <Compile Include="currency_mapper not initialized.test.fs" />
     <Compile Include="parser.test.fs" />

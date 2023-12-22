@@ -1,0 +1,75 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.19" />
+    <PackageReference Include="FsUnit" Version="5.2.0" />
+    <PackageReference Include="nunit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+	<PackageReference Update="FSharp.Core" Version="7.0.200" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="data\extract mappings.py" />
+    <EmbeddedResource Include="data\AssetPairs response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\Assets response %28not used%29.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\create market order response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\create limit order response.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\create order response - Error for No funds.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\create order response - Error for Volume.json" />
+    <Content Include="data\response API feature disabled.json" />
+    <EmbeddedResource Include="data\Balance response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\Balance response 2.json" />
+    <EmbeddedResource Include="data\Balance response 3.json" />
+    <EmbeddedResource Include="data\Balance response - error.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Content Include="data\response for invalid api key.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="data\_not_used_GET pairs response.json" />
+    <EmbeddedResource Include="data\GET ticker response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\list Open Orders response %28one limit order untouched%29.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\list Closed Orders.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="data\Withdraw Funds response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Compile Include="currency_mapper.test.fs" />
+    <Compile Include="currency_mapper not initialized.test.fs" />
+    <Compile Include="parser.test.fs" />
+    <Compile Include="parser get balance.test.fs" />
+    <Compile Include="__this is a library__.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\KrakenApiClient\KrakenApiClient.fsproj" />
+  </ItemGroup>
+
+</Project>

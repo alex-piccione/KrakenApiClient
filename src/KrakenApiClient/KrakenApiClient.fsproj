@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net6.0</TargetFrameworks>
+    <Version>1.0</Version>
+    <Description>Kraken API client for .Net</Description>
+    <Authors>Alessandro Piccione</Authors>
+    <PackageId>Alex75.KrakenApiClient</PackageId>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageTags>Kraken cryptocurrency XRP Bitcoin</PackageTags>
+    <RepositoryUrl>https://github.com/alex-piccione/KrakenApiClient</RepositoryUrl>    
+    <RepositoryType>Git</RepositoryType>
+    <PackageProjectUrl>https://github.com/alex-piccione/KrakenApiClient</PackageProjectUrl>
+    <UserSecretsId>Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="api response models.fs" />
+    <Compile Include="utils.fs" />
+    <Compile Include="responses.fs" />
+    <Compile Include="parser.fs" />
+    <Compile Include="currency mapper.fs" />
+    <Compile Include="IClient.fs" />
+    <Compile Include="Client.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.19" />
+    <PackageReference Include="Flurl.Http" Version="2.4.2" />
+    <PackageReference Include="FSharp.Data" Version="5.0.2" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="7.0.200" />
+  </ItemGroup>
+
+</Project>

@@ -2,7 +2,7 @@
 
 A Simple .Net client for the **Kraken** API.  
 Developed mainly for _XRP_.  
-Target frameworks: _.NET Standard 2.0_ & _.NET Core 3.1_
+Target frameworks: _.NET Standard 2.0_, _.NET Core 3.1_, .net 6.0
 
 [![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient) 
 ![Build Status](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/dotnet.yml/badge.svg)
@@ -22,13 +22,13 @@ Create Market Order  | Create an order at the current market price              
 Create Limit Order   | Create an order with a specified price                             | 
 List open orders     | List all the open orders                                           | 
 List closed orders   | List all the closed order                                          |
-Withdrawal Crypto    | Withdrawal cryptocurrency to a registered wallet.                  | The _wallet name_ must be registered in advance
+Withdraw Crypto      | Withdraw cryptocurrency to a registered wallet.                    | The _wallet name_ must be registered in advance
 
 
 ## How to use it
 
 Add the <a href="https://www.nuget.org/packages/Alex75.KrakenApiClient" target="_blank">NuGet package</a>.  
-See the examples in <a href="Example/Program.cs">Examples</a>
+See the examples in <a href="src/Examples/Program.cs">Examples</a>
 
 
 ## For developers
@@ -45,8 +45,4 @@ API support page: https://support.kraken.com/hc/en-us/categories/360000080686-AP
 
 C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
 
-  
-  
-
-[![HitCount](http://hits.dwyl.io/alex-piccione/alex-piccione/KrakenApiClient.svg)](http://hits.dwyl.io/alex-piccione/alex-piccione/KrakenApiClient)
-
+ 

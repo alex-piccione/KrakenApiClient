@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningsAsErrors>3239;</WarningsAsErrors>
+    <NoWarn>FS0988</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.19" />
+    <PackageReference Include="FsUnit" Version="5.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
+    <PackageReference Include="nunit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+	<PackageReference Update="FSharp.Core" Version="7.0.200" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="utils.fs" />
+    <Compile Include="Client Withdraw.fs" />
+    <Compile Include="Client ListPairs.fs" />
+    <Compile Include="Client GetTicker.fs" />
+    <Compile Include="Client GetBalance.test.fs" />
+    <Compile Include="Client Create Market Order.fs" />
+    <Compile Include="Client Create Limit Order.fs" />
+    <Compile Include="Client List Open Orders.fs" />
+    <Compile Include="Client List Closed Orders.fs" />
+    <Compile Include="__this is a library__.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\KrakenApiClient\KrakenApiClient.fsproj" />
+  </ItemGroup>
+</Project>

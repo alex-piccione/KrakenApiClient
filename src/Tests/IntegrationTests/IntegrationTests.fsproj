@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.19" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.2.2" />
     <PackageReference Include="FsUnit" Version="5.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
     <PackageReference Include="nunit" Version="3.13.3" />
@@ -29,7 +30,7 @@
     <Compile Include="Client Withdraw.fs" />
     <Compile Include="Client ListPairs.fs" />
     <Compile Include="Client GetTicker.fs" />
-    <Compile Include="Client GetBalance.test.fs" />
+    <Compile Include="Client GetBalance.fs" />
     <Compile Include="Client Create Market Order.fs" />
     <Compile Include="Client Create Limit Order.fs" />
     <Compile Include="Client List Open Orders.fs" />

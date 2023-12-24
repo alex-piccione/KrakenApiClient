@@ -39,8 +39,9 @@ Deployment on GitHub use a much cleaner script with only 1 "layer" of inermediat
 
 ### Kraken documentation
 
-REST API documentation: https://www.kraken.com/features/api  
-WebSocket API documentation: https://www.kraken.com/en-gb/features/websocket-api  
+Kraken API documentation: 
+- REST API documentation: https://docs.kraken.com/rest
+- WebSocket API documentation: https://docs.kraken.com/websockets
 API support page: https://support.kraken.com/hc/en-us/categories/360000080686-API  
 
 C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/

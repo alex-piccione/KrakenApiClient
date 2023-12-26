@@ -26,11 +26,6 @@ let normalizeCurrency = fun k ->
     | _ -> Currency(k)
 
 [<Test>]
-let ``parseBalance when is error``() =
-    let json = readResource "Balance response - error.json"
-    (fun () -> parser.parseBalance json (fun k -> Currency(k)) |> ignore) |> should throw typeof<Exception>
-
-[<Test>]
 let ``parseBalance`` () =
     let json = readResource "Balance response.json"
     let balance = parser.parseBalance json normalizeCurrency
@@ -47,9 +42,14 @@ let ``parseBalance`` () =
     balance |> shouldHaveCurrency Currency.ADA 0.76461705m
     balance |> shouldHaveCurrency Currency.XTZ 0m
     balance |> shouldHaveCurrency Currency.DOT 662.24614826m
+ 
+[<Test>]
+let ``parseBalance when is error``() =
+    let json = readResource "Balance response - error.json"
+    (fun () -> parser.parseBalance json (fun k -> Currency(k)) |> ignore) |> should throw typeof<Exception>
 
 [<Test>]
-let ``parseBalance [with] Stacking`` ()=
+let ``parseBalance when Stacking`` ()=
     let json = readResource "Balance response 2.json"
     let balance = parser.parseBalance json normalizeCurrency
     balance |> shouldHaveCurrency Currency.DOT (1.11m + 2.22m + 3.33m) // DOT + DOT.S + DOT28.S
@@ -88,3 +88,19 @@ let ``parseBalance [with] Stacking (many cases)`` ()=
     balance |> shouldHaveCurrency Currency.LTC (1.0000000000m)
     balance |> shouldHaveCurrency Currency.XRP (3973.29885459m)
     balance |> shouldHaveCurrency (Currency("ETHW")) (0.0000019m)
+
+[<Test>]
+let ``parseBalanceEx when Stacking (many cases)`` () =
+    let json = readResource "BalanceEx response.json"
+
+    let balance = parser.parseBalanceEx json normalizeCurrency
+
+    balance.HasCurrency "USD" |> should be True
+    balance.HasCurrency "BTC" |> should be True
+
+    (balance[Currency("USD")]).Total |> should equal 25435.21m
+    (balance[Currency("USD")]).Free |> should equal (25435.21m - 8249.76m)
+
+    (balance[Currency("BTC")]).Total |> should equal 1.2435m
+    (balance[Currency("BTC")]).Free |> should equal (1.2435m - 0.8423m)
+

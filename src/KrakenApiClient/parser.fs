@@ -3,9 +3,12 @@
 [<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
 
 open System
+open System.Linq
 open System.Collections.Generic
 open FSharp.Data
 open Alex75.Cryptocurrencies
+
+let currencyRegex = System.Text.RegularExpressions.Regex("([A-Z]+)([\d]*)\.S")
 
 let internal load_result_and_check_errors jsonString =
     let json = JsonValue.Parse(jsonString)
@@ -65,21 +68,25 @@ let internal parseBalance jsonString normalizeCurrency =
         match (kraken_currency:string).Split('.') with
         | [|code|] -> "normal", normalizeCurrency kraken_currency , amount
         | [|code;"S"|] -> // manage stacking tickers, like "CCC.S" and "CCC28.S"
-            let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code 
+
+            let matches = System.Text.RegularExpressions.Regex("([A-Z]+)([\d]*).S").Matches(kraken_currency)
+            //matches.Count > 1
+            //matches.Item[0]
+
+            let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code
             "stacking", normalizeCurrency newCode , amount
         | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
 
     let mappedByKind:seq<(string * Currency * decimal)> = result.Properties() |> Seq.map mapByKind
 
     let stackingMap = Map(
-        mappedByKind 
+        mappedByKind
         |> Seq.filter (fun (kind,_,_) -> kind = "stacking")
         |> Seq.groupBy (fun (_,currency,_) -> currency)
-        |> Seq.map(fun (currency,items) -> 
+        |> Seq.map(fun (currency,items) ->
             let total = items |> Seq.sumBy( fun (_,_,value) -> value)
             (currency, total)
         ))
-
 
     let balances = mappedByKind
                    |> Seq.choose (fun (kind,currency:Currency,amount) ->
@@ -108,17 +115,42 @@ type internal BalanceExKrakenResponse = { balance: decimal; on_hold: decimal }
 let internal parseBalanceEx jsonString normalizeCurrency =
     let result = load_result_and_check_errors jsonString // result is an array of assets
 
-    let prop_1 = result.Properties()[0]
-    let balances = result.Properties() |> Seq.map (fun (krakenCurrencyCode, item) -> 
-        
-        let currency = normalizeCurrency krakenCurrencyCode
-        let total = item["balance"].AsDecimal()
-        let onHold = item["hold_trade"].AsDecimal()
+    let balances: Dictionary<string, CurrencyBalance> = Dictionary<string, CurrencyBalance>()
 
-        CurrencyBalance( (currency:Currency), total, total-onHold)
-        )
+    for (krakenCurrencyCode, item) in  result.Properties() do
 
-    new AccountBalance(balances)
+        let (currencyCode, isStacking) = 
+            match  currencyRegex.Match(krakenCurrencyCode) with
+            | m when m.Success -> m.Groups[1].Value, true
+            | _ -> krakenCurrencyCode, false
+
+        let balance = item["balance"].AsDecimal()
+        let onTrade = item["hold_trade"].AsDecimal()
+
+        match balances.ContainsKey currencyCode with
+        | true -> 
+            let item = balances[currencyCode]
+            if isStacking then 
+                balances[currencyCode] <- item.AddStacking(balance) // does this change the total?
+            else 
+                let total = item.Total + balance
+                let free = total-onTrade
+
+                let currencyBalance = 
+                    CurrencyBalance((normalizeCurrency(currencyCode):Currency), total, free, onTrade)
+                        .AddStacking(item.Stacking)
+                balances[currencyCode] <- currencyBalance
+        | _ ->
+            if isStacking then
+                let currencyBalance = 
+                    CurrencyBalance((normalizeCurrency(currencyCode):Currency), balance, balance-onTrade)
+                        .AddStacking balance
+
+                balances.Add(currencyCode, currencyBalance)
+            else
+                balances.Add(currencyCode, CurrencyBalance((normalizeCurrency(currencyCode):Currency), balance, balance-onTrade, onTrade))
+
+    new AccountBalance(balances.Values)
 
 let internal parseCreateOrder(jsonString:string) =
     let result = load_result_and_check_errors(jsonString)
@@ -129,7 +161,7 @@ let internal parseCreateOrder(jsonString:string) =
 
     struct (orderIds, amount)
 
-let internal parseOrderType value =  
+let internal parseOrderType value =
     match value with
     | "limit" -> OrderType.Limit
     | "market" -> OrderType.Market
@@ -139,7 +171,7 @@ let internal parseOrderType value =
     | "take-profit-limit" -> OrderType.TakeProfitLimit
     | x -> failwithf "Order type not recognized: %s" x
 
-let internal  parseOrderSide value = 
+let internal  parseOrderSide value =
     match value with
     | "sell" -> OrderSide.Sell
     | "buy" -> OrderSide.Buy

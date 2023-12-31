@@ -1,7 +1,6 @@
 ﻿namespace Alex75.KrakenApiClient
 
 open System
-open System.Linq
 open System.Collections.Generic
 
 open Flurl.Http
@@ -96,16 +95,18 @@ type public Client (public_key:string, secret_key:string) =
             match cache.GetAccountBalance(balance_cache_time) with
             | Some balance -> balance
             | _ ->
-                let url = f"%s/private/Balance" base_url
+                //let url = f"%s/private/BalanceEx" base_url
                 let nonce_content, content = create_content (dict [])
-                let balances =
-                    (url.WithApi "/0/private/Balance" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
+
+                let balancesEx = 
+                    ((f"%s/private/BalanceEx" base_url).WithApi "/0/private/BalanceEx" nonce_content public_key secret_key)
+                        .PostUrlEncodedAsync(content).Result
                         .EnsureSuccessStatusCode()
                         |> fun msg -> msg.Content.ReadAsStringAsync().Result
-                        |> parser.parseBalance <| currency_mapper.getCurrency
+                        |> parser.parseBalanceEx <| currency_mapper.getCurrency
 
-                cache.SetAccountBalance balances
-                balances
+                cache.SetAccountBalance balancesEx
+                balancesEx
 
         member this.ListOpenOrdersIsAvailable = true
         member this.ListOpenOrders () =

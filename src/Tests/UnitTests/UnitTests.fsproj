@@ -45,6 +45,7 @@
     <EmbeddedResource Include="data\Balance response - error.json" />
     <EmbeddedResource Include="data\BalanceEx response.json" />
     <EmbeddedResource Include="data\BalanceEx response 2.json" />
+    <EmbeddedResource Include="data\BalanceEx response 3.json" />
     <EmbeddedResource Include="data\response for invalid api key.json" />
     <EmbeddedResource Include="data\_not_used_GET pairs response.json" />
     <EmbeddedResource Include="data\GET ticker response.json">

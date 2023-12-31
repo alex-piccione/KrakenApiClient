@@ -1,0 +1,17 @@
+{
+  "error": [],
+  "result": {
+    "DOT": {
+      "balance": "2",
+      "hold_trade": "0"
+    },
+    "DOT.S": {
+      "balance": "4",
+      "hold_trade": "0"
+    },
+    "DOT28.S": {
+      "balance": "8",
+      "hold_trade": "0"
+    }
+  }
+}

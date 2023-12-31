@@ -24,6 +24,7 @@ let ``getCurrency`` () =
     "ZUSD" |> shouldBeMappedTo Currency.USD
     "ZEUR" |> shouldBeMappedTo Currency.EUR
     "XXRP" |> shouldBeMappedTo Currency.XRP
+    "XETH" |> shouldBeMappedTo Currency.ETH
     // special mapping
     "XXBT" |> shouldBeMappedTo Currency.BTC
 
@@ -57,3 +58,4 @@ let ``parseKrakenAltPair`` () =
     "XRPEUR" |> shouldMapTo CurrencyPair.XRP_EUR
     "XRPUSD" |> shouldMapTo CurrencyPair.XRP_USD
     "XBTUSD" |> shouldMapTo CurrencyPair.BTC_USD
+    "XETHEUR" |> shouldMapTo CurrencyPair.ETH_EUR

@@ -13,15 +13,15 @@
 
   <ItemGroup>
     <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.19" />
-    <PackageReference Include="FsUnit" Version="5.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
-    <PackageReference Include="nunit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2">
+    <PackageReference Include="FsUnit" Version="5.6.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
+    <PackageReference Include="nunit" Version="3.14.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-	<PackageReference Update="FSharp.Core" Version="7.0.200" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+	<PackageReference Update="FSharp.Core" Version="8.0.100" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,7 +29,7 @@
     <Compile Include="Client Withdraw.fs" />
     <Compile Include="Client ListPairs.fs" />
     <Compile Include="Client GetTicker.fs" />
-    <Compile Include="Client GetBalance.test.fs" />
+    <Compile Include="Client GetBalance.fs" />
     <Compile Include="Client Create Market Order.fs" />
     <Compile Include="Client Create Limit Order.fs" />
     <Compile Include="Client List Open Orders.fs" />

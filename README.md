@@ -2,7 +2,7 @@
 
 A Simple .Net client for the **Kraken** API.  
 Developed mainly for _XRP_.  
-Target frameworks: _.NET Standard 2.0_, _.NET Core 3.1_, .net 6.0
+Target frameworks: _.NET Standard 2.0_, _.NET Core 3.1_, .net 6, ,net 8
 
 [![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient) 
 ![Build Status](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/dotnet.yml/badge.svg)
@@ -28,7 +28,7 @@ Withdraw Crypto      | Withdraw cryptocurrency to a registered wallet.          
 ## How to use it
 
 Add the <a href="https://www.nuget.org/packages/Alex75.KrakenApiClient" target="_blank">NuGet package</a>.  
-See the examples in <a href="Examples/Program.cs">Examples</a>
+See the examples in <a href="src/Examples/Program.cs">Examples</a>
 
 
 ## For developers
@@ -39,8 +39,9 @@ Deployment on GitHub use a much cleaner script with only 1 "layer" of inermediat
 
 ### Kraken documentation
 
-REST API documentation: https://www.kraken.com/features/api  
-WebSocket API documentation: https://www.kraken.com/en-gb/features/websocket-api  
+Kraken API documentation: 
+- REST API documentation: https://docs.kraken.com/rest
+- WebSocket API documentation: https://docs.kraken.com/websockets
 API support page: https://support.kraken.com/hc/en-us/categories/360000080686-API  
 
 C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/

@@ -103,6 +103,23 @@ let internal parseBalance jsonString normalizeCurrency =
 
     new AccountBalance(Seq.append balances stackingBalances)
 
+type internal BalanceExKrakenResponse = { balance: decimal; on_hold: decimal }
+
+let internal parseBalanceEx jsonString normalizeCurrency =
+    let result = load_result_and_check_errors jsonString // result is an array of assets
+
+    let prop_1 = result.Properties()[0]
+    let balances = result.Properties() |> Seq.map (fun (krakenCurrencyCode, item) -> 
+        
+        let currency = normalizeCurrency krakenCurrencyCode
+        let total = item["balance"].AsDecimal()
+        let onHold = item["hold_trade"].AsDecimal()
+
+        CurrencyBalance( (currency:Currency), total, total-onHold)
+        )
+
+    new AccountBalance(balances)
+
 let internal parseCreateOrder(jsonString:string) =
     let result = load_result_and_check_errors(jsonString)
 
@@ -136,16 +153,16 @@ let internal parseOpenOrders(jsonString:string, normalizePair) =
         let orderSide = parseOrderSide(descr["type"].AsString())
         let orderType = parseOrderType(descr["ordertype"].AsString())
 
-        let openTime = parseUnixTime(json.["opentm"].AsDecimal()) // 1575484650.7296,
-        let pair = normalizePair(descr.["pair"].AsString())    // this is (illogically) the altname !!!
-        let vol = json.["vol"].AsDecimal()   // ???
+        let openTime = parseUnixTime(json["opentm"].AsDecimal()) // 1575484650.7296,
+        let pair = normalizePair(descr["pair"].AsString())    // this is (illogically) the altname !!!
+        let vol = json["vol"].AsDecimal()   // ???
         //let vol_exec = json.["vol_exec"].AsDecimal()   // ???
 
-        let limitPrice = if orderType = OrderType.Limit then descr.["price"].AsDecimal() else 0m
+        let limitPrice = if orderType = OrderType.Limit then descr["price"].AsDecimal() else 0m
 
         OpenOrder(id, orderType, orderSide, openTime, pair, vol, limitPrice)
 
-    result.["open"].Properties() |> Array.map readOrder
+    result["open"].Properties() |> Array.map readOrder
 
 //refid = Referral order transaction id that created this order
 //userref = user reference id

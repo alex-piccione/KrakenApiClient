@@ -1,6 +1,6 @@
 ﻿module utils
 
-open System
+open CommunityToolkit.Diagnostics
 open Microsoft.Extensions.Configuration
 open Alex75.KrakenApiClient
 
@@ -8,10 +8,15 @@ open Alex75.KrakenApiClient
 
 let configuration =
     ConfigurationBuilder()
-        .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352")
+        .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352") // secret file of main project
         .Build()
 
-let publicKey = configuration.["public key"]
-let secretKey = configuration.["secret key"]
+let publicKey = configuration["public key"]
+let secretKey = configuration["private key"]
+
+Guard.IsNotNullOrEmpty (publicKey, $@"configuration secret ""{nameof publicKey}""")
+Guard.IsNotNullOrEmpty (secretKey, $@"configurationsecret ""{nameof secretKey}""")
 
 let client = Client(publicKey, secretKey) :> IClient
+
+let getClient() = client

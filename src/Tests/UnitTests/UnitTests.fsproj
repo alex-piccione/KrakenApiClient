@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
     <OutputType>Library</OutputType>
@@ -42,12 +42,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="data\Balance response 2.json" />
     <EmbeddedResource Include="data\Balance response 3.json" />
-    <EmbeddedResource Include="data\Balance response - error.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <Content Include="data\response for invalid api key.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="data\Balance response - error.json" />
+    <EmbeddedResource Include="data\BalanceEx response.json" />
+    <EmbeddedResource Include="data\BalanceEx response 2.json" />
+    <EmbeddedResource Include="data\response for invalid api key.json" />
     <EmbeddedResource Include="data\_not_used_GET pairs response.json" />
     <EmbeddedResource Include="data\GET ticker response.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

@@ -4,10 +4,11 @@ open NUnit.Framework
 open FsUnit
 
 open Alex75.Cryptocurrencies
-open utils
 
 [<Category("Client")>]
 module GetBalance =
+
+    let client = utils.getClient()
 
     [<Test; Category("REQUIRES_API_KEY")>]
     let ``GetBalance()`` () =

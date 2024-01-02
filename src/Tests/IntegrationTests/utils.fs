@@ -12,11 +12,11 @@ let configuration =
         .Build()
 
 let publicKey = configuration["public key"]
-let secretKey = configuration["private key"]
+let privateKey = configuration["private key"]
 
 Guard.IsNotNullOrEmpty (publicKey, $@"configuration secret ""{nameof publicKey}""")
-Guard.IsNotNullOrEmpty (secretKey, $@"configurationsecret ""{nameof secretKey}""")
+Guard.IsNotNullOrEmpty (privateKey, $@"configuration secret ""{nameof privateKey}""")
 
-let client = Client(publicKey, secretKey) :> IClient
+let client = Client(publicKey, privateKey) :> IClient
 
 let getClient() = client

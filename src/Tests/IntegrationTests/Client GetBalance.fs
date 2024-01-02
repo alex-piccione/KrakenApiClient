@@ -19,5 +19,7 @@ module GetBalance =
         balance.HasCurrency(Currency.GBP) |> should be True
         balance.HasCurrency(Currency.BTC) |> should be True
         balance.HasCurrency(Currency.DOT) |> should be True
-        balance[Currency.DOT].Total |> should be (greaterThan 0m)
-        balance[Currency.DOT].Stacking |> should be (greaterThan 0m)
+        //balance[Currency.DOT].Total |> should be (greaterThan 0m)
+        //balance[Currency.DOT].Stacking |> should be (greaterThan 0m)
+        balance[Currency.ADA].Total |> should be (greaterThan 0m)
+        balance[Currency.ADA].Stacking |> should be (greaterThan 0m)

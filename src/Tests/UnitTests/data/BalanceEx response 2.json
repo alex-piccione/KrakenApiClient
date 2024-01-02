@@ -1,0 +1,153 @@
+{
+  "error": [],
+  "result": {
+    "ADA": {
+      "balance": "0.00000005",
+      "hold_trade": "0.00000000"
+    },
+    "ADA.S": {
+      "balance": "22.70610300",
+      "hold_trade": "0.00000000"
+    },
+    "BCH": {
+      "balance": "0.0000000000",
+      "hold_trade": "0.0000000000"
+    },
+    "DOT": {
+      "balance": "457.5698026500",
+      "hold_trade": "0.0000000000"
+    },
+    "DOT.S": {
+      "balance": "0.0000000000",
+      "hold_trade": "0.0000000000"
+    },
+    "DOT28.S": {
+      "balance": "0.0000000000",
+      "hold_trade": "0.0000000000"
+    },
+    "ETH2": {
+      "balance": "0.0000000000",
+      "hold_trade": "0.0000000000"
+    },
+    "ETH2.S": {
+      "balance": "0.2500398160",
+      "hold_trade": "0.0000000000"
+    },
+    "ETHW": {
+      "balance": "0.0000019",
+      "hold_trade": "0.0000000"
+    },
+    "EWT": {
+      "balance": "0.0000000000",
+      "hold_trade": "0.0000000000"
+    },
+    "FIL": {
+      "balance": "13.0448980000",
+      "hold_trade": "0.0000000000"
+    },
+    "FLOW": {
+      "balance": "0.0000000000",
+      "hold_trade": "0.0000000000"
+    },
+    "FLOW.S": {
+      "balance": "79.3139764150",
+      "hold_trade": "0.0000000000"
+    },
+    "FLR": {
+      "balance": "0.0000",
+      "hold_trade": "0.0000"
+    },
+    "FLR.S": {
+      "balance": "246.5735",
+      "hold_trade": "0.0000"
+    },
+    "GRT": {
+      "balance": "0.0000048500",
+      "hold_trade": "0.0000000000"
+    },
+    "GRT28.S": {
+      "balance": "1166.3361657500",
+      "hold_trade": "0.0000000000"
+    },
+    "LUNA2": {
+      "balance": "1.77561458",
+      "hold_trade": "0.00000000"
+    },
+    "MANA": {
+      "balance": "0.0000000000",
+      "hold_trade": "0.0000000000"
+    },
+    "OCEAN": {
+      "balance": "3032.6018400000",
+      "hold_trade": "0.0000000000"
+    },
+    "SC": {
+      "balance": "440000.0000000000",
+      "hold_trade": "200000.0000000000"
+    },
+    "SGB": {
+      "balance": "0.0000095062",
+      "hold_trade": "0.0000000000"
+    },
+    "SOL": {
+      "balance": "0.0000089800",
+      "hold_trade": "0.0000000000"
+    },
+    "SOL.S": {
+      "balance": "0.0054525800",
+      "hold_trade": "0.0000000000"
+    },
+    "STORJ": {
+      "balance": "50.0000046000",
+      "hold_trade": "50.0000046000"
+    },
+    "USDC": {
+      "balance": "20.00000000",
+      "hold_trade": "0.00000000"
+    },
+    "USDT": {
+      "balance": "30.00000000",
+      "hold_trade": "0.00000000"
+    },
+    "UST": {
+      "balance": "111.11111111",
+      "hold_trade": "0.00000000"
+    },
+    "XETH": {
+      "balance": "0.0228252363",
+      "hold_trade": "0.0000000000"
+    },
+    "XLTC": {
+      "balance": "1.0000000000",
+      "hold_trade": "0.0000000000"
+    },
+    "XTZ": {
+      "balance": "1.05277600",
+      "hold_trade": "0.00000000"
+    },
+    "XTZ.S": {
+      "balance": "0.00000000",
+      "hold_trade": "0.00000000"
+    },
+    "XXBT": {
+      "balance": "0.0000000020",
+      "hold_trade": "0.0000000000"
+    },
+    "XXRP": {
+      "balance": "6036.31959790",
+      "hold_trade": "0.00000000"
+    },
+    "ZEUR": {
+      "balance": "1437.7916",
+      "hold_trade": "0.0000"
+    },
+    "ZGBP": {
+      "balance": "6162.8347",
+      "hold_trade": "6159.8251"
+    },
+    "ZUSD": {
+      "balance": "0.0000",
+      "hold_trade": "0.0000"
+    }
+  }
+}

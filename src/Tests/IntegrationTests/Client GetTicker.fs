@@ -19,5 +19,5 @@ let GetTicker (main:string, other:string) =
     ticker.Pair |> should equal (pair)
 
 [<Test>]
-let ``GetTicker when asset does not exists`` ()  =
+let ``GetTicker when asset does not exists`` () =
     (fun () -> client.GetTicker(CurrencyPair("usd", "eth")) |> ignore ) |> should throw typeof<Exception>

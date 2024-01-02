@@ -8,13 +8,11 @@ open System.Collections.Generic
 open FSharp.Data
 open Alex75.Cryptocurrencies
 
-let currencyRegex = System.Text.RegularExpressions.Regex("([A-Z]+)([\d]*)\.S")
-
 let internal load_result_and_check_errors jsonString =
     let json = JsonValue.Parse(jsonString)
-    let errors = json.["error"].AsArray()
-    if errors.Length > 0 then failwith (errors.[0].AsString())
-    json.["result"]
+    let errors = json["error"].AsArray()
+    if errors.Length > 0 then failwith (errors[0].AsString())
+    json["result"]
 
 let private parseUnixTime unixTime = DateTimeOffset.FromUnixTimeMilliseconds(int64(unixTime*1000m)).DateTime
 
@@ -57,60 +55,8 @@ let internal parseTicker (pair:CurrencyPair, data:string) =
 
     Ticker(pair, bid, ask, None, None, None)
 
-let internal parseBalance jsonString normalizeCurrency =
-    let result = load_result_and_check_errors jsonString
 
-    // ticker can have the form TTT, TTT.S, TTT21.S, TTT28.S
-
-    // map to "normal" or "stacking" kind
-    let mapByKind (kraken_currency, amountJson) =
-        let amount = (amountJson:JsonValue).AsDecimal()
-        match (kraken_currency:string).Split('.') with
-        | [|code|] -> "normal", normalizeCurrency kraken_currency , amount
-        | [|code;"S"|] -> // manage stacking tickers, like "CCC.S" and "CCC28.S"
-
-            let matches = System.Text.RegularExpressions.Regex("([A-Z]+)([\d]*).S").Matches(kraken_currency)
-            //matches.Count > 1
-            //matches.Item[0]
-
-            let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code
-            "stacking", normalizeCurrency newCode , amount
-        | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
-
-    let mappedByKind:seq<(string * Currency * decimal)> = result.Properties() |> Seq.map mapByKind
-
-    let stackingMap = Map(
-        mappedByKind
-        |> Seq.filter (fun (kind,_,_) -> kind = "stacking")
-        |> Seq.groupBy (fun (_,currency,_) -> currency)
-        |> Seq.map(fun (currency,items) ->
-            let total = items |> Seq.sumBy( fun (_,_,value) -> value)
-            (currency, total)
-        ))
-
-    let balances = mappedByKind
-                   |> Seq.choose (fun (kind,currency:Currency,amount) ->
-                                      match kind with
-                                      | "normal" -> Some(
-                                                let balance = CurrencyBalance(currency, amount, amount)
-                                                if stackingMap.ContainsKey currency then balance.AddStacking stackingMap.[currency]
-                                                else balance
-                                                )
-                                      | _ -> None )
-
-    let getStackingBalance (currency:Currency, amount) =
-        if balances |> Seq.exists (fun balance -> balance.Currency = currency)
-        then None
-        else Some(CurrencyBalance.Zero(currency).AddStacking amount)
-
-    let stackingBalances =
-        stackingMap
-        |> Map.toSeq
-        |> Seq.choose getStackingBalance
-
-    new AccountBalance(Seq.append balances stackingBalances)
-
-type internal BalanceExKrakenResponse = { balance: decimal; on_hold: decimal }
+let currencyRegex = System.Text.RegularExpressions.Regex("([A-Z]+)([\d]*)\.S")
 
 let internal parseBalanceEx jsonString normalizeCurrency =
     let result = load_result_and_check_errors jsonString // result is an array of assets
@@ -119,7 +65,7 @@ let internal parseBalanceEx jsonString normalizeCurrency =
 
     for (krakenCurrencyCode, item) in  result.Properties() do
 
-        let (currencyCode, isStacking) = 
+        let (currencyCode, isStacking) =
             match  currencyRegex.Match(krakenCurrencyCode) with
             | m when m.Success -> m.Groups[1].Value, true
             | _ -> krakenCurrencyCode, false
@@ -128,21 +74,21 @@ let internal parseBalanceEx jsonString normalizeCurrency =
         let onTrade = item["hold_trade"].AsDecimal()
 
         match balances.ContainsKey currencyCode with
-        | true -> 
+        | true ->
             let item = balances[currencyCode]
-            if isStacking then 
+            if isStacking then
                 balances[currencyCode] <- item.AddStacking(balance) // does this change the total?
-            else 
+            else
                 let total = item.Total + balance
                 let free = total-onTrade
 
-                let currencyBalance = 
+                let currencyBalance =
                     CurrencyBalance((normalizeCurrency(currencyCode):Currency), total, free, onTrade)
                         .AddStacking(item.Stacking)
                 balances[currencyCode] <- currencyBalance
         | _ ->
             if isStacking then
-                let currencyBalance = 
+                let currencyBalance =
                     CurrencyBalance((normalizeCurrency(currencyCode):Currency), balance, balance-onTrade)
                         .AddStacking balance
 

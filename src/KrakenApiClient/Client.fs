@@ -95,7 +95,6 @@ type public Client (public_key:string, secret_key:string) =
             match cache.GetAccountBalance(balance_cache_time) with
             | Some balance -> balance
             | _ ->
-                //let url = f"%s/private/BalanceEx" base_url
                 let nonce_content, content = create_content (dict [])
 
                 let balancesEx = 

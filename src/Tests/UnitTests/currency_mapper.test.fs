@@ -58,4 +58,4 @@ let ``parseKrakenAltPair`` () =
     "XRPEUR" |> shouldMapTo CurrencyPair.XRP_EUR
     "XRPUSD" |> shouldMapTo CurrencyPair.XRP_USD
     "XBTUSD" |> shouldMapTo CurrencyPair.BTC_USD
-    "XETHEUR" |> shouldMapTo CurrencyPair.ETH_EUR
+    "ETHEUR" |> shouldMapTo CurrencyPair.ETH_EUR

@@ -19,36 +19,40 @@ module internal mapper =
 
     [<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
 
-    /// parameter:pairs = Seq of (krakenSymbol, krakenPairAltName, quote, base)
-    type Mapping (pairs:seq<(string * string * string * string)>, assets:seq<(string * string)>) =
-        let krakenCurrenciesMap = Map( assets |> Seq.map ( fun (k, c) ->
-            match k with
-            | "XXBT" -> (k, "BTC")
-            | _ -> (k,c)
-        ))
+    type internal Asset = { Name:string; AltName:string}
 
-        // create a key:value map wherre the key is the kraken pair altname (used in order list) and the value is the standard currency pair
+    /// pairs: Seq of (krakenSymbol, krakenPairAltName, base, quote)
+    /// assets: Seq of (name, altname)
+    type Mapping (pairs:seq<(string * string * string * string)>, assets:seq<Asset>) =
+
+        let krakenCurrenciesMap = Map(assets |> Seq.map (fun asset ->
+            match asset.Name with
+            | "XXBT" -> (asset.Name, "BTC")
+            | _ -> (asset.Name, asset.AltName) // ZEUR, EUR
+        ) |> Seq.append( ["ETH", "ETH"])) // to manage ETH2 currency in stacking, that is manages as XETH in other calls
+
+        // create a key:value map where the key is the kraken pair altname (used in order list) and the value is the standard currency pair
         let krakenAltNamePairMap =
-            Map( pairs
-            |> Seq.map( fun (krakenPair, krakenAltName, krakenBase_, krakenQuote) ->
-                            (krakenAltName, CurrencyPair(krakenCurrenciesMap.[krakenBase_], krakenCurrenciesMap.[krakenQuote]))
+            Map(pairs
+                |> Seq.map(fun (krakenPair, krakenAltName, krakenBase_, krakenQuote) ->
+                            (krakenAltName, CurrencyPair(krakenCurrenciesMap[krakenBase_], krakenCurrenciesMap[krakenQuote]))
             ))
 
         // create a key:value map where the key is the standard pair and the value is the Kraken symbol
         let krakenPairMap =
             Map( pairs
-            |> Seq.where (fun (krakenPair, krakenAltName, krakenBase_, krakenQuote) -> not(krakenPair.EndsWith(".d")))
+            |> Seq.where (fun (krakenPair, _, _, _) -> not(krakenPair.EndsWith(".d")))
             |> Seq.map( fun (krakenPair, krakenAltName, krakenBase_, krakenQuote) ->
-                            (CurrencyPair(krakenCurrenciesMap.[krakenBase_], krakenCurrenciesMap.[krakenQuote]).AAA_BBB, krakenPair)
+                            (CurrencyPair(krakenCurrenciesMap[krakenBase_], krakenCurrenciesMap[krakenQuote]).AAA_BBB, krakenPair)
             ))
 
         /// given the standard pair returns the Kraken symbol (pair) (make order). XRP/EUR -> XXRPZEUR
-        member this.getKrakenPair (pair:CurrencyPair) = krakenPairMap.[pair.AAA_BBB]
+        member this.getKrakenPair (pair:CurrencyPair) = krakenPairMap[pair.AAA_BBB]
 
         /// given the Kraken currency returns the standard currency (for balance). ZEUR -> EUR
         member this.getCurrency (krakenCurrency:string) =
             if not(krakenCurrenciesMap.ContainsKey krakenCurrency) then failwithf "Kraken currencies map does not contain \"%s\"" krakenCurrency
-            Currency(krakenCurrenciesMap.[krakenCurrency])
+            Currency(krakenCurrenciesMap[krakenCurrency])
 
         /// given an "altname" (orders list) returns the standard pair. XRPEUR -> XRP/EUR
         member this.getPairFromAltName altName = krakenAltNamePairMap.[altName]
@@ -59,20 +63,23 @@ module internal mapper =
     let mutable lastUpdate:Option<DateTime> = None
     let mutable mapping:Option<Mapping> = None
 
+    // returns XETHXXBT, ETHXBT, XETH, XXBT
     let fetchPairsAsync baseUrl =
         async {
             return parser.load_result_and_check_errors( (f"%s/public/AssetPairs" baseUrl).GetStringAsync().Result )
                     .Properties()
                     // skip derivatives, technically "XXBTZUSD.d" is exactly the same as "XXBTZUSD"
                     //|> Seq.where (fun (name,json)-> not(name.EndsWith(".d")))
-                    |> Seq.map( fun (name,json) ->  name, json.["altname"].AsString(), json.["base"].AsString(), json.["quote"].AsString() )
+                    |> Seq.map( fun (name,json) ->  name, json["altname"].AsString(), json["base"].AsString(), json["quote"].AsString() )
         }
 
+    // returns ZEUR, EUR
     let fetchAssetsAsync baseUrl =
         async {
-            return parser.load_result_and_check_errors( (f"%s/public/Assets" baseUrl).GetStringAsync().Result )
+            let json = (f"%s/public/Assets" baseUrl).GetStringAsync().Result
+            return parser.load_result_and_check_errors(json)
                 .Properties()
-                |> Seq.map( fun (name, json) -> name, json.["altname"].AsString() )
+                |> Seq.map(fun (name, json) -> { Name=name; AltName=json["altname"].AsString()}:Asset )
         }
 
     let updateMap baseUrl =

@@ -1,0 +1,26 @@
+{
+  "error": [],
+  "result": {
+    "DOT": {
+      "balance": "2",
+      "hold_trade": "0"
+    },
+    "DOT.S": {
+      "balance": "4",
+      "hold_trade": "0"
+    },
+    "DOT28.S": {
+      "balance": "8",
+      "hold_trade": "0"
+    },
+    "ETH2.S": {
+      "balance": "16",
+      "hold_trade": "0"
+    }
+    /*"ETH2": {
+      "balance": "32",
+      "hold_trade": "0"
+    }*/
+  }
+}
+

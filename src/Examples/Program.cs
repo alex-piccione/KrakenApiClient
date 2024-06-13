@@ -1,5 +1,6 @@
 ﻿using Alex75.Cryptocurrencies;
 using Alex75.KrakenApiClient;
+using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Reflection;
@@ -17,7 +18,11 @@ namespace Example
                 .Build();
 
             string publicKey = configuration["public key"];
-            string privateKey = configuration["secret key"];
+            string privateKey = configuration["private key"];
+
+            Guard.IsNotNullOrEmpty(publicKey, $@"configuration secret ""{nameof(publicKey)}""");
+            Guard.IsNotNullOrEmpty(privateKey, $@"configuration secret ""{nameof(privateKey)}""");
+
             IClient client = new Client(publicKey, privateKey);
 
             // get ticker
@@ -62,6 +67,8 @@ namespace Example
 
         private static void GetBalance(IClient client)
         {
+            PrintSection("Get Balance");
+
             try
             {
                 var balance = client.GetBalance();
@@ -73,6 +80,14 @@ namespace Example
             {
                 Console.WriteLine($"Error: {exc}");
             }
+        }
+
+        private static void PrintSection(string text)
+        {
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(text);
+            Console.ForegroundColor = color;
         }
 
         private static void ListOpenOrders(IClient client)

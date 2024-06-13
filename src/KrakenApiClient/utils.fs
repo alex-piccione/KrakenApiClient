@@ -45,4 +45,5 @@ type Flurl.Http.IFlurlRequest with
         self.WithHeader("API-Key", public_key).WithHeader("API-Sign", signature)
 
 type String with
-    member self.WithApi api_path nonce_content public_key secret_key = FlurlRequest(Url(self)).WithApi api_path nonce_content public_key secret_key
+    member self.WithApi api_path nonce_content public_key secret_key = 
+        FlurlRequest(Url(self)).WithApi api_path nonce_content public_key secret_key

@@ -2,7 +2,7 @@ name: Deploy Beta
 
 on:
   push:
-    branches: [master]
+  #  branches: [master]
   pull_request:
     branches: [master]
     # "*" does not match "/" so you need 2 when the branch contains a slash

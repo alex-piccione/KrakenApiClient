@@ -34,6 +34,10 @@ jobs:
     #      cat project.fsproj | Select-String -Pattern 'Version>' | ConvertFrom-StringData -Propertyvalue | Out-Variable projectVersion
     #      echo "Project version: $projectVersion"
 
+    - name: What is the ref ?
+      run: echo github.ref:: ${{github.ref}}
+    
+
     - name: Define NuGet package version
       run: |
         suffix="-beta"

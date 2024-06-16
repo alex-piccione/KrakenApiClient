@@ -1,5 +1,4 @@
-﻿[<NUnit.Framework.Category("Client")>]
-module IntegrationTests.Client.GetTicker
+﻿module IntegrationTests.Client.GetTicker
 
 open System
 open NUnit.Framework

@@ -1,17 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp3.1;net6.0;net8.0</TargetFrameworks>
-    <Version>1.0</Version>
     <Description>Kraken API client for .Net</Description>
     <Authors>Alessandro Piccione</Authors>
     <PackageId>Alex75.KrakenApiClient</PackageId>
     <PackageIcon>logo.png</PackageIcon>
     <PackageTags>Kraken cryptocurrency XRP Bitcoin</PackageTags>
-    <RepositoryUrl>https://github.com/alex-piccione/KrakenApiClient</RepositoryUrl>    
+    <RepositoryUrl>https://github.com/alex-piccione/KrakenApiClient</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageProjectUrl>https://github.com/alex-piccione/KrakenApiClient</PackageProjectUrl>
     <UserSecretsId>Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352</UserSecretsId>
+    <Nullable>enabled</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

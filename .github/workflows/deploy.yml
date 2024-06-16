@@ -1,9 +1,10 @@
-name: Deploy Master or PR
+name: Deploy
+
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
+    branches: [master]
+    # "*" does not match "/" so you need 2 when the branch contains a slash
 
 env:
   VERSION: 1.1.${{github.run_number}}
@@ -15,10 +16,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-dotnet@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
+
+    - name: What is the branch ?
+      run: |
+        echo github.ref:: ${{github.ref}}
 
     - name: Install dependencies
       run: dotnet restore
@@ -30,6 +35,7 @@ jobs:
     - name: Define NuGet package version
       run: |
         suffix="-alpha"
+        # remove the suffix if we are pushing from master branch
         if [[ ${{ github.event_name }} == "push" && ${{ github.ref }} == "refs/heads/master" ]]; then
           suffix=""
         fi
@@ -44,6 +50,3 @@ jobs:
         echo publish package
         dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
 
-# how to pass values from step to step
-# https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
-# https://stackoverflow.com/questions/57819539/github-actions-how-to-share-a-calculated-value-between-job-steps

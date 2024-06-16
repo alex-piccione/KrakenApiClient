@@ -34,7 +34,6 @@ let parsePairs () =
 
 [<Test>]
 let parseTicker () =
-
     let pair = CurrencyPair.XRP_USD
     let json = readResource "GET ticker response.json"
     let ticker = parser.parseTicker (pair, json)

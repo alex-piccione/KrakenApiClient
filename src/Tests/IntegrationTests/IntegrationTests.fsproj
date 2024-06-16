@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Compile Include="utils.fs" />
+    <Compile Include="Mapping.test.fs" />
     <Compile Include="Client Withdraw.fs" />
     <Compile Include="Client ListPairs.fs" />
     <Compile Include="Client GetTicker.fs" />

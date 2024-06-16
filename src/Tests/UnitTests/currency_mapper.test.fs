@@ -26,6 +26,7 @@ let ``getCurrency`` () =
     "XXRP" |> shouldBeMappedTo Currency.XRP
     // special mapping
     "XXBT" |> shouldBeMappedTo Currency.BTC
+    "ETH2" |> shouldBeMappedTo Currency.ETH
 
 [<Test>]
 let ``getKrakenPair`` () =

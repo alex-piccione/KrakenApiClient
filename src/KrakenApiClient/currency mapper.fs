@@ -1,10 +1,11 @@
 ﻿module internal currency_mapper
 
 [<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
+[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("IntegrationTests")>] do()
 
 (*
-A map of currencies and pairs will be updated continuosly in the background.
-Every time the map is updated the "lastUpdate" field is updated with current date and time.
+A mapping of currencies and pairs will be updated continuosly in the background.
+Every time the mapping is updated the "lastUpdate" field is updated with current date and time.
 If it fails the first time it raises an error, not on successive failures.
 *)
 
@@ -18,12 +19,23 @@ open System.Collections.Generic
 module internal mapper =
 
     [<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
+    [<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("IntegrationTests")>] do()
+
+    let maxAgeOfMappedCurrencies = TimeSpan.FromMinutes(30.)
 
     /// parameter:pairs = Seq of (krakenSymbol, krakenPairAltName, quote, base)
     type Mapping (pairs:seq<(string * string * string * string)>, assets:seq<(string * string)>) =
-        let krakenCurrenciesMap = Map( assets |> Seq.map ( fun (k, c) ->
+
+
+        // Simce the Bsalance function returns "ETH.F" that we convert to "ETH" but the Assets list does not containe "ETH"
+        // we need to add it
+        let extendedAssets = Seq.append assets (seq { ("ETH","ETH") })
+
+        let krakenCurrenciesMap = Map( extendedAssets |> Seq.map ( fun (k, c) ->
             match k with
             | "XXBT" -> (k, "BTC")
+            | "ETH2" -> (k, "ETH")
+            | "XETH" -> (k, "ETH")
             | _ -> (k,c)
         ))
 
@@ -61,7 +73,8 @@ module internal mapper =
 
     let fetchPairsAsync baseUrl =
         async {
-            return parser.load_result_and_check_errors( (f"%s/public/AssetPairs" baseUrl).GetStringAsync().Result )
+            let! pairs = (f"%s/public/AssetPairs" baseUrl).GetStringAsync() |> Async.AwaitTask
+            return parser.load_result_and_check_errors(pairs)
                     .Properties()
                     // skip derivatives, technically "XXBTZUSD.d" is exactly the same as "XXBTZUSD"
                     //|> Seq.where (fun (name,json)-> not(name.EndsWith(".d")))
@@ -70,15 +83,16 @@ module internal mapper =
 
     let fetchAssetsAsync baseUrl =
         async {
-            return parser.load_result_and_check_errors( (f"%s/public/Assets" baseUrl).GetStringAsync().Result )
+            let! assets = (f"%s/public/Assets" baseUrl).GetStringAsync() |> Async.AwaitTask
+            return parser.load_result_and_check_errors(assets)
                 .Properties()
-                |> Seq.map( fun (name, json) -> name, json.["altname"].AsString() )
+                |> Seq.map( fun (name, json) -> name, json["altname"].AsString() )
         }
 
     let updateMap baseUrl =
         lock LOCK ( fun () ->
             async {
-                if lastUpdate.IsNone || (DateTime.Now - lastUpdate.Value) > TimeSpan.FromMinutes(10.) then
+                if lastUpdate.IsNone || (DateTime.Now - lastUpdate.Value) > maxAgeOfMappedCurrencies then
                     let mutable run = 0
                     while run = 0 || run < 10 do
                         try

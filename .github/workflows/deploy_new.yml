@@ -1,0 +1,51 @@
+name: Deploy Beta
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  VERSION: 1.1.${{github.run_number}} 
+  PROJECT_FOLDER: src/KrakenApiClient
+  NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Run Tests
+      run: dotnet test --no-restore --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY"
+
+    #- name: Read project version
+    #    run: |
+    #      cat project.fsproj | Select-String -Pattern 'Version>' | ConvertFrom-StringData -Propertyvalue | Out-Variable projectVersion
+    #      echo "Project version: $projectVersion"
+
+    - name: Define NuGet package version
+      run: |
+        suffix="-beta"
+        if [[ ${{ github.event_name }} == "push" && ${{ github.ref }} == "refs/heads/master" ]]; then
+          suffix=""
+        fi
+        echo version:: $VERSION$suffix
+        echo "NUGET_PACKAGE_VERSION=$VERSION$suffix" >> $GITHUB_ENV
+    - name: Pack NuGet
+      run: |
+        echo create package $NUGET_PACKAGE_VERSION
+        dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$NUGET_PACKAGE_VERSION
+    - name: Publish NuGet
+      run: |
+        echo publish package
+        dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+

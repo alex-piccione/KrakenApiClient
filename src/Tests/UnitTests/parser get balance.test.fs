@@ -50,24 +50,23 @@ let ``parseBalance`` () =
     balance |> shouldHaveCurrency Currency.DOT 662.24614826m
 
 [<Test>]
-let ``parseBalance [with] Stacking`` ()=
-    let json = readResource "Balance 2.response.json"
+let ``parseBalance with Stacking`` ()=
+    let json = readResource "Balance with Stacking.response.json"
     let balance = parser.parseBalance json normalizeCurrency
     balance |> shouldHaveCurrency Currency.DOT (1.11m + 2.22m + 3.33m) // DOT + DOT.S + DOT28.S
 
 [<Test>]
-let ``parseBalance [with] Stacking (many cases)`` ()=
-    let json = readResource "Balance 3.response.json"
+let ``parseBalance with many cases`` ()=
+    let json = readResource "Balance with many assets.response.json"
 
     let balance = parser.parseBalance json normalizeCurrency
 
-    balance |> shouldHaveCurrency Currency.ETH 0.0001646140m
+    balance |> shouldHaveCurrency Currency.ETH (0.0001646140m + 0.0230299580m + 0.2500398160m) //XETH +  ETH2 + ETH2.S
     balance |> shouldHaveCurrency Currency.USDC 2347.91604938m
     balance |> shouldHaveCurrency (Currency("FLOW")) (0.0000000000m + 77.1046636650m) // FLOW + FLOW.S
     balance |> shouldHaveCurrency Currency.SOL (0.0000089800m + 0.0052996500m) // SOL + SOL.S
     balance |> shouldHaveCurrency Currency.USDT 0.00008351m
     balance |> shouldHaveCurrency Currency.FIL 13.0448980000m
-    balance |> shouldHaveCurrency (Currency("ETH2")) (0.0230299580m + 0.2500398160m) // ETH2 + ETH2.S
     balance |> shouldHaveCurrency Currency.ADA (0.00000005m + 0.79254500m) // ADA + ADA.S
     balance |> shouldHaveCurrency Currency.GBP 2009.8895m
     balance |> shouldHaveCurrency Currency.FLR (7833.3514M + 0.0000M) // FLR.S + FLR
@@ -91,11 +90,18 @@ let ``parseBalance [with] Stacking (many cases)`` ()=
     balance |> shouldHaveCurrency (Currency("ETHW")) (0.0000019m)
 
 [<Test>]
-let ``parseBalance [with] Futures`` ()=
-    let json = readResource "Balance with Futures.response.json"
+let ``parseBalance with Flexible Stacking`` ()=
+    let json = readResource "Balance with Flexible Stacking.response.json"
     let balance = parser.parseBalance json normalizeCurrency
 
     balance |> shouldHaveCurrency Currency.ADA (0.00000000m + 0.00050265m + 23.03690434m) // ADA + ADA.F + ADA.S
     balance |> shouldHaveCurrency Currency.DOT (0.00000000m + 458.7557891616m + 0.0000000000m + 0.0000000000m) // DOT + DOT.F + DOT.S + DOT28.S
     balance |> shouldHaveCurrency Currency.ETH (0.0000000000m + 0.0264431431m + 0.0000000000m + 0.2500398160m) // XETH + ETH.F + ETH2 + ETH2.S
     balance |> shouldHaveCurrency (Currency("ETHW")) (0.0000019m)
+
+[<Test>]
+let ``parseBalance with ETH2`` ()=
+    let json = readResource "Balance with ETH2.response.json"
+    let balance = parser.parseBalance json normalizeCurrency
+
+    balance |> shouldHaveCurrency Currency.ETH (0.1m + 0.2m + 0.4m + + 0.8m) // XETH + ETH2 + ETH2.S + ETH.F

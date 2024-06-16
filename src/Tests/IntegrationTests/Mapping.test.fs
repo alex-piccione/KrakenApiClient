@@ -7,11 +7,11 @@ module currency_mapper =
 
     let base_url = "https://api.kraken.com/0"
 
-    [<TestCase("ETH")>]
-    let ``getCurrency contains currency`` (currency) =
+    [<TestCase("ETH", "ETH")>]
+    [<TestCase("ETH2", "ETH")>]
+    let ``getCurrency contains currency`` (krakenCurrency, currency) =
         currency_mapper.startMapping(base_url)
-        let currency = currency_mapper.getCurrency(currency)
-        currency |> should not' (be null)
+        currency_mapper.getCurrency(krakenCurrency).UpperCase |> should equal currency
 
 
     [<TestCase("XETH", "ETH")>]

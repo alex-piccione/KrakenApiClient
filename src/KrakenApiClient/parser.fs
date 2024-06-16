@@ -54,21 +54,23 @@ let internal parseTicker (pair:CurrencyPair, data:string) =
 
     Ticker(pair, bid, ask, None, None, None)
 
+
 let internal parseBalance jsonString normalizeCurrency =
     let result = load_result_and_check_errors jsonString
 
-    // ticker can have the form TTT, TTT.S, TTT21.S, TTT28.S
+    // ticker can have the form TTT, TTT.S, TTT21.S, TTT28.S, TTT.F
 
-    // map to "normal" or "stacking" kind
+    // map to "normal", "stacking" or "flexible" kind
     let mapByKind (kraken_currency, amountJson) =
         let amount = (amountJson:JsonValue).AsDecimal()
         match (kraken_currency:string).Split('.') with
+        | [|"ETH2"; "S"|] -> "stacking", Currency.ETH, amount
         | [|code|] -> "normal", normalizeCurrency kraken_currency , amount
         | [|code;"S"|] -> // manage stacking tickers, like "CCC.S" and "CCC28.S"
             let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code 
             "stacking", normalizeCurrency newCode , amount
-        | [|code; "F"|] -> // manage Futures, like "ADA.F"
-            "futures", normalizeCurrency code, amount
+        | [|code; "F"|] -> // manage Flexible, like "ADA.F"
+            "flexible", normalizeCurrency code, amount
         | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
 
     let mappedByKind:seq<(string * Currency * decimal)> = result.Properties() |> Seq.map mapByKind
@@ -83,29 +85,39 @@ let internal parseBalance jsonString normalizeCurrency =
         ))
 
         
-    let futuresMap = Map(
+    let flexiblesMap = Map(
         mappedByKind 
-        |> Seq.filter (fun (kind,_,_) -> kind = "futures")
+        |> Seq.filter (fun (kind,_,_) -> kind = "flexible")
         |> Seq.groupBy (fun (_,currency,_) -> currency)
         |> Seq.map(fun (currency,items) -> 
             let total = items |> Seq.sumBy( fun (_,_,value) -> value)
             (currency, total)
         ))
 
+    let balances = 
+        mappedByKind
+        |> Seq.filter (fun (kind,_,_) -> kind = "normal")
+        |> Seq.map( fun (kind,currency:Currency,amount) -> 
+            let mutable balance = CurrencyBalance(currency, amount, amount)
 
-    let balances = mappedByKind
-                   |> Seq.choose (fun (kind,currency:Currency,amount) ->
-                                      match kind with
-                                      | "normal" -> Some(
-                                                let mutable balance = CurrencyBalance(currency, amount, amount)
-                                                balance <- if stackingMap.ContainsKey currency then balance.AddStacking stackingMap.[currency]
-                                                           else balance
-                                                
-                                                balance <- if futuresMap.ContainsKey currency then CurrencyBalance(currency, balance.Total + futuresMap[currency], amount)
-                                                           else balance
-                                                balance
-                                                )
-                                      | _ -> None )
+            balance <- 
+                if flexiblesMap.ContainsKey currency then 
+                    let newTotal = balance.Total + flexiblesMap[currency] // flexible are available
+                    CurrencyBalance(currency, newTotal, newTotal)
+                else balance
+
+            // add ETH2 to ETH
+            if currency = Currency.ETH then 
+                let eth2 = mappedByKind |> Seq.tryFind (fun (_,currency,_) -> currency.UpperCase = "ETH2")
+                if eth2.IsSome then
+                    let _, _, eth2_amount = eth2.Value
+                    let newTotal =  balance.Total + eth2_amount
+                    balance <- CurrencyBalance(currency, newTotal, newTotal)
+
+            balance <- if stackingMap.ContainsKey currency then balance.AddStacking stackingMap.[currency]
+                       else balance
+
+            balance)
 
     let getStackingBalance (currency:Currency, amount) =
         if balances |> Seq.exists (fun balance -> balance.Currency = currency)

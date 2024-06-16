@@ -26,6 +26,7 @@
     <EmbeddedResource Include="data\Assets response %28not used%29.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="data\Balance with ETH2.response.json" />
     <EmbeddedResource Include="data\create market order response.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -40,9 +41,9 @@
     <EmbeddedResource Include="data\Balance.response.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="data\Balance 2.response.json" />
-    <EmbeddedResource Include="data\Balance 3.response.json" />
-    <EmbeddedResource Include="data\Balance with Futures.response.json" />
+    <EmbeddedResource Include="data\Balance with Stacking.response.json" />
+    <EmbeddedResource Include="data\Balance with many assets.response.json" />
+    <EmbeddedResource Include="data\Balance with Flexible Stacking.response.json" />
     <EmbeddedResource Include="data\Balance Error.response.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>

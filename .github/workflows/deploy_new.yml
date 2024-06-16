@@ -35,7 +35,8 @@ jobs:
     #      echo "Project version: $projectVersion"
 
     - name: What is the ref ?
-      run: echo github.ref:: ${{github.ref}}
+      run: |
+        echo github.ref:: ${{github.ref}}
     
 
     - name: Define NuGet package version

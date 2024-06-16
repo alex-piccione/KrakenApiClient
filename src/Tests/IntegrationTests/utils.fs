@@ -12,6 +12,6 @@ let configuration =
         .Build()
 
 let publicKey = configuration.["public key"]
-let secretKey = configuration.["secret key"]
+let secretKey = configuration.["private key"]
 
 let client = Client(publicKey, secretKey) :> IClient

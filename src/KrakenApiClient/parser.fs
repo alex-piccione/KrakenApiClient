@@ -67,6 +67,8 @@ let internal parseBalance jsonString normalizeCurrency =
         | [|code;"S"|] -> // manage stacking tickers, like "CCC.S" and "CCC28.S"
             let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code 
             "stacking", normalizeCurrency newCode , amount
+        | [|code; "F"|] -> // manage Futures, like "ADA.F"
+            "futures", normalizeCurrency code, amount
         | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
 
     let mappedByKind:seq<(string * Currency * decimal)> = result.Properties() |> Seq.map mapByKind
@@ -80,14 +82,28 @@ let internal parseBalance jsonString normalizeCurrency =
             (currency, total)
         ))
 
+        
+    let futuresMap = Map(
+        mappedByKind 
+        |> Seq.filter (fun (kind,_,_) -> kind = "futures")
+        |> Seq.groupBy (fun (_,currency,_) -> currency)
+        |> Seq.map(fun (currency,items) -> 
+            let total = items |> Seq.sumBy( fun (_,_,value) -> value)
+            (currency, total)
+        ))
+
 
     let balances = mappedByKind
                    |> Seq.choose (fun (kind,currency:Currency,amount) ->
                                       match kind with
                                       | "normal" -> Some(
-                                                let balance = CurrencyBalance(currency, amount, amount)
-                                                if stackingMap.ContainsKey currency then balance.AddStacking stackingMap.[currency]
-                                                else balance
+                                                let mutable balance = CurrencyBalance(currency, amount, amount)
+                                                balance <- if stackingMap.ContainsKey currency then balance.AddStacking stackingMap.[currency]
+                                                           else balance
+                                                
+                                                balance <- if futuresMap.ContainsKey currency then CurrencyBalance(currency, balance.Total + futuresMap[currency], amount)
+                                                           else balance
+                                                balance
                                                 )
                                       | _ -> None )
 

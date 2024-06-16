@@ -1,8 +1,6 @@
-﻿[<NUnit.Framework.Category("Client")>]
-module IntegrationTests.Client.GetTicker
+﻿module IntegrationTests.Client.GetTicker
 
 open System
-open System.Collections.Generic
 open NUnit.Framework
 open FsUnit
 open Alex75.KrakenApiClient

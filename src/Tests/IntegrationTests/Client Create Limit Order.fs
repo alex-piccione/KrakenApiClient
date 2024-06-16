@@ -7,9 +7,9 @@ open FsUnit
 open Alex75.Cryptocurrencies
 open utils
 
-module CreateLimitOrder =             
+module CreateLimitOrder =
 
-    [<Test; Category("AFFECTS_BALANCE"); Category("REQUIRES_API_KEY")>]   
+    [<Test; Category("AFFECTS_BALANCE"); Category("REQUIRES_API_KEY")>]
     // todo: write custom Ignore rule, example : https://amido.com/blog/conditional-ignore-nunit-and-the-ability-to-conditionally-ignore-a-test/
     // [<IgnoreIf("payment involved")>]
     let ``CreateLimitOrder`` () =
@@ -20,5 +20,3 @@ module CreateLimitOrder =
         let ordererence = client.CreateLimitOrder(CreateOrderRequest.Limit(OrderSide.Sell, pair, buyAmount, limitPrice))
 
         ordererence |> should not' (be NullOrEmptyString)
-
-        

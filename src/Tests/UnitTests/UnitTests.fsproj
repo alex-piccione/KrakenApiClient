@@ -37,13 +37,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="data\create order response - Error for Volume.json" />
     <Content Include="data\response API feature disabled.json" />
-    <EmbeddedResource Include="data\Balance response.json">
+    <EmbeddedResource Include="data\Balance.response.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="data\Balance response 2.json" />
-    <EmbeddedResource Include="data\Balance response 3.json" />
-    <EmbeddedResource Include="data\Balance response - error.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <EmbeddedResource Include="data\Balance 2.response.json" />
+    <EmbeddedResource Include="data\Balance 3.response.json" />
+    <EmbeddedResource Include="data\Balance with Futures.response.json" />
+    <EmbeddedResource Include="data\Balance Error.response.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <Content Include="data\response for invalid api key.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

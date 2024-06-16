@@ -7,9 +7,9 @@ open FsUnit
 open Alex75.Cryptocurrencies
 open utils
 
-module CreateMarketOrder =             
+module CreateMarketOrder =
 
-    [<Test; Category("AFFECTS_BALANCE"); Category("REQUIRES_API_KEY")>]   
+    [<Test; Category("AFFECTS_BALANCE"); Category("REQUIRES_API_KEY")>]
     // todo: write custom Ignore rule, example : https://amido.com/blog/conditional-ignore-nunit-and-the-ability-to-conditionally-ignore-a-test/
     // [<IgnoreIf("payment involved")>]
     let ``CreateMarketOrder`` () =
@@ -20,5 +20,3 @@ module CreateMarketOrder =
 
         order |> should not' (be null)
         order.Reference |> should not' (be NullOrEmptyString)
-
-        

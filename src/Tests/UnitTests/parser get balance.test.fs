@@ -23,16 +23,17 @@ let normalizeCurrency = fun k ->
     | "XLTC" -> Currency.LTC
     | "XETH" -> Currency.ETH
     | "DOT" -> Currency.DOT
+    | "ADA" -> Currency.ADA
     | _ -> Currency(k)
 
 [<Test>]
 let ``parseBalance when is error``() =
-    let json = readResource "Balance response - error.json"
+    let json = readResource "Balance Error.response.json"
     (fun () -> parser.parseBalance json (fun k -> Currency(k)) |> ignore) |> should throw typeof<Exception>
 
 [<Test>]
 let ``parseBalance`` () =
-    let json = readResource "Balance response.json"
+    let json = readResource "Balance.response.json"
     let balance = parser.parseBalance json normalizeCurrency
 
     balance |> should not' (be null)
@@ -50,13 +51,13 @@ let ``parseBalance`` () =
 
 [<Test>]
 let ``parseBalance [with] Stacking`` ()=
-    let json = readResource "Balance response 2.json"
+    let json = readResource "Balance 2.response.json"
     let balance = parser.parseBalance json normalizeCurrency
     balance |> shouldHaveCurrency Currency.DOT (1.11m + 2.22m + 3.33m) // DOT + DOT.S + DOT28.S
 
 [<Test>]
 let ``parseBalance [with] Stacking (many cases)`` ()=
-    let json = readResource "Balance response 3.json"
+    let json = readResource "Balance 3.response.json"
 
     let balance = parser.parseBalance json normalizeCurrency
 
@@ -87,4 +88,14 @@ let ``parseBalance [with] Stacking (many cases)`` ()=
     balance |> shouldHaveCurrency (Currency("LUNA2")) (0.92091819m)
     balance |> shouldHaveCurrency Currency.LTC (1.0000000000m)
     balance |> shouldHaveCurrency Currency.XRP (3973.29885459m)
+    balance |> shouldHaveCurrency (Currency("ETHW")) (0.0000019m)
+
+[<Test>]
+let ``parseBalance [with] Futures`` ()=
+    let json = readResource "Balance with Futures.response.json"
+    let balance = parser.parseBalance json normalizeCurrency
+
+    balance |> shouldHaveCurrency Currency.ADA (0.00000000m + 0.00050265m + 23.03690434m) // ADA + ADA.F + ADA.S
+    balance |> shouldHaveCurrency Currency.DOT (0.00000000m + 458.7557891616m + 0.0000000000m + 0.0000000000m) // DOT + DOT.F + DOT.S + DOT28.S
+    balance |> shouldHaveCurrency Currency.ETH (0.0000000000m + 0.0264431431m + 0.0000000000m + 0.2500398160m) // XETH + ETH.F + ETH2 + ETH2.S
     balance |> shouldHaveCurrency (Currency("ETHW")) (0.0000019m)

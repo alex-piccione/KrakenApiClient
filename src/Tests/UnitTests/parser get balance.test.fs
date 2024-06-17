@@ -50,19 +50,14 @@ let ``parseBalance`` () =
     balance |> shouldHaveCurrency Currency.DOT 662.24614826m
  
 [<Test>]
-let ``parseBalance with Stacking`` ()=
+let ``parseBalance with Stacking`` () =
     let json = readResource "Balance with Stacking.response.json"
     let balance = parser.parseBalance json normalizeCurrency
     balance |> shouldHaveCurrency Currency.DOT (1.11m + 2.22m + 3.33m) // DOT + DOT.S + DOT28.S
 
 
 [<Test>]
-let ``parseBalance when Stacking`` ()=
-    let balance = parser.parseBalance json normalizeCurrency
-    balance |> shouldHaveCurrency Currency.DOT (1.11m + 2.22m + 3.33m) // DOT + DOT.S + DOT28.S
-
-[<Test>]
-let ``parseBalance with many cases`` ()=
+let ``parseBalance with many cases`` () =
     let json = readResource "Balance with many assets.response.json"
 
     let balance = parser.parseBalance json normalizeCurrency
@@ -96,7 +91,7 @@ let ``parseBalance with many cases`` ()=
     balance |> shouldHaveCurrency (Currency("ETHW")) (0.0000019m)
 
 [<Test>]
-let ``parseBalance with Flexible Stacking`` ()=
+let ``parseBalance with Flexible Stacking`` () =
     let json = readResource "Balance with Flexible Stacking.response.json"
     let balance = parser.parseBalance json normalizeCurrency
 
@@ -106,7 +101,7 @@ let ``parseBalance with Flexible Stacking`` ()=
     balance |> shouldHaveCurrency (Currency("ETHW")) (0.0000019m)
 
 [<Test>]
-let ``parseBalance with ETH2`` ()=
+let ``parseBalance with ETH2`` () =
     let json = readResource "Balance with ETH2.response.json"
     let balance = parser.parseBalance json normalizeCurrency
 

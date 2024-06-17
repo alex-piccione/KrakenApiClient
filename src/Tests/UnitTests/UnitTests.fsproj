@@ -20,48 +20,32 @@
 
   <ItemGroup>
     <None Include="data\extract mappings.py" />
-    <EmbeddedResource Include="data\AssetPairs response.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="data\Assets response %28not used%29.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="data\Balance with ETH2.response.json" />
-    <EmbeddedResource Include="data\create market order response.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="data\create limit order response.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="data\create order response - Error for No funds.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+	<Content Include="data\response API feature disabled.json" />
+	
+    <EmbeddedResource Include="data\AssetPairs response.json" />    
+	<EmbeddedResource Include="data\Assets response %28not used%29.json" />    
+	<EmbeddedResource Include="data\Balance with ETH2.response.json" />    
+	<EmbeddedResource Include="data\create market order response.json" />    
+	<EmbeddedResource Include="data\create limit order response.json" />
+    <EmbeddedResource Include="data\create order response - Error for No funds.json" />
     <EmbeddedResource Include="data\create order response - Error for Volume.json" />
-    <Content Include="data\response API feature disabled.json" />
-    <EmbeddedResource Include="data\Balance.response.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+	
+
+    
+	<EmbeddedResource Include="data\Balance.response.json" />
     <EmbeddedResource Include="data\Balance with Stacking.response.json" />
     <EmbeddedResource Include="data\Balance with many assets.response.json" />
     <EmbeddedResource Include="data\Balance with Flexible Stacking.response.json" />
-    <EmbeddedResource Include="data\Balance Error.response.json">
-    <EmbeddedResource Include="data\Balance response - error.json" />
+    <EmbeddedResource Include="data\Balance Error.response.json" />
     <EmbeddedResource Include="data\BalanceEx response.json" />
     <EmbeddedResource Include="data\BalanceEx response 2.json" />
     <EmbeddedResource Include="data\response for invalid api key.json" />
     <EmbeddedResource Include="data\_not_used_GET pairs response.json" />
-    <EmbeddedResource Include="data\GET ticker response.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="data\list Open Orders response %28one limit order untouched%29.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="data\list Closed Orders.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="data\Withdraw Funds response.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="data\GET ticker response.json" />
+    <EmbeddedResource Include="data\list Open Orders response %28one limit order untouched%29.json" />
+    <EmbeddedResource Include="data\list Closed Orders.json" />
+    <EmbeddedResource Include="data\Withdraw Funds response.json" />
+	
     <Compile Include="currency_mapper.test.fs" />
     <Compile Include="currency_mapper not initialized.test.fs" />
     <Compile Include="parser.test.fs" />

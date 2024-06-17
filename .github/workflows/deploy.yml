@@ -4,10 +4,9 @@ on:
   push:
   pull_request:
     branches: [master]
-    # "*" does not match "/" so you need 2 when the branch contains a slash
 
 env:
-  VERSION: 1.1.${{github.run_number}}
+  VERSION: 1.2.${{github.run_number}}
   PROJECT_FOLDER: src/KrakenApiClient
   NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
 

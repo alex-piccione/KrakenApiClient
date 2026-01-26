@@ -15,6 +15,9 @@ let internal load_result_and_check_errors jsonString =
 
 let private parseUnixTime unixTime = DateTimeOffset.FromUnixTimeMilliseconds(int64(unixTime*1000m)).DateTime
 
+let private parseDecimal (value:string) =
+    Decimal.Parse(value, System.Globalization.CultureInfo.InvariantCulture)
+
 let private mapBTC currency = if currency = "XBT" then "BTC" else currency
 
 /// Creates a map <Kraken currency>:<currency>
@@ -143,8 +146,7 @@ let internal parseBalanceEx jsonString normalizeCurrency =
         let total = item["balance"].AsDecimal()
         let onHold = item["hold_trade"].AsDecimal()
 
-        CurrencyBalance( (currency:Currency), total, total-onHold)
-        )
+        CurrencyBalance( (currency:Currency), total, total-onHold) )
 
     new AccountBalance(balances)
 
@@ -152,7 +154,7 @@ let internal parseCreateOrder(jsonString:string) =
     let result = load_result_and_check_errors(jsonString)
 
     let order = result["descr"].["order"].ToString()
-    let amount = Decimal.Parse(order.Split(' ')[1])
+    let amount = parseDecimal(order.Split(' ')[1])
     let orderIds = result["txid"].AsArray() |> Array.map (fun v -> v.AsString())
 
     struct (orderIds, amount)

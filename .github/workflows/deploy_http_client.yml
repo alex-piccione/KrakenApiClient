@@ -52,7 +52,7 @@ jobs:
         fi
 
         echo "NUGET_PACKAGE_VERSION=$NUGET_PACKAGE_VERSION" >> $GITHUB_ENV
-        echo "📦 NUGET PACKAGE VERSION: $NUGET_PACKAGE_VERSION >> $GITHUB_OUTPUT
+        echo "📦 NUGET PACKAGE VERSION: $NUGET_PACKAGE_VERSION" >> $GITHUB_OUTPUT
     
     - name: 📦 Pack NuGet
       run: |

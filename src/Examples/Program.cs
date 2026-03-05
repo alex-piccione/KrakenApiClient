@@ -16,8 +16,8 @@ namespace Example
                 .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352")
                 .Build();
 
-            string publicKey = configuration["public key"];
-            string privateKey = configuration["secret key"];
+            string publicKey = configuration["public key"] ?? throw new Exception("Missing cinfiguration: public key");
+            string privateKey = configuration["secret key"] ?? throw new Exception("Missing cinfiguration: secret key");
             IClient client = new Client(publicKey, privateKey);
 
             // get ticker
@@ -155,7 +155,7 @@ namespace Example
             var orderId = client.CreateLimitOrder(orderRequest);
             Console.WriteLine($"Order: {orderId}");
         }
-
+        /*
         private static void WithdrawFunds(IClient client)
         {
             var response = client.Withdraw(Currency.XRP, 50, "Binance");
@@ -168,6 +168,6 @@ namespace Example
             {
                 Console.WriteLine($"{MethodBase.GetCurrentMethod().Name} failed: {response.Error}");
             }
-        }
+        }*/
     }
 }

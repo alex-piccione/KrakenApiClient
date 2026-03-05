@@ -14,8 +14,11 @@ let readResource resourceName =
     let names = assembly.GetManifestResourceNames()
     if not(Array.contains resourceFullName names) then failwith $@"Cannot find ""{resourceName}"" in the embedded resources"
 
-    use reader = new StreamReader(assembly.GetManifestResourceStream(resourceFullName))
-    reader.ReadToEnd()
+    match assembly.GetManifestResourceStream(resourceFullName) with
+    | null -> failwith $@"Cannot load ""{resourceName}"" from the embedded resources"
+    | stream ->
+        use reader = new StreamReader(stream)
+        reader.ReadToEnd()
 
 [<Test>]
 let parsePairs () =
@@ -29,8 +32,11 @@ let parsePairs () =
 
     pairs |> should contain (CurrencyPair("ewt", "eur"))
     let ewt_eur = pairs.Find( fun p -> p = CurrencyPair("ewt", "eur") )
-    ewt_eur.OrderDecimals.IsSome |> should be True
-    ewt_eur.OrderDecimals.Value |> should equal 3
+    match ewt_eur with
+    | null -> Assert.Fail("Cannot find EWT/EUR pair")
+    | ewt_eur ->
+        ewt_eur.OrderDecimals.IsSome |> should be True
+        ewt_eur.OrderDecimals.Value |> should equal 3
 
 [<Test>]
 let parseTicker () =
@@ -55,7 +61,6 @@ let ``parseOrder for Limit order`` () =
     let struct (orderIds, amount) = parser.parseCreateOrder(json)
     orderIds |> should contain "OIDW6A-5TZUS-6P7ZPN"
     amount |> should equal 223.28146083
-
 
 //[<Test>]
 //let ``parseOpenOrders when list is empty`` () =

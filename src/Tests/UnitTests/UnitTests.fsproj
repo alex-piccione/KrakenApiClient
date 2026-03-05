@@ -1,39 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.30" />
-    <PackageReference Include="FsUnit" Version="7.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="nunit" Version="4.5.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="6.1.0">
+    <PackageReference Include="Alex75.Cryptocurrencies" />
+    <PackageReference Include="FsUnit" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="nunit" />
+    <PackageReference Include="NUnit3TestAdapter" >
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
-	<PackageReference Update="FSharp.Core" Version="10.0.103" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+	<PackageReference Update="FSharp.Core" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="data\extract mappings.py" />
-	<Content Include="data\response API feature disabled.json" />
+	  <Content Include="data\response API feature disabled.json" />
 	
     <EmbeddedResource Include="data\AssetPairs response.json" />    
-	<EmbeddedResource Include="data\Assets response %28not used%29.json" />    
-	<EmbeddedResource Include="data\Balance with ETH2.response.json" />    
-	<EmbeddedResource Include="data\create market order response.json" />    
-	<EmbeddedResource Include="data\create limit order response.json" />
+    <EmbeddedResource Include="data\Assets response %28not used%29.json" />    
+    <EmbeddedResource Include="data\Balance with ETH2.response.json" />    
+    <EmbeddedResource Include="data\create market order response.json" />    
+    <EmbeddedResource Include="data\create limit order response.json" />
     <EmbeddedResource Include="data\create order response - Error for No funds.json" />
     <EmbeddedResource Include="data\create order response - Error for Volume.json" />
-	
-
-    
-	<EmbeddedResource Include="data\Balance.response.json" />
+    <EmbeddedResource Include="data\Balance.response.json" />
     <EmbeddedResource Include="data\Balance with Stacking.response.json" />
     <EmbeddedResource Include="data\Balance with many assets.response.json" />
     <EmbeddedResource Include="data\Balance with Flexible Stacking.response.json" />
@@ -46,7 +42,7 @@
     <EmbeddedResource Include="data\list Open Orders response %28one limit order untouched%29.json" />
     <EmbeddedResource Include="data\list Closed Orders.json" />
     <EmbeddedResource Include="data\Withdraw Funds response.json" />
-	
+
     <Compile Include="currency_mapper.test.fs" />
     <Compile Include="currency_mapper not initialized.test.fs" />
     <Compile Include="parser.test.fs" />

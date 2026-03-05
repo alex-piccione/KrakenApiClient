@@ -2,7 +2,7 @@ name: 🚀 Deploy http-client branch
 
 on:
   push:
-    branches: ["http-client"]
+    #branches: ["http-client"]
 
 env:
   PROJECT_FOLDER: src/KrakenApiClient

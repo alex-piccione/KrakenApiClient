@@ -16,6 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="logo.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -32,11 +35,13 @@
     <Compile Include="IClient.fs" />
     <Compile Include="Client.fs" />
   </ItemGroup>
+  
+  <ItemGroup />
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies"/>
-    <PackageReference Include="CommunityToolkit.Diagnostics"  />
-    <PackageReference Include="Flurl.Http"  />
+    <PackageReference Include="Alex75.Cryptocurrencies" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
+    <PackageReference Include="Flurl.Http" />
     <PackageReference Include="FSharp.Data" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Update="FSharp.Core" />

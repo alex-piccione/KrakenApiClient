@@ -44,9 +44,9 @@ jobs:
 
     - name: 🧪 Run Tests
       run: |
-        dotnet test --no-restore --configuration Release /
-        #--logger "GitHubActions" /
-        --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY"
+        dotnet test --no-restore --configuration Release \
+          --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY" \
+          #--logger "GitHubActions" 
      
     #- name: 🎯 Define NuGet package version
     #  run: |
@@ -60,7 +60,6 @@ jobs:
 
     - name: 🎯 Define NuGet package version
       run: |
-        # Base version (e.g., 25.3.5) + build number (e.g., 123456)
         # MAJOR.MINOR.PATCH-BUILD-LABEL  // accepted SemVer format
         BASE_VERSION=$(date +'%y.%-m.%-d')-${{ github.run_number }}  # e.g., 25.3.5
         BUILD_NUMBER="${{ github.run_number }}"  # e.g., 123456
@@ -77,8 +76,8 @@ jobs:
       run: |
         echo create package $NUGET_PACKAGE_VERSION
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build 
-        -p:PackageVersion=$NUGET_PACKAGE_VERSION
-        -o ./nupkgs
+          -p:PackageVersion=$NUGET_PACKAGE_VERSION
+          -o ./nupkgs
 
     - name: 🚀 Publish NuGet
       run: |

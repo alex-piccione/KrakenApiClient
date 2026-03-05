@@ -26,9 +26,10 @@ module internal mapper =
     /// parameter:pairs = Seq of (krakenSymbol, krakenPairAltName, quote, base)
     type Mapping (pairs:seq<(string * string * string * string)>, assets:seq<(string * string)>) =
 
-
-        // Simce the Bsalance function returns "ETH.F" that we convert to "ETH" but the Assets list does not containe "ETH"
+        // Simce the Balance function returns "ETH.F" that we convert to "ETH" but the Assets list does not containe "ETH"
         // we need to add it
+        // TODO: where is "ETH.F" ?
+        // TODO: where is "SOL03" ?
         let extendedAssets = Seq.append assets (seq { ("ETH","ETH") })
 
         let krakenCurrenciesMap = Map( extendedAssets |> Seq.map ( fun (k, c) ->

@@ -1,8 +1,7 @@
 # Kraken API Client
 
 A Simple .Net client for the **Kraken** API.  
-Developed mainly for _XRP_.  
-Target frameworks: _.NET Standard 2.0_, _.NET Core 3.1_, .net 6, ,net 8
+Target frameworks: net 10
 
 [![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient) 
 ![Build Status](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy.yml/badge.svg)
@@ -45,5 +44,4 @@ Kraken API documentation:
 API support page: https://support.kraken.com/hc/en-us/categories/360000080686-API  
 
 C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
-
  

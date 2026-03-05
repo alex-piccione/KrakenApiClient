@@ -34,15 +34,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alex75.Cryptocurrencies" Version="1.5.30" />
-    <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
-    <PackageReference Include="Flurl.Http" Version="2.4.2" />
-    <PackageReference Include="FSharp.Data" Version="6.6.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="10.0.102" />
+    <PackageReference Include="Alex75.Cryptocurrencies"/>
+    <PackageReference Include="CommunityToolkit.Diagnostics"  />
+    <PackageReference Include="Flurl.Http"  />
+    <PackageReference Include="FSharp.Data" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Update="FSharp.Core" />
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,7 @@ name: 🚀 Deploy http-client branch
 on:
   push:
     #branches: ["http-client"]
+  workflow_dispatch:  # Adds "Run workflow" button
 
 env:
   PROJECT_FOLDER: src/KrakenApiClient

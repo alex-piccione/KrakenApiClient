@@ -17,15 +17,6 @@ jobs:
     - name: 📦 Checkout code
       uses: actions/checkout@v5
   
-    #- name: 🆕 Create Version
-    #  id: versioning
-    #  run: | 
-    #    # MAJOR.MINOR.PATCH-BUILD-LABEL  // accepted SemVer format
-    #    VERSION=$(date +'%y.%-m.%-d')-${{ github.run_number }}
-    #    # create OUTPUT variables for next steps
-    #    # echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-    #    echo "VERSION=$VERSION" >> $GITHUB_ENV  # Enables $VERSION below
-
     - name: ⚙️ Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -48,20 +39,10 @@ jobs:
           --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY" \
           #--logger "GitHubActions" 
      
-    #- name: 🎯 Define NuGet package version
-    #  run: |
-    #    suffix="-alpha"
-    #    # remove the suffix if we are pushing from main branch
-    #    if [[ ${{ github.event_name }} == "push" && ${{ github.ref }} == "refs/heads/main" ]]; then
-    #      suffix=""
-    #    fi
-    #    echo version:: $VERSION$suffix
-    #    echo "NUGET_PACKAGE_VERSION=$VERSION$suffix" >> $GITHUB_ENV
-
     - name: 🎯 Define NuGet package version
       run: |
         # MAJOR.MINOR.PATCH-BUILD-LABEL  // accepted SemVer format
-        BASE_VERSION=$(date +'%y.%-m.%-d')-${{ github.run_number }}  # e.g., 25.3.5
+        BASE_VERSION=$(date +'%y.%-m.%-d') # e.g., 25.3.5
         BUILD_NUMBER="${{ github.run_number }}"  # e.g., 123456
         NUGET_PACKAGE_VERSION="${BASE_VERSION}-${BUILD_NUMBER}"  # e.g., 25.3.5-123456
 
@@ -71,6 +52,7 @@ jobs:
         fi
 
         echo "NUGET_PACKAGE_VERSION=$NUGET_PACKAGE_VERSION" >> $GITHUB_ENV
+        echo "📦 NUGET PACKAGE VERSION: $NUGET_PACKAGE_VERSION >> $GITHUB_OUTPUT
     
     - name: 📦 Pack NuGet
       run: |

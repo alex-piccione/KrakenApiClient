@@ -30,7 +30,7 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: 🔍 Whhich branch is this?
-      run: 
+      run: |
         #echo "Branch: ${{ github.ref }}"
         echo github.ref:: ${{github.ref}}
 

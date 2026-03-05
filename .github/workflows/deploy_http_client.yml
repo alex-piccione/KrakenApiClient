@@ -56,9 +56,9 @@ jobs:
     
     - name: 📦 Pack NuGet
       run: |
-        echo create package $NUGET_PACKAGE_VERSION
-        dotnet pack $PROJECT_FOLDER --configuration Release --no-build 
-          -p:PackageVersion=$NUGET_PACKAGE_VERSION
+        echo create package $NUGET_PACKAGE_VERSION \
+        dotnet pack $PROJECT_FOLDER --configuration Release --no-build \
+          -p:PackageVersion=$NUGET_PACKAGE_VERSION \
           -o ./nupkgs
 
     - name: 🚀 Publish NuGet

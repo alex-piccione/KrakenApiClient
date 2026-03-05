@@ -2,7 +2,7 @@ name: 🚀 Deploy http-client branch
 
 on:
   push:
-    branches: [http-client]
+    branches: [""http-client""]
 
 env:
   PROJECT_FOLDER: src/KrakenApiClient
@@ -31,8 +31,8 @@ jobs:
 
     - name: 🔍 Whhich branch is this?
       run: 
-        echo "Branch: ${{ github.ref }}"
-        #echo github.ref:: ${{github.ref}}
+        #echo "Branch: ${{ github.ref }}"
+        echo github.ref:: ${{github.ref}}
 
     - name: 🔄 Restore packages
       run: dotnet restore

@@ -22,7 +22,7 @@ jobs:
         VERSION=$(date +'%y.%-m.%-d')-${{ github.run_number }}
         # create OUTPUT variables for next steps
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-        echo "VERSION=$VERSION" >> $GITHUB_ENV  # 🔑 Enables $VERSION below
+        echo "VERSION=$VERSION" >> $GITHUB_ENV  # Enables $VERSION below
 
     - name: ⚙️ Setup .NET
       uses: actions/setup-dotnet@v4
@@ -32,7 +32,7 @@ jobs:
     - name: 🔍 Whhich branch is this?
       run: 
         echo "Branch: ${{ github.ref }}"
-      #  echo github.ref:: ${{github.ref}}
+        #echo github.ref:: ${{github.ref}}
 
     - name: 🔄 Restore packages
       run: dotnet restore

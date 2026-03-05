@@ -19,7 +19,7 @@ jobs:
     - name: 🆕 Create Version
       id: versioning
       run: | 
-        VERSION=$(date +'%y.%-m.%-d')-${{ github.run_number }}
+        VERSION=$(date +'%y.%-m.%-d').${{ github.run_number }}
         # create OUTPUT variables for next steps
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_ENV  # Enables $VERSION below

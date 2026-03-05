@@ -61,7 +61,7 @@ let internal parseTicker (pair:CurrencyPair, data:string) =
 let internal parseBalance jsonString normalizeCurrency =
     let result = load_result_and_check_errors jsonString
 
-    // ticker can have the form TTT, TTT.S, TTT21.S, TTT28.S, TTT.F
+    // ticker can have the form TTT, TTT.S, TTT21.S, TTT28.S, TTT.F, SOL03.S...
 
     // map to "normal", "stacking" or "flexible" kind
     let mapByKind (kraken_currency, amountJson) =
@@ -69,11 +69,14 @@ let internal parseBalance jsonString normalizeCurrency =
         match (kraken_currency:string).Split('.') with
         | [|"ETH2"; "S"|] -> "stacking", Currency.ETH, amount
         | [|code|] -> "normal", normalizeCurrency kraken_currency , amount
-        | [|code;"S"|] -> // manage stacking tickers, like "CCC.S" and "CCC28.S"
+        | [|code;"S"|] -> // manage stacking tickers, like "CCC.S", "CCC28.S", "SOL03.S"
             let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code 
             "stacking", normalizeCurrency newCode , amount
         | [|code; "F"|] -> // manage Flexible, like "ADA.F"
             "flexible", normalizeCurrency code, amount
+        //| [|code; "B"|] -> // manage YealdBearing, like "ADA.B"
+        //| [|code; "M"|] -> // manage OptInReward, like "ADA.M"
+        //| [|code; "T"|] -> // manage Tokenized, like "ADA.T"
         | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
 
     let mappedByKind:seq<(string * Currency * decimal)> = result.Properties() |> Seq.map mapByKind

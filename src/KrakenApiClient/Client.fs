@@ -13,7 +13,7 @@ type public Client (public_key:string, secret_key:string) =
     let cache = new Cache()
     let assets_cache_time = TimeSpan.FromHours 6.0
     let ticker_cache_time = TimeSpan.FromSeconds 10.0
-    let balance_cache_time = TimeSpan.FromSeconds 30.0
+    //let balance_cache_time = TimeSpan.FromSeconds 30.0
 
     let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method requires public and secret keys"
 
@@ -87,24 +87,20 @@ type public Client (public_key:string, secret_key:string) =
                      cache.SetTicker ticker
                      ticker
 
-        // private //
+        // private (require authentication) //
 
         member this.GetBalance(): AccountBalance =
             ensure_keys()
 
-            match cache.GetAccountBalance(balance_cache_time) with
-            | Some balance -> balance
-            | _ ->
-                let url = f"%s/private/Balance" base_url
-                let nonce_content, content = create_content (dict [])
-                let balances =
-                    (url.WithApi "/0/private/Balance" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
-                        .EnsureSuccessStatusCode()
-                        |> fun msg -> msg.Content.ReadAsStringAsync().Result
-                        |> parser.parseBalance <| currency_mapper.getCurrency
+            let url = f"%s/private/Balance" base_url
+            let nonce_content, content = create_content (dict [])
+            let balances =
+                (url.WithApi "/0/private/Balance" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
+                    .EnsureSuccessStatusCode()
+                    |> fun msg -> msg.Content.ReadAsStringAsync().Result
+                    |> parser.parseBalance <| currency_mapper.getCurrency
 
-                cache.SetAccountBalance balances
-                balances
+            balances
 
         member this.ListOpenOrdersIsAvailable = true
         member this.ListOpenOrders () =

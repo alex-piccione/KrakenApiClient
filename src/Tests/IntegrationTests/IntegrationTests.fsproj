@@ -16,8 +16,8 @@
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="nunit"  />
-    <PackageReference Include="NUnit3TestAdapter" >
+    <PackageReference Include="nunit" />
+    <PackageReference Include="NUnit3TestAdapter">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -26,16 +26,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="utils.fs" />
+    <Compile Include="Client\utils.fs" />
+    <Compile Include="Client\Withdraw.fs" />
+    <Compile Include="Client\List Pairs.fs" />
+    <Compile Include="Client\Get Ticker.fs" />
+    <Compile Include="Client\Get Balance.fs" />
+    <Compile Include="Client\Create Market Order.fs" />
+    <Compile Include="Client\Create Limit Order.fs" />
+    <Compile Include="Client\List Open Orders.fs" />
+    <Compile Include="Client\List Closed Orders.fs" />
     <Compile Include="Mapping.test.fs" />
-    <Compile Include="Client Withdraw.fs" />
-    <Compile Include="Client ListPairs.fs" />
-    <Compile Include="Client GetTicker.fs" />
-    <Compile Include="Client GetBalance.fs" />
-    <Compile Include="Client Create Market Order.fs" />
-    <Compile Include="Client Create Limit Order.fs" />
-    <Compile Include="Client List Open Orders.fs" />
-    <Compile Include="Client List Closed Orders.fs" />
     <Compile Include="__this is a library__.fs" />
   </ItemGroup>
 

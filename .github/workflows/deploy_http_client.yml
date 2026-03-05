@@ -2,7 +2,7 @@ name: 🚀 Deploy http-client branch
 
 on:
   push:
-    #branches: ["http-client"]
+    branches: ["http-client"]
   workflow_dispatch:  # Adds "Run workflow" button
 
 env:

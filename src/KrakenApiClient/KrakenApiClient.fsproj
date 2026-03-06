@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Content Include="README.md" Pack="true" PackagePath="\" />
-    <EmbeddedResource Include="logo.png">
+    <EmbeddedResource Include="logo.png" Pack="true" PackagePath="\" >
       <!--<Pack>True</Pack>
       <PackagePath></PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->

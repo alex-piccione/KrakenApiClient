@@ -54,14 +54,14 @@ jobs:
     
     - name: 📦 Pack NuGet
       run: |
-        echo create package $NUGET_PACKAGE_VERSION \
+        echo create package $NUGET_PACKAGE_VERSION
         dotnet pack $PROJECT_FOLDER --configuration Release --no-build \
           -p:PackageVersion=$NUGET_PACKAGE_VERSION \
           -o ./nupkgs
 
     - name: 🚀 Publish NuGet
       run: |
-        echo "publish $NUGET_PACKAGE_VERSION" \
+        echo "publish $NUGET_PACKAGE_VERSION"
         dotnet nuget push ./nupkgs/*.nupkg \
           --api-key "${NUGET_API_KEY}" \
           --source https://api.nuget.org/v3/index.json \

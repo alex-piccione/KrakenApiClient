@@ -18,13 +18,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="README.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="README.md" Pack="true" PackagePath="\" />
     <EmbeddedResource Include="logo.png">
-      <Pack>True</Pack>
+      <!--<Pack>True</Pack>
       <PackagePath></PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
     </EmbeddedResource>
   </ItemGroup>
   

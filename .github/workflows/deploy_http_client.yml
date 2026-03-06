@@ -41,16 +41,12 @@ jobs:
      
     - name: 🎯 Define NuGet package version
       run: |
-        # MAJOR.MINOR.PATCH-BUILD-LABEL  // accepted SemVer format
-        #BASE_VERSION=$(date +'%y.%-m.%-d') # e.g., 25.3.5
-        #BUILD_NUMBER="${{ github.run_number }}"  # e.g., 123456
-        #NUGET_PACKAGE_VERSION="${BASE_VERSION}-${BUILD_NUMBER}"  # e.g., 25.3.5-123456
-
         NUGET_PACKAGE_VERSION=$(date +'%y.%-m.%-d') # e.g., 25.3.5
 
         # Append -alpha for non-main branches
         if [[ ${{ github.ref }} != "refs/heads/main" ]]; then
-          NUGET_PACKAGE_VERSION="${NUGET_PACKAGE_VERSION}-alpha"  # e.g., 25.3.5-123456-alpha
+          BUILD_NUMBER="${{ github.run_number }}"  # e.g., 123
+          NUGET_PACKAGE_VERSION="${NUGET_PACKAGE_VERSION}-alpha.${BUILD_NUMBER}"  # e.g., 25.3.5-alpha.123
         fi
 
         echo "NUGET_PACKAGE_VERSION=$NUGET_PACKAGE_VERSION" >> $GITHUB_ENV

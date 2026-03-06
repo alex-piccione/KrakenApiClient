@@ -6,6 +6,8 @@
     <PackageId>Alex75.KrakenApiClient</PackageId>
     <PackageIcon>logo.png</PackageIcon>
     <PackageTags>Kraken cryptocurrency XRP Bitcoin</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/alex-piccione/KrakenApiClient</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageProjectUrl>https://github.com/alex-piccione/KrakenApiClient</PackageProjectUrl>

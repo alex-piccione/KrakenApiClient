@@ -27,10 +27,26 @@ type public Client (public_key:string, secret_key:string) =
         let nonce_content = f"%s%s" nonce content
         (nonce_content, content)
 
+    // useless for now, because it provide Kraken "crazy" assets without any link to standard tokens
+    // SOL, SOL.S, SOL03.S, LUNA2.S, ETH2.S, etc... 
+
+    let get_assets() =
+        //match cache.GetAssetsInfo assets_cache_time with
+        //| Some pairs -> pairs
+        //| _ ->
+        task {
+            let! responseContent = (f"%s/public/Assets" base_url).GetStringAsync()
+            let currencies = parser.parseAssets responseContent
+            //cache.SetPairs pairs
+            //return currencies :> ICollection<Currency>
+            return currencies
+        }
+
     do
         currency_mapper.startMapping base_url
 
     new () = Client(null, null)
+
 
     member this.CreateMarketOrder (pair:CurrencyPair, side:OrderSide, buyAmount:decimal) =
         ensure_keys()

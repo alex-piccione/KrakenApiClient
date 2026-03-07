@@ -19,11 +19,10 @@
 
   <ItemGroup>
     <Content Include="README.md" Pack="true" PackagePath="\" />
-    <EmbeddedResource Include="logo.png" Pack="true" PackagePath="\" >
-      <!--<Pack>True</Pack>
-      <PackagePath></PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
+    <EmbeddedResource Include="logo.png" Pack="true" PackagePath="\">
     </EmbeddedResource>
+    <Compile Include="asset.fs" />
+    <Compile Include="assets mapping.fs" />
   </ItemGroup>
   
   <ItemGroup>
@@ -35,13 +34,12 @@
     <Compile Include="IClient.fs" />
     <Compile Include="Client.fs" />
   </ItemGroup>
-  
-  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="Alex75.Cryptocurrencies" />
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Flurl.Http" />
+    <PackageReference Include="FSharp.Core" />
     <PackageReference Include="FSharp.Data" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Update="FSharp.Core" />

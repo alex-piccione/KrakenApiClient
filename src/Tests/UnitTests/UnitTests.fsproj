@@ -7,10 +7,11 @@
 
   <ItemGroup>
     <PackageReference Include="Alex75.Cryptocurrencies" />
+    <PackageReference Include="FSharp.Core" />
     <PackageReference Include="FsUnit" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="nunit" />
-    <PackageReference Include="NUnit3TestAdapter" >
+    <PackageReference Include="NUnit3TestAdapter">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -19,11 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="data\not used\Assets.response.json" />
+    <Content Include="data\Balance Response 3.json" />
     <None Include="data\extract mappings.py" />
 	  <Content Include="data\response API feature disabled.json" />
 	
     <EmbeddedResource Include="data\AssetPairs response.json" />    
-    <EmbeddedResource Include="data\Assets response %28not used%29.json" />    
     <EmbeddedResource Include="data\Balance with ETH2.response.json" />    
     <EmbeddedResource Include="data\create market order response.json" />    
     <EmbeddedResource Include="data\create limit order response.json" />
@@ -42,6 +44,7 @@
     <EmbeddedResource Include="data\list Open Orders response %28one limit order untouched%29.json" />
     <EmbeddedResource Include="data\list Closed Orders.json" />
     <EmbeddedResource Include="data\Withdraw Funds response.json" />
+    <Compile Include="asset mapping.test.fs" />
 
     <Compile Include="currency_mapper.test.fs" />
     <Compile Include="currency_mapper not initialized.test.fs" />

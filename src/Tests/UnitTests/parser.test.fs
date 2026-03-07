@@ -21,6 +21,13 @@ let readResource resourceName =
         reader.ReadToEnd()
 
 [<Test>]
+let parseAssets () =
+    let json = readResource "Assets.response.json"
+    let assets = parser.parseAssets json
+
+    assets |> should not' (be Empty)
+
+[<Test>]
 let parsePairs () =
     let json = readResource "AssetPairs response.json"
     let pairs = parser.parsePairs json

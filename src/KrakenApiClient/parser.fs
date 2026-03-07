@@ -6,12 +6,13 @@ open System
 open System.Collections.Generic
 open FSharp.Data
 open Alex75.Cryptocurrencies
+open asset
 
 let internal load_result_and_check_errors jsonString =
     let json = JsonValue.Parse(jsonString)
-    let errors = json.["error"].AsArray()
-    if errors.Length > 0 then failwith (errors.[0].AsString())
-    json.["result"]
+    let errors = json["error"].AsArray()
+    if errors.Length > 0 then failwith (errors[0].AsString())
+    json["result"]
 
 let private parseUnixTime unixTime = DateTimeOffset.FromUnixTimeMilliseconds(int64(unixTime*1000m)).DateTime
 
@@ -20,11 +21,11 @@ let private parseDecimal (value:string) =
 
 let private mapBTC currency = if currency = "XBT" then "BTC" else currency
 
-/// Creates a map <Kraken currency>:<currency>
-let internal parseAssets (jsonString) =
+let internal parseAssets (jsonString): Asset seq =
     let result = load_result_and_check_errors jsonString
     result.Properties()
-    |> Seq.map (fun (name, json) -> (name, json["altname"].AsString()) )
+    |> Seq.map (fun (name, json) -> { Name=name; AltName=json["altname"].AsString() })
+    //|> Seq.map (fun (name, _json) -> name )
 
 let internal parsePairs (content:string) =
     let result = load_result_and_check_errors content

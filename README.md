@@ -38,10 +38,10 @@ Deployment on GitHub use a much cleaner script with only 1 "layer" of inermediat
 
 ### Kraken documentation
 
-Kraken API documentation: 
-- REST API documentation: https://docs.kraken.com/rest
-- WebSocket API documentation: https://docs.kraken.com/websockets
-API support page: https://support.kraken.com/hc/en-us/categories/360000080686-API  
+- REST API documentation: https://docs.kraken.com/api/docs/rest-api/get-account-balance
+- APIs general introduction: https://docs.kraken.com/api/docs/guides/global-intro
 
-C# examples: https://bitbucket.org/arrivets/krakenapi/src/master/
- 
+### Kraken (crazy) assets
+
+Kraken assets can be obtains by the REASY aPI /Assets endpoint.  
+An asset can be like "SOL", "SOL.S", ""

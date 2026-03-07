@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Alex75.Cryptocurrencies" />
+    <PackageReference Include="FSharp.Core" />
     <PackageReference Include="FsUnit" />
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />

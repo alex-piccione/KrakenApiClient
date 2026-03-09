@@ -9,6 +9,9 @@ open Alex75.Cryptocurrencies
 
 let assembly = Assembly.GetExecutingAssembly()
 
+// helper to avoid type annotation on "contains" assertion
+let asAsset name alt : asset.Asset = { Name=name; AltName=alt }
+
 let readResource resourceName =
     let resourceFullName = $"{assembly.GetName().Name}.data.{resourceName}"
     let names = assembly.GetManifestResourceNames()
@@ -26,6 +29,10 @@ let parseAssets () =
     let assets = parser.parseAssets json
 
     assets |> should not' (be Empty)
+    assets |> should contain (asAsset "0G""0G")
+    assets |> should contain (asAsset "ADA" "ADA")
+    assets |> should contain (asAsset "ADA.S" "ADA.S")
+    assets |> should contain (asAsset "XXRP" "XRP")
 
 [<Test>]
 let parsePairs () =

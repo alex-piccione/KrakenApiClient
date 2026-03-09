@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="data\not used\Assets.response.json" />
-    <Content Include="data\Balance Response 3.json" />
+    <Content Include="data\not used\Balance Response 3.json" />
+    <EmbeddedResource Include="data\Assets.response.json" />
     <None Include="data\extract mappings.py" />
 	  <Content Include="data\response API feature disabled.json" />
 	

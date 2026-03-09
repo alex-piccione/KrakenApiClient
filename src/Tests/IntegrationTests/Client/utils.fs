@@ -13,6 +13,6 @@ let private getValue (key: string) =
     | null -> failwithf @"configuration value ""%s"" is missing" key
     | value -> value
 
-let client = Client(getValue "public key", getValue "secret key") :> IClient
+let client = Client(getValue "public key", getValue "private key") :> IClient
 
 let getClient() = client

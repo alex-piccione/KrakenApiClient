@@ -64,43 +64,96 @@ let internal parseBalance jsonString normalizeCurrency =
 
     // ticker can have the form TTT, TTT.S, TTT21.S, TTT28.S, TTT.F, SOL03.S...
 
-    // map to "normal", "stacking" or "flexible" kind
-    let mapByKind (kraken_currency, amountJson) =
+    // identify "normal", "stacking" or "flexible" kind, real currency name and amount
+    let processRecord (kraken_currency, amountJson): Currency * AssetType * decimal =
         let amount = (amountJson:JsonValue).AsDecimal()
-        match (kraken_currency:string).Split('.') with
-        | [|"ETH2"; "S"|] -> "stacking", Currency.ETH, amount
-        | [|code|] -> "normal", normalizeCurrency kraken_currency , amount
-        | [|code;"S"|] -> // manage stacking tickers, like "CCC.S", "CCC28.S", "SOL03.S"
-            let newCode = if code.Substring(code.Length-2) = "28" then code.Substring(0, code.Length-2) else code 
-            "stacking", normalizeCurrency newCode , amount
-        | [|code; "F"|] -> // manage Flexible, like "ADA.F"
-            "flexible", normalizeCurrency code, amount
-        //| [|code; "B"|] -> // manage YealdBearing, like "ADA.B"
-        //| [|code; "M"|] -> // manage OptInReward, like "ADA.M"
-        //| [|code; "T"|] -> // manage Tokenized, like "ADA.T"
-        | _ -> failwithf "Unmanaged Kraken currency symbol: \"%s\"" kraken_currency
 
-    let mappedByKind:seq<(string * Currency * decimal)> = result.Properties() |> Seq.map mapByKind
+        // get the currency and the type
+        let currency, kind = assets_mapping.getCurrencyInfo kraken_currency
 
-    let stackingMap = Map(
+        // the currency still need another mapping to get hte proper currency, like XXRP -> XRP
+        // Also ETH and ETH2 are both mapped to ETH,  and we want to have a single balance for them.
+        let currency = normalizeCurrency currency
+
+        currency, kind, amount
+
+    let emptyMap = Map.empty<Currency, CurrencyBalance>
+
+    let final_map =
+        result.Properties()
+        |> Seq.fold (fun map item ->  
+            let currency, kind, amount = processRecord item
+
+            if (map: Map<Currency, CurrencyBalance>).ContainsKey currency then
+                let existingBalance = map[currency]
+                let newBalance = 
+                    match kind with
+                    | AssetType.Normal -> CurrencyBalance(currency, existingBalance.Total + amount, existingBalance.Total + amount)
+                    | AssetType.Stacking 
+                    | AssetType.Flexible -> existingBalance.AddStacking amount
+                    | _ -> existingBalance.AddStacking amount // treat all the other types as stacking, since they are not available for trading
+                map.Add(currency, newBalance)
+            else 
+                let balance = 
+                    match kind with
+                    | AssetType.Normal -> CurrencyBalance(currency, amount, amount)
+                    | AssetType.Stacking 
+                    | AssetType.Flexible -> CurrencyBalance.Zero(currency).AddStacking amount
+                    | _ -> CurrencyBalance.Zero(currency).AddStacking amount// treat all the other types as stacking, since they are not available for trading
+                map.Add(currency, balance)
+            ) emptyMap
+
+    new AccountBalance(final_map.Values)
+   
+   
+   (*
+
+    for kraken_currency, amountJson in result.Properties() do
+        let kind, currency, amount = processRecord (kraken_currency, amountJson)
+        //let currency = normalizeCurrency kraken_currency
+        //let kind = mapByKind kraken_currency
+        // add the balance to the list
+
+
+        if balances.ContainsKey currency then 
+             // add current values
+        else
+             // add new balance
+             balances.A
+
+        if balances |> Seq.exists (fun balance -> balance.Currency = currency) then
+
+            if kind = AssetType.Normal then 
+                let existingBalance = balances |> Seq.find (fun balance -> balance.Currency = currency)
+                let newTotal = existingBalance.Total + amount
+                let newAvailable = existingBalance.Available + amount
+                let newBalance = CurrencyBalance(currency, newTotal, newAvailable)
+                balances.Remove(existingBalance) |> ignore
+                balances.Add(newBalance)
+            else if kind = AssetType.Stacking then 
+                let existingBalance = balances |> Seq.find (fun balance -> balance.Currency = currency)
+                let newBalance = existingBalance.AddStacking amount
+                balances.Remove(existingBalance) |> ignore
+                balances.Add(newBalance)
+            else
+            failwithf "Duplicate balance for currency %s" (currency.ToString())
+
+        let balance = CurrencyBalance(currency, amount, amount)
+        balances.Add(balance)
+
+    let mappedByKind:seq<(AssetType * Currency * decimal)> = result.Properties() |> Seq.map mapByKind
+
+    let availableMap = Map(
         mappedByKind 
-        |> Seq.filter (fun (kind,_,_) -> kind = "stacking")
+        |> Seq.filter (fun (kind,_,_) -> kind = AssetType.Normal)
         |> Seq.groupBy (fun (_,currency,_) -> currency)
         |> Seq.map(fun (currency,items) -> 
             let total = items |> Seq.sumBy( fun (_,_,value) -> value)
             (currency, total)
         ))
 
-        
-    let flexiblesMap = Map(
-        mappedByKind 
-        |> Seq.filter (fun (kind,_,_) -> kind = "flexible")
-        |> Seq.groupBy (fun (_,currency,_) -> currency)
-        |> Seq.map(fun (currency,items) -> 
-            let total = items |> Seq.sumBy( fun (_,_,value) -> value)
-            (currency, total)
-        ))
 
+    // NOTE. Assume that only the "normal" balance is available for trading, and all the other are not.
     let balances = 
         mappedByKind
         |> Seq.filter (fun (kind,_,_) -> kind = "normal")
@@ -137,6 +190,7 @@ let internal parseBalance jsonString normalizeCurrency =
         |> Seq.choose getStackingBalance
 
     new AccountBalance(Seq.append balances stackingBalances)
+    *)
 
 type internal BalanceExKrakenResponse = { balance: decimal; on_hold: decimal }
 

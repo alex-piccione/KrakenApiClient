@@ -1,8 +1,8 @@
-name: Deploy http-client branch
+name: .Net 10
 
 on:
   push:
-    branches: ["http-client"]
+    branches: ["net-10"]
   workflow_dispatch:  # Adds "Run workflow" button
 
 env:

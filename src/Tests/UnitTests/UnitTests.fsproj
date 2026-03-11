@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <IsPackable>false</IsPackable>
-    <GenerateProgramFile>false</GenerateProgramFile>
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
@@ -50,7 +48,6 @@
     <Compile Include="currency_mapper not initialized.test.fs" />
     <Compile Include="parser.test.fs" />
     <Compile Include="parser get balance.test.fs" />
-    <Compile Include="__this is a library__.fs" />
   </ItemGroup>
 
   <ItemGroup>

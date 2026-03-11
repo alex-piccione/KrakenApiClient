@@ -2,6 +2,7 @@
 
 open System
 open System.Collections.Generic
+open System.Threading.Tasks
 
 open Flurl.Http
 open Alex75.Cryptocurrencies
@@ -28,7 +29,7 @@ type public Client (public_key:string, secret_key:string) =
         (nonce_content, content)
 
     // useless for now, because it provide Kraken "crazy" assets without any link to standard tokens
-    // SOL, SOL.S, SOL03.S, LUNA2.S, ETH2.S, etc... 
+    // SOL, SOL.S, SOL03.S, LUNA2.S, ETH2.S, etc...
 
     let get_assets() =
         //match cache.GetAssetsInfo assets_cache_time with
@@ -46,7 +47,6 @@ type public Client (public_key:string, secret_key:string) =
         currency_mapper.startMapping base_url
 
     new () = Client(null, null)
-
 
     member this.CreateMarketOrder (pair:CurrencyPair, side:OrderSide, buyAmount:decimal) =
         ensure_keys()
@@ -77,9 +77,11 @@ type public Client (public_key:string, secret_key:string) =
 
         //with e -> CreateMarketOrderResponse.Fail e.Message
 
+
+
     interface IClient with
 
-        // public //
+        // public methos //
 
         member this.ListPairs() =
             match cache.GetPairs assets_cache_time with
@@ -103,11 +105,12 @@ type public Client (public_key:string, secret_key:string) =
                      cache.SetTicker ticker
                      ticker
 
-        // private (require authentication) //
+        // private methods (require authentication) //
 
         member this.GetBalance(): AccountBalance =
             ensure_keys()
 
+            //async {
             let url = f"%s/private/Balance" base_url
             let nonce_content, content = create_content (dict [])
             let balances =
@@ -117,6 +120,7 @@ type public Client (public_key:string, secret_key:string) =
                     |> parser.parseBalance <| currency_mapper.getCurrency
 
             balances
+            //}
 
         member this.ListOpenOrdersIsAvailable = true
         member this.ListOpenOrders () =

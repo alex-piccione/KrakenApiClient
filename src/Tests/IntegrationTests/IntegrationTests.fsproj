@@ -38,7 +38,6 @@
     <Compile Include="Client\List Open Orders.fs" />
     <Compile Include="Client\List Closed Orders.fs" />
     <Compile Include="Mapping.test.fs" />
-    <Compile Include="__this is a library__.fs" />
   </ItemGroup>
 
   <ItemGroup>

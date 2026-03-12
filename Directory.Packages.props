@@ -10,7 +10,7 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.4" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.3" />
-    <PackageVersion Include="Alex75.Cryptocurrencies" Version="1.5.30" />
+    <PackageVersion Include="Alex75.Cryptocurrencies" Version="26.3.11-alpha.12" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
     <PackageVersion Include="FSharp.Data" Version="8.1.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />

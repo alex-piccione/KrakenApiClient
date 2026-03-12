@@ -37,7 +37,6 @@ jobs:
       run: |
         dotnet test --no-restore --configuration Release \
           --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY" \
-          #--logger "GitHubActions" 
      
     - name: 🎯 Define NuGet package version
       run: |
@@ -61,7 +60,7 @@ jobs:
 
     - name: 🚀 Publish NuGet
       run: |
-        echo "publish $NUGET_PACKAGE_VERSION"
+        echo "publish $NUGET_PACKAGE_VERSION version"
         dotnet nuget push ./nupkgs/*.nupkg \
           --api-key "${NUGET_API_KEY}" \
           --source https://api.nuget.org/v3/index.json \

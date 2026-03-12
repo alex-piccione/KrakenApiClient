@@ -5,7 +5,6 @@ open FsUnit
 open Alex75.Cryptocurrencies
 open utils
 
-
 [<Test; Category("REQUIRES_API_KEY")>]
 let ``GetBalance()`` () =
     let balance = client.GetBalance()

@@ -7,16 +7,21 @@ open System.Threading.Tasks
 open Flurl.Http
 open Alex75.Cryptocurrencies
 open utils
+open System.Net.Http
 
 type public Client (public_key:string, secret_key:string) =
 
-    let base_url = "https://api.kraken.com/0"
+    let base_url = "https://api.kraken.com/0/"
     let cache = new Cache()
     let assets_cache_time = TimeSpan.FromHours 6.0
     let ticker_cache_time = TimeSpan.FromSeconds 10.0
     //let balance_cache_time = TimeSpan.FromSeconds 30.0
 
-    let ensure_keys () = if String.IsNullOrWhiteSpace(public_key) || String.IsNullOrWhiteSpace(secret_key) then failwith "This method requires public and secret keys"
+    let client = new HttpClient(BaseAddress = Uri(base_url))
+
+    do
+        if String.IsNullOrWhiteSpace(public_key) then failwith "Public key is empty"
+        if String.IsNullOrWhiteSpace(secret_key) then failwith "Secret key is empty"
 
     let create_content (properties:IDictionary<string, string>) =
         let nonce = DateTime.UtcNow.Ticks.ToString()
@@ -49,7 +54,6 @@ type public Client (public_key:string, secret_key:string) =
     new () = Client(null, null)
 
     member this.CreateMarketOrder (pair:CurrencyPair, side:OrderSide, buyAmount:decimal) =
-        ensure_keys()
 
         let url = f"%s/private/AddOrder" base_url
         let kraken_pair = currency_mapper.getKrakenPair pair
@@ -77,8 +81,6 @@ type public Client (public_key:string, secret_key:string) =
 
         //with e -> CreateMarketOrderResponse.Fail e.Message
 
-
-
     interface IClient with
 
         // public methos //
@@ -91,6 +93,21 @@ type public Client (public_key:string, secret_key:string) =
                 let pairs = parser.parsePairs responseContent
                 cache.SetPairs pairs
                 pairs :> ICollection<CurrencyPair>
+
+        member this.ListPairsAsync() =
+            match cache.GetPairs assets_cache_time with
+            | Some pairs -> Task.FromResult pairs
+            | _ -> task {
+                let! response = client.GetAsync "public/AssetPairs"
+                let! content = response.Content.ReadAsStringAsync()
+                match response.IsSuccessStatusCode with
+                | false -> return failwithf $"Response status is not success. {response.StatusCode} {response.ReasonPhrase} | {content[..500]}"
+                | true -> 
+                    let pairs = parser.parsePairs content
+                    cache.SetPairs pairs
+                    return pairs :> ICollection<CurrencyPair>
+                    //let responseContent = (f"%s/public/AssetPairs" base_url).GetStringAsync().Result
+            }
 
         member this.GetTicker(pair: CurrencyPair): Ticker =
             let cached_ticker = cache.GetTicker pair ticker_cache_time
@@ -108,7 +125,6 @@ type public Client (public_key:string, secret_key:string) =
         // private methods (require authentication) //
 
         member this.GetBalance(): AccountBalance =
-            ensure_keys()
 
             //async {
             let url = f"%s/private/Balance" base_url
@@ -124,7 +140,6 @@ type public Client (public_key:string, secret_key:string) =
 
         member this.ListOpenOrdersIsAvailable = true
         member this.ListOpenOrders () =
-            ensure_keys()
 
             let url = f"%s/private/OpenOrders" base_url
 
@@ -145,7 +160,6 @@ type public Client (public_key:string, secret_key:string) =
 
         member this.ListClosedOrdersIsAvailable = true
         member this.ListClosedOrders() =
-            ensure_keys()
 
             let url = f"%s/private/ClosedOrders" base_url
 
@@ -171,7 +185,6 @@ type public Client (public_key:string, secret_key:string) =
             else failwith result.Error
 
         member this.CreateLimitOrder(request: CreateOrderRequest): string =
-            ensure_keys()
             let url = f"%s/private/AddOrder" base_url
             let kraken_pair = currency_mapper.getKrakenPair request.Pair
 
@@ -203,8 +216,6 @@ type public Client (public_key:string, secret_key:string) =
             String.Join(", ", orderIds)
 
         member this.Withdraw (currency:Currency, amount:decimal, walletName:string) =
-            ensure_keys()
-
             let url = f"%s/private/Withdraw" base_url
 
             try

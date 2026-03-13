@@ -23,9 +23,9 @@
     <None Include="data\extract mappings.py" />
 	  <Content Include="data\response API feature disabled.json" />
 	
-    <EmbeddedResource Include="data\AssetPairs response.json" />    
-    <EmbeddedResource Include="data\Balance with ETH2.response.json" />    
-    <EmbeddedResource Include="data\create market order response.json" />    
+    <EmbeddedResource Include="data\AssetPairs response.json" />
+    <EmbeddedResource Include="data\Balance with ETH2.response.json" />
+    <EmbeddedResource Include="data\create market order response.json" />
     <EmbeddedResource Include="data\create limit order response.json" />
     <EmbeddedResource Include="data\create order response - Error for No funds.json" />
     <EmbeddedResource Include="data\create order response - Error for Volume.json" />

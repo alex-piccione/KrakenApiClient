@@ -6,11 +6,11 @@
     <PackageVersion Include="FSharp.Core" Version="11.0.100" />
     <PackageVersion Include="FsHttp" Version="15.0.3" />
     <PackageVersion Include="Flurl.Http" Version="2.4.2" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.4" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.3" />
-    <PackageVersion Include="Alex75.Cryptocurrencies" Version="26.3.11-alpha.12" />
+    <PackageVersion Include="Alex75.Cryptocurrencies" Version="26.3.13-alpha.28" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
     <PackageVersion Include="FSharp.Data" Version="8.1.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />

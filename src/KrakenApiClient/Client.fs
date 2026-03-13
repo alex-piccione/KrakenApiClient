@@ -83,8 +83,6 @@ type public Client (public_key:string, secret_key:string) =
 
     interface IClient with
 
-        // public methos //
-
         member this.ListPairs() =
             match cache.GetPairs assets_cache_time with
             | Some pairs -> pairs
@@ -106,7 +104,6 @@ type public Client (public_key:string, secret_key:string) =
                     let pairs = parser.parsePairs content
                     cache.SetPairs pairs
                     return pairs :> ICollection<CurrencyPair>
-                    //let responseContent = (f"%s/public/AssetPairs" base_url).GetStringAsync().Result
             }
 
         member this.GetTicker(pair: CurrencyPair): Ticker =
@@ -122,10 +119,23 @@ type public Client (public_key:string, secret_key:string) =
                      cache.SetTicker ticker
                      ticker
 
-        // private methods (require authentication) //
+        member this.GetTickerAsync(pair: CurrencyPair): Task<Ticker> = task {
+            let cached_ticker = cache.GetTicker pair ticker_cache_time
+            match cached_ticker with
+                | Some ticker -> return ticker
+                | _ ->
+                    let kraken_pair = currency_mapper.getKrakenPair pair
+                    let! response = client.GetAsync $"public/Ticker?pair={kraken_pair}"
+                    let! content = response.Content.ReadAsStringAsync()
+                    match response.IsSuccessStatusCode with
+                    | false -> return failwithf $"Response status is not success. {response.StatusCode} {response.ReasonPhrase} | {content[..500]}"
+                    | true -> 
+                        let ticker = parser.parseTicker(pair, content)
+                        cache.SetTicker ticker
+                        return ticker
+            }
 
         member this.GetBalance(): AccountBalance =
-
             //async {
             let url = f"%s/private/Balance" base_url
             let nonce_content, content = create_content (dict [])

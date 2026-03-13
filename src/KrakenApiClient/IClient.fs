@@ -16,5 +16,5 @@ type IClient =
 
     // ASYNC methods
     abstract ListPairsAsync: unit -> Task<ICollection<CurrencyPair>>
-    //abstract GetTickerAsync: CurrencyPair -> Task<Ticker>
+    abstract GetTickerAsync: CurrencyPair -> Task<Ticker>
   

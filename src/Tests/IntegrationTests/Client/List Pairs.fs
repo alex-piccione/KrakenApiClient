@@ -6,7 +6,6 @@ open FsUnit
 open Alex75.Cryptocurrencies
 open utils
 
-
 [<Test>]
 let ListPairs () =
     let pairs = client.ListPairs()

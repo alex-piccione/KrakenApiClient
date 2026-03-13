@@ -6,22 +6,23 @@ Target frameworks: net 10
 [![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient) 
 ![Build Status](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy.yml/badge.svg)
 
+[![.Net 10](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy_net-10.yml/badge.svg?branch=net-10)](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy_net-10.yml)
+
 ## Functionalities
 
-**Public** | &nbsp; | &nbsp; 
----                 | ---                                              | ---
-ListPairs           | List available currency pairs                    | 
-Get Ticker          | Retrieve the Ticker of a specific currency pair. | The response is cached for a configurable amount of time.
 
+Cached: The response is cached for a configurable amount of time.
 
-**Private** | &nbsp; | &nbsp;
----                  | ---                                                                | ---
-Get Balance          | Retrieve the owned and available amount <br/>of every currencies.  | 
-Create Market Order  | Create an order at the current market price                        | 
-Create Limit Order   | Create an order with a specified price                             | 
-List open orders     | List all the open orders                                           | 
-List closed orders   | List all the closed order                                          |
-Withdraw Crypto      | Withdraw cryptocurrency to a registered wallet.                    | The _wallet name_ must be registered in advance
+| Function             | Cached | Description                                                    | Note | 
+|----------------------|----|--------------------------------------------------------------------|------| 
+| List Pairs           | ✔️ | List all the available currency pairs.                             |      |
+| Get Ticker           | ✔️ | Retrieve the Ticker of a specific currency pair.                   |      |
+| Get Balance          | ✔️ | Retrieve the owned and available amount <br/>of every currencies.  |      |
+| Create Market Order  |    | Create an order at the current market price                        |      |
+| Create Limit Order   |    | Create an order with a specified price                             |      |
+| List open orders     |    | List all the open orders                                           |      |
+| List closed orders   |    | List all the closed order                                          |      |
+| Withdraw Crypto      |    | Withdraw cryptocurrency to a registered wallet.                    | The _wallet name_ must be registered in advance |
 
 
 ## How to use it

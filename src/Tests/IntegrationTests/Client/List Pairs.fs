@@ -6,7 +6,7 @@ open FsUnit
 open Alex75.Cryptocurrencies
 open utils
 
-[<Test>]
+[<Test; Category("REQUIRES_API_KEY")>]
 let ListPairs () = task {
     let! pairs = client.ListPairs()
 

@@ -26,7 +26,6 @@ let internal createSignature (path:string) privateKey (data:Map<string, obj>) (n
     content, Convert.ToBase64String(signature)
 
 
-
 /// extend HttpClient method
 
 type Net.Http.HttpClient with
@@ -44,7 +43,7 @@ type Net.Http.HttpClient with
     member self.PostAsyncWithSignature path publicKey privateKey =
         let nonce = getNonce()
 
-        let data = Map.empty<string, obj> // [
+        //let data = Map.empty<string, obj> // [
             //"nonce", nonce
         //]
 

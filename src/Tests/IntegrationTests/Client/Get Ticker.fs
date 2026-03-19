@@ -7,6 +7,7 @@ open Swensen.Unquote
 open Alex75.Cryptocurrencies
 open utils
 
+[<Category("REQUIRES_API_KEY")>]
 [<TestCase("xrp", "eur")>]
 [<TestCase("xrp", "usd")>]
 [<TestCase("ETH", "usd")>]

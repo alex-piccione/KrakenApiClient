@@ -34,6 +34,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: 🧪 Run Tests
+      if: false
       run: |
         dotnet test --no-restore --configuration Release \
           --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY" \

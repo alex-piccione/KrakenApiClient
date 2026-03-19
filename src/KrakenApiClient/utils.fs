@@ -12,6 +12,8 @@ let sha512HMAC (data:byte[], messageBytes:byte[]) =
     (new Security.Cryptography.HMACSHA512(data)).ComputeHash(messageBytes)
 
 
+let invariantCulture = System.Globalization.CultureInfo.InvariantCulture
+
 let private getNonce () = DateTime.UtcNow.Ticks.ToString()
 
 let internal createSignature (path:string) privateKey (data:Map<string, obj>) (nonce:string) =
@@ -23,7 +25,7 @@ let internal createSignature (path:string) privateKey (data:Map<string, obj>) (n
     let base64DecodedSecred = Convert.FromBase64String(privateKey)
     let signature = sha512HMAC(base64DecodedSecred, message)
 
-    content, Convert.ToBase64String(signature)
+    Convert.ToBase64String(signature)
 
 
 /// extend HttpClient method
@@ -32,7 +34,7 @@ type Net.Http.HttpClient with
 
     /// Call GET adding the signature for API authentication
     member self.GetAsyncWithSignature path publicKey privateKey =
-        let _, signature = createSignature path privateKey Map.empty (getNonce())
+        let signature = createSignature path privateKey Map.empty (getNonce())
         let message = new Net.Http.HttpRequestMessage(Net.Http.HttpMethod.Get, path)
         message.SetHeader ("API-Key", publicKey)
         message.SetHeader ("API-Sign", signature)
@@ -43,29 +45,24 @@ type Net.Http.HttpClient with
     member self.PostAsyncWithSignature path publicKey privateKey =
         let nonce = getNonce()
 
-        let data = Map.empty<string, obj> // [
-            //"nonce", nonce
-        //]
+        let data = Map.empty<string, obj>
 
-        //let a = dict data
+        // System.Globalization.CultureInfo.InstalledUICulture
+        let form = 
+            data 
+            |> Map.add "nonce" nonce
+            |> Map.toSeq
+            |> Seq.map (fun (k, v) -> System.Collections.Generic.KeyValuePair(k, v.ToString()))
+            |> Seq.toList
 
-        let form = [
-            System.Collections.Generic.KeyValuePair("nonce", nonce)
-        ]
-
-        let payload, signature = createSignature path privateKey data nonce
+        let signature = createSignature path privateKey data nonce
         let message = new Net.Http.HttpRequestMessage(Net.Http.HttpMethod.Post, path)
-        //let jsonBody = $"""{{"nonce":{nonce}}}"""
-        //message.Content <- new Net.Http.StringContent(jsonBody, Encoding.UTF8, "application/json")
-        //message.Content <- new Net.Http.StringContent(payload, Encoding.UTF8, "text/plain")
+
         message.Content <- new Net.Http.FormUrlEncodedContent(form)
-        //message.SetHeader ("Content-Type", "application/json")
         message.SetHeader ("API-Key", publicKey)
         message.SetHeader ("API-Sign", signature)
 
         self.SendAsync message
-
-
 
 
 /// extend Flurl to add API key and signature

@@ -1,20 +1,19 @@
 ﻿namespace Alex75.KrakenApiClient
 
-open System.Collections.Generic
-open System.Threading.Tasks
 open Alex75.Cryptocurrencies
+open Alex75.Cryptocurrencies.Exchanges
 
 type IClient =
-    inherit IApiClient
-    inherit IApiClientPrivate
+    // new async interfaces
+    inherit IApiClientV2
+
+    // legacy not-async interfaces
+    //inherit IApiClient
+    //inherit IApiClientPrivate
     //inherit IApiClientWithInfo
     inherit IApiClientMakeOrders
     inherit IApiClientListOrders
     //inherit IApiClientWithdrawals
 
+    // Custom
     abstract member Withdraw: currency:Currency * amount:decimal * walletName:string -> WithdrawalResponse
-
-    // ASYNC methods
-    abstract ListPairsAsync: unit -> Task<ICollection<CurrencyPair>>
-    abstract GetTickerAsync: CurrencyPair -> Task<Ticker>
-  

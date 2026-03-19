@@ -43,9 +43,11 @@ type Net.Http.HttpClient with
     member self.PostAsyncWithSignature path publicKey privateKey =
         let nonce = getNonce()
 
-        //let data = Map.empty<string, obj> // [
+        let data = Map.empty<string, obj> // [
             //"nonce", nonce
         //]
+
+        //let a = dict data
 
         let form = [
             System.Collections.Generic.KeyValuePair("nonce", nonce)

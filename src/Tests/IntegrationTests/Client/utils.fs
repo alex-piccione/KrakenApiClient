@@ -1,11 +1,12 @@
 ﻿module utils
 
+open System.Reflection
 open Microsoft.Extensions.Configuration
 open Alex75.KrakenApiClient
 
 let configuration =
     ConfigurationBuilder()
-        .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352") // same of main project
+        .AddUserSecrets(Assembly.GetExecutingAssembly()) // assembly is required to give the runtime the correct one where to find the UserSecretsId
         .Build()
 
 let private getValue (key: string) =
@@ -14,5 +15,3 @@ let private getValue (key: string) =
     | value -> value
 
 let client = Client(getValue "public key", getValue "private key") :> IClient
-
-let getClient() = client

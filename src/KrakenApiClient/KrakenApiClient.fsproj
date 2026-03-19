@@ -18,9 +18,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="python official signature implementation\api_signature.py" />
     <Content Include="README.md" Pack="true" PackagePath="\" />
     <EmbeddedResource Include="logo.png" Pack="true" PackagePath="\">
     </EmbeddedResource>
+    <Compile Include="Constants.fs" />
     <Compile Include="asset.fs" />
     <Compile Include="assets mapping.fs" />
   </ItemGroup>
@@ -43,6 +45,10 @@
     <PackageReference Include="FSharp.Data" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Update="FSharp.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Python official signature implementation\" />
   </ItemGroup>
 
 </Project>

@@ -5,11 +5,9 @@ open NUnit.Framework
 
 open Alex75.Cryptocurrencies
 
-let base_url = "https://api.kraken.com/0"
-
 [<SetUp>]
 let SetUp () =
-    currency_mapper.startMapping base_url
+    currency_mapper.startMapping ()
 
 [<Test>]
 let ``getCurrency`` () =

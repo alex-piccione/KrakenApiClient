@@ -6,6 +6,7 @@ open FsUnit
 [<Test>]
 let ``createSignature produce expected signature as per official documentation example`` () =
 
+    // gitguardian:ignore
     let privateKey = "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg=="
     let nonce = "1616492376594"
     let path = "/0/private/AddOrder"

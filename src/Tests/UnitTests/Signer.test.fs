@@ -10,6 +10,7 @@ let ``createSignature produce expected signature as per official documentation e
     let privateKey = "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg=="
     let nonce = "1616492376594"
     let path = "/0/private/AddOrder"
+    // gitguardian:ignore
     let expectedSignature = "4/dpxb3iT4tp/ZCVEwSnEsLxx0bqyhLpdfOpc6fn7OR8+UClSV5n9E6aSS8MPtnRfp32bAb0nmbRn6H8ndwLUQ=="
 
     let data = Map.ofSeq<string, obj> [

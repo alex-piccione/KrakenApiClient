@@ -31,12 +31,12 @@ jobs:
       run: dotnet restore
 
     - name: 🏗️ Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build -c Release --no-restore
 
     - name: 🧪 Run Tests
       if: false
       run: |
-        dotnet test --no-restore --configuration Release \
+        dotnet test --no-restore -c Release \
           --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY" \
      
     - name: 🎯 Define NuGet package version

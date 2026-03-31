@@ -10,7 +10,6 @@ Target frameworks: net 10
 
 ## Functionalities
 
-
 Cached: The response is cached for a configurable amount of time.
 
 | Function             | Cached | Description                                                    | Note | 
@@ -44,5 +43,5 @@ Deployment on GitHub use a much cleaner script with only 1 "layer" of inermediat
 
 ### Kraken (crazy) assets
 
-Kraken assets can be obtains by the REASY aPI /Assets endpoint.  
-An asset can be like "SOL", "SOL.S", ""
+Kraken assets can be obtains by the REST API _/Assets_ endpoint.  
+An asset can be like "SOL", "SOL.S" etc..., so it need to be parsed in some way to get a official cryptocurrency symbol.

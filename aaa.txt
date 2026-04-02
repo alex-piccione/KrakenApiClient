@@ -1,0 +1,6 @@
+
+
+# https://docs.gitguardian.com/ggshield-docs/configuration#configuration-files
+
+
+let privateKey = "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg=="

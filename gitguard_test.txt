@@ -1,0 +1,4 @@
+Test GitGuard.
+
+
+secret_key="aaa123456111111mmmmasasas"

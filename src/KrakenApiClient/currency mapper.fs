@@ -1,13 +1,19 @@
 ﻿module internal currency_mapper
 
-[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
-[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("IntegrationTests")>] do()
-
+// TODO: write an explanation aboud the need of a mapper and how it works
 (*
-A mapping of currencies and pairs will be updated continuosly in the background.
+Kraken use weir currency symbols.
+XBT for BTC and ETH2 for ETH, are two special cases.
+It also has an internal convention for currencies used for difefrent purposes...
+
+
+This is a mapping of currencies and pairs that will be updated continuosly in the background.
 Every time the mapping is updated the "lastUpdate" field is updated with current date and time.
 If it fails the first time it raises an error, not on successive failures.
 *)
+
+[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
+[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("IntegrationTests")>] do()
 
 open System
 open System.Collections.Generic
@@ -16,8 +22,6 @@ open Alex75.Cryptocurrencies
 open System.Net.Http
 
 module internal mapper =
-    //[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")>] do()
-    //[<assembly:System.Runtime.CompilerServices.InternalsVisibleTo("IntegrationTests")>] do()
 
     let base_url = "https://api.kraken.com"
     let client = new HttpClient(BaseAddress = Uri(base_url))
@@ -25,10 +29,7 @@ module internal mapper =
     /// parameter:pairs = Seq of (krakenSymbol, krakenPairAltName, quote, base)
     type Mapping (pairs:seq<(string * string * string * string)>, assets:seq<(string * string)>) =
 
-        // Since the Balance function returns "ETH.F" that we convert to "ETH" but the Assets list does not containe "ETH"
-        // we need to add it
-        // TODO: where is "ETH.F" ?
-        // TODO: where is "SOL03" ?
+        // Since the Balance function returns "ETH.F" that we convert to "ETH" but the Assets list does not contain "ETH"
         let extendedAssets = Seq.append assets (seq { ("ETH","ETH") })
 
         let krakenCurrenciesMap = Map( extendedAssets |> Seq.map ( fun (k, c) ->
@@ -39,7 +40,7 @@ module internal mapper =
             | _ -> (k,c)
         ))
 
-        // create a key:value map wherre the key is the kraken pair altname (used in order list) and the value is the standard currency pair
+        // create a key:value map where the key is the kraken pair altname (used in order list) and the value is the standard currency pair
         let krakenAltNamePairMap =
             Map( pairs
             |> Seq.map( fun (krakenPair, krakenAltName, krakenBase_, krakenQuote) ->
@@ -65,8 +66,8 @@ module internal mapper =
         /// given an "altname" (orders list) returns the standard pair. XRPEUR -> XRP/EUR
         member this.getPairFromAltName altName = krakenAltNamePairMap.[altName]
 
-    let mapTTL = TimeSpan.FromHours(6.0)  // 6 hours
-    let LOCK = Object()
+    //let mapTTL = TimeSpan.FromHours(6.0)  // 6 hours
+    //let LOCK = Object()
     let mutable lastError: Option<Exception> = Some(Exception("Mapper is not initialized"))
     let mutable lastUpdate:Option<DateTime> = None
     let mutable mapping:Option<Mapping> = None
@@ -88,28 +89,31 @@ module internal mapper =
             |> Seq.map( fun (name, json) -> name, json["altname"].AsString() )
     }
 
-    let updateMap () =
-        lock LOCK ( fun () -> task {
-            if lastUpdate.IsNone || (DateTime.Now - lastUpdate.Value) > Constants. MAPPED_CURRENCIES_LIFETIME then
-                let mutable run = 0
-                while run = 0 || run < 10 do
-                    try
-                        let! pairs = fetchPairs ()
-                        let! assets = fetchAssets ()
-                        mapping <- Some(Mapping(pairs, assets))
-                        lastUpdate <- Some(DateTime.Now)
-                        run <- 10 // stop
-                        lastError <- None
-                    with e ->
-                        run <- run + 1
-                        lastError <- Some(e)
+    let updateMap () = task  {
+        let mutable run = 0
+        while run = 0 || run < 10 do
+            try
+                let! pairs = fetchPairs ()
+                let! assets = fetchAssets ()
+                mapping <- Some(Mapping(pairs, assets))
+                lastUpdate <- Some(DateTime.Now)
+                run <- 10 // stop
+                lastError <- None
+            with e ->
+                run <- run + 1
+                lastError <- Some(e)
         }
-    )
+
+        //lock LOCK ( fun () -> task {
+        //    if lastUpdate.IsNone || (DateTime.Now - lastUpdate.Value) > Constants.MAPPED_CURRENCIES_LIFETIME then
+
+        //}
+    //)
 
 let startMapping () = task {
-    let timer = new System.Timers.Timer(mapper.mapTTL.TotalMilliseconds)
+    let timer = new System.Timers.Timer(Constants.MAPPED_CURRENCIES_LIFETIME.TotalMilliseconds)
     timer.AutoReset <- true
-    timer.Elapsed.Add (fun e -> mapper.updateMap() |> ignore)
+    timer.Elapsed.Add (fun _ -> mapper.updateMap() |> ignore)
     do! mapper.updateMap() // initial call
 }
 

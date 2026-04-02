@@ -8,6 +8,9 @@ Target frameworks: net 10
 
 [![.Net 10](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy_net-10.yml/badge.svg?branch=net-10)](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy_net-10.yml)
 
+This library uses common types defined in Alex75.Cryptocurrencies, like Currecy, CurrencyPir, Ticker...
+
+
 ## Functionalities
 
 Cached: The response is cached for a configurable amount of time.
@@ -22,6 +25,20 @@ Cached: The response is cached for a configurable amount of time.
 | List open orders     |    | List all the open orders                                           |      |
 | List closed orders   |    | List all the closed order                                          |      |
 | Withdraw Crypto      |    | Withdraw cryptocurrency to a registered wallet.                    | The _wallet name_ must be registered in advance |
+
+## Functionalities
+
+Cached: The response is cached for a configurable amount of time.
+| Function               | Cached | Description                                                    | Note                                                                                     |
+|------------------------|--------|----------------------------------------------------------------|--------------------------------------------------------------------------|
+| List Pairs             | ✔️     | List all the available currency pairs.                         |                                                                                          |
+| Get Ticker             | ✔️     | Retrieve the Ticker of a specific currency pair.               |                                                                                          |
+| Get Balance            |        | Retrieve the owned and available amount of every currency.     |                                                                                          |
+| Create Market Order    |        | Create an order at the current market price.                    |                                                                                          |
+| Create Limit Order     |        | Create an order with a specified price.                        |                                                                                          |
+| List Open Orders       |        | List all the open orders.                                      |                                                                                          |
+| List Closed Orders     |        | List all the closed orders.                                    |                                                                                          |
+| Withdraw Crypto        |        | Withdraw cryptocurrency to a registered wallet.                | The **wallet name** must be registered in advance on Kraken.              |
 
 
 ## How to use it
@@ -45,3 +62,11 @@ Deployment on GitHub use a much cleaner script with only 1 "layer" of inermediat
 
 Kraken assets can be obtains by the REST API _/Assets_ endpoint.  
 An asset can be like "SOL", "SOL.S" etc..., so it need to be parsed in some way to get a official cryptocurrency symbol.
+
+
+## TODO
+
+- Clean currency_mapper (use hte new CurrenciesMapper type and interface)
+- Move fixed cache from Client.fs to Constants.fs
+- can we move the  fetchPairs and fetchAssets functions from currency mapper to Client.fs ?
+  (if not write a comment)

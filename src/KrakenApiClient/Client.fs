@@ -13,9 +13,9 @@ type public Client (publicKey:string, secretKey:string) =
 
     let base_url = "https://api.kraken.com"
     let cache = new Cache()
+    // TODO: move to Constants.fs
     let assets_cache_time = TimeSpan.FromHours 6.0
     let ticker_cache_time = TimeSpan.FromSeconds 10.0
-    //let balance_cache_time = TimeSpan.FromSeconds 30.0
 
     let client = new HttpClient(BaseAddress = Uri(base_url))
 
@@ -29,27 +29,12 @@ type public Client (publicKey:string, secretKey:string) =
 
     let create_content (properties:IDictionary<string, string>) =
         let nonce = DateTime.UtcNow.Ticks.ToString()
-        //properties.Add("nonce", nonce)
         let content = properties
                         |> Seq.map (fun kv -> sprintf "&%s=%s" kv.Key kv.Value)
                         |> Seq.fold (+) ("nonce=" + nonce)
 
         let nonce_content = nonce + content
         (nonce_content, content)
-
-    // useless for now, because it provide Kraken "crazy" assets without any link to standard tokens
-    // SOL, SOL.S, SOL03.S, LUNA2.S, ETH2.S, etc...
-    let get_assets () =
-        //match cache.GetAssetsInfo assets_cache_time with
-        //| Some pairs -> pairs
-        //| _ ->
-        task {
-            let! content = client.GetStringAsync "/0/public/Assets"
-            let currencies = parser.parseAssets content
-            //cache.SetPairs pairs
-            //return currencies :> ICollection<Currency>
-            return currencies
-        }
 
     do
         currency_mapper.startMapping().GetAwaiter().GetResult() // await... so test it will be simple
@@ -133,18 +118,6 @@ type public Client (publicKey:string, secretKey:string) =
             | false -> return failwith $"Failed to call GetBalance. {response.StatusCode} {response.ReasonPhrase} {content}"
             | true -> return parser.parseBalance content <| currency_mapper.getCurrency
         }
-
-        (*
-        member this.GetBalance(): AccountBalance =
-            let url = f"%s/private/Balance" base_url
-            let nonce_content, content = create_content (dict [])
-            let balances =
-                (url.WithApi "/0/private/Balance" nonce_content public_key secret_key).PostUrlEncodedAsync(content).Result
-                    .EnsureSuccessStatusCode()
-                    |> fun msg -> msg.Content.ReadAsStringAsync().Result
-                    |> parser.parseBalance <| currency_mapper.getCurrency
-            balances
-        *)
 
         member this.ListOpenOrdersIsAvailable = true
         member this.ListOpenOrders () =

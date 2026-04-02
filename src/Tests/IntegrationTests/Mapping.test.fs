@@ -14,7 +14,7 @@ module currency_mapper =
     [<TestCase("XETH", "ETH")>]
     [<TestCase("XXBT", "XBT")>]
     [<TestCase("XXRP", "XRP")>]
-    let ``fetchAssetsAsync retrieves Krafken currency`` (krakenName, name) = task {
+    let ``fetchAssets retrieves Kraken currency`` (krakenName, name) = task {
         let! assets = currency_mapper.mapper.fetchAssets ()
         //assets |> Seq.filter (fun (k,c) -> k.Contains("ETH") || c.Contains("ETH")) |> Seq.iter (fun asset -> printf $"{asset}")
         //  (ETH2, ETH2)(ETH2.S, ETH2.S)(ETHFI, ETHFI)(ETHW, ETHW)(WETH, WETH)(XETH, ETH)

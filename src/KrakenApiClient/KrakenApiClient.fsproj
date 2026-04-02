@@ -48,6 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="CurrenciesMapper.fs" />
     <Folder Include="Python official signature implementation\" />
   </ItemGroup>
 

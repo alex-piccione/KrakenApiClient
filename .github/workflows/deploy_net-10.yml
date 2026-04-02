@@ -14,9 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🔍 Which branch is this?
+
+    - name: 🌿 Branch info
       run: |
-        .echo "Branch: ${{ github.ref }}"
+        echo "Branch: ${{ github.ref }}"
 
     - name: 📦 Checkout code
       uses: actions/checkout@v5

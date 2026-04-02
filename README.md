@@ -66,6 +66,10 @@ An asset can be like "SOL", "SOL.S" etc..., so it need to be parsed in some way 
 
 ## TODO
 
+- Gitguardian: ignore keys
+- GitGuardian: amend history to put ignore 
+let privateKey = "kQH5HW/8p1uGOVjbgWA7FunAmGO8lsSUXNsu3eow76sz84Q18fWxnyRzBHCd3pd5nE9qa99HAZtuZuj6F1huXg=="
+
 - Clean currency_mapper (use hte new CurrenciesMapper type and interface)
 - Move fixed cache from Client.fs to Constants.fs
 - can we move the  fetchPairs and fetchAssets functions from currency mapper to Client.fs ?

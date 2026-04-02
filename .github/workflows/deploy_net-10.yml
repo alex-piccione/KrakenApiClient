@@ -2,7 +2,7 @@ name: .Net 10
 
 on:
   push:
-    branches: ["net-10"]
+    branches: ["net-10-cleanup"]
   workflow_dispatch:  # Adds "Run workflow" button
 
 env:

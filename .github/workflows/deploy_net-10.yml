@@ -14,6 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: 🔍 Which branch is this?
+      run: |
+        .echo "Branch: ${{ github.ref }}"
+
     - name: 📦 Checkout code
       uses: actions/checkout@v5
   
@@ -21,11 +25,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
-
-    - name: 🔍 Which branch is this?
-      run: |
-        #echo "Branch: ${{ github.ref }}"
-        echo github.ref:: ${{github.ref}}
 
     - name: 🔄 Restore packages
       run: dotnet restore

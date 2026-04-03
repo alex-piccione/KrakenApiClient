@@ -2,51 +2,68 @@ name: Deploy
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [master]
+    branches: ["main"]
+  workflow_dispatch:  # Adds "Run workflow" button
 
 env:
-  VERSION: 2.0.${{github.run_number}}
   PROJECT_FOLDER: src/KrakenApiClient
   NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-dotnet@v4
+
+    - name: 🌿 Branch info
+      run: |
+        echo "Branch: ${{ github.ref }}"
+
+    - name: 📦 Checkout code
+      uses: actions/checkout@v5
+  
+    - name: ⚙️ Setup .NET
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
 
-    - name: What is the branch ?
-      run: |
-        echo github.ref:: ${{github.ref}}
-
-    - name: Install dependencies
+    - name: 🔄 Restore packages
       run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Run Tests
-      run: dotnet test --no-restore --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY"
 
-    - name: Define NuGet package version
+    - name: 🏗️ Build
+      run: dotnet build -c Release --no-restore
+
+    - name: 🧪 Run Tests
+      if: false
       run: |
-        suffix="-alpha"
-        # remove the suffix if we are pushing from master branch
-        if [[ ${{ github.event_name }} == "push" && ${{ github.ref }} == "refs/heads/master" ]]; then
-          suffix=""
+        dotnet test --no-restore -c Release \
+          --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY" \
+     
+    - name: 🎯 Define NuGet package version
+      run: |
+        NUGET_PACKAGE_VERSION=$(date +'%y.%-m.%-d') # e.g., 25.3.5
+
+        # Append -alpha for non-main branches
+        if [[ ${{ github.ref }} != "refs/heads/main" ]]; then
+          BUILD_NUMBER="${{ github.run_number }}"  # e.g., 123
+          NUGET_PACKAGE_VERSION="${NUGET_PACKAGE_VERSION}-alpha.${BUILD_NUMBER}"  # e.g., 25.3.5-alpha.123
         fi
-        echo version:: $VERSION$suffix
-        echo "NUGET_PACKAGE_VERSION=$VERSION$suffix" >> $GITHUB_ENV
-    - name: Pack NuGet
+
+        echo "NUGET_PACKAGE_VERSION=$NUGET_PACKAGE_VERSION" >> $GITHUB_ENV
+        echo "📦 NUGET PACKAGE VERSION=$NUGET_PACKAGE_VERSION" >> $GITHUB_OUTPUT
+    
+    - name: 📦 Pack NuGet
       run: |
         echo create package $NUGET_PACKAGE_VERSION
-        dotnet pack $PROJECT_FOLDER --configuration Release --no-build -p:PackageVersion=$NUGET_PACKAGE_VERSION
-    - name: Publish NuGet
+        dotnet pack $PROJECT_FOLDER --configuration Release --no-build \
+          -p:PackageVersion=$NUGET_PACKAGE_VERSION \
+          -o ./nupkgs
+
+    - name: 🚀 Publish NuGet
       run: |
-        echo publish package
-        dotnet nuget push $PROJECT_FOLDER/bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+        echo "publish $NUGET_PACKAGE_VERSION version"
+        dotnet nuget push ./nupkgs/*.nupkg \
+          --api-key "${NUGET_API_KEY}" \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate
 

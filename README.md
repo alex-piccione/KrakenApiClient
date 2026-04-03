@@ -6,8 +6,6 @@ Target frameworks: net 10
 [![NuGet](https://img.shields.io/nuget/v/Alex75.KrakenApiClient.svg)](https://www.nuget.org/packages/Alex75.KrakenApiClient) 
 ![Build Status](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy.yml/badge.svg)
 
-[![.Net 10](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy_net-10.yml/badge.svg?branch=net-10)](https://github.com/alex-piccione/KrakenApiClient/actions/workflows/deploy_net-10.yml)
-
 This library uses common types defined in Alex75.Cryptocurrencies, like Currecy, CurrencyPir, Ticker...
 
 

@@ -8,13 +8,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83BAB588-21D5-49A5-BCE1-D5B96D7B3AAE}"
 	ProjectSection(SolutionItems) = preProject
 		.gitguardian.yaml = .gitguardian.yaml
-		aaa.txt = aaa.txt
 		.github\workflows\deploy.yml = .github\workflows\deploy.yml
 		.github\workflows\deploy_net-10.yml = .github\workflows\deploy_net-10.yml
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
-		gitguardian_test_2.txt = gitguardian_test_2.txt
-		gitguard_test.txt = gitguard_test.txt
 		README.md = README.md
 	EndProjectSection
 EndProject

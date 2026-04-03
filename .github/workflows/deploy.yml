@@ -2,11 +2,12 @@ name: Deploy
 
 on:
   push:
+    branches: [main]
   pull_request:
     branches: [master]
 
 env:
-  VERSION: 1.2.${{github.run_number}}
+  VERSION: 2.0.${{github.run_number}}
   PROJECT_FOLDER: src/KrakenApiClient
   NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
 
@@ -15,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '10.0.x'
 
     - name: What is the branch ?
       run: |

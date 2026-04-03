@@ -1,17 +1,14 @@
-﻿module IntegrationTests.Client.ListPairs
+﻿module Client.ListPairs
 
 open System.Linq
 open NUnit.Framework
 open FsUnit
-open Alex75.KrakenApiClient
 open Alex75.Cryptocurrencies
+open utils
 
-[<Test; Category("Client")>]
-let ListPairs () =
-
-    let client = Client() :> IClient
-
-    let pairs = client.ListPairs()
+[<Test; Category("REQUIRES_API_KEY")>]
+let ListPairs () = task {
+    let! pairs = client.ListPairs()
 
     pairs |> should not' (be null)
     pairs |> should contain CurrencyPair.XRP_EUR
@@ -19,5 +16,9 @@ let ListPairs () =
 
     let ewt_eur = pairs.SingleOrDefault( fun p -> p = CurrencyPair("EWT", "EUR") )
     ewt_eur |> should not' (be Null)
-    ewt_eur.OrderDecimals.IsSome |> should be True
-    ewt_eur.OrderDecimals.Value |> should equal 3
+    match ewt_eur with
+    | null -> ()
+    | ewt_eur ->
+        ewt_eur.OrderDecimals.IsSome |> should be True
+        ewt_eur.OrderDecimals.Value |> should equal 3
+}

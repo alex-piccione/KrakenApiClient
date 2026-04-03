@@ -3,23 +3,19 @@
 using Alex75.Cryptocurrencies;
 using Alex75.KrakenApiClient;
 
-namespace Example_of_use
+namespace ExampleOfUse
 {
-    class Trader
+    class Trader(IClient client)
     {
-        IClient client;
+        private readonly IClient client = client;
 
-        public Trader(IClient client) {
-            this.client = client;
-        }
-
-        internal void CreateLimitOrder_Buy_Sell(CurrencyPair pair, decimal payAmount, decimal percentageToRemoveFromAsk, decimal percentageToAddForSell)
+        internal async void CreateLimitOrder_Buy_Sell(CurrencyPair pair, decimal payAmount, decimal percentageToRemoveFromAsk, decimal percentageToAddForSell)
         {
             Console.WriteLine("\n# Buy & Sell #\n");
 
-            Console.WriteLine($"Amount: {payAmount} {pair.Other}");
+            Console.WriteLine($"Amount: {payAmount} {pair.Quote}");
 
-            var ticker = client.GetTicker(pair);
+            var ticker = await client.GetTicker(pair);
             Console.WriteLine(ticker);
 
             // BUY

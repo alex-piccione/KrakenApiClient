@@ -22,8 +22,7 @@ let normalizeCurrency = fun k ->
     | "XXRP" -> Currency.XRP
     | "XLTC" -> Currency.LTC
     | "XETH" -> Currency.ETH
-    | "DOT" -> Currency.DOT
-    | "ADA" -> Currency.ADA
+    | "ETH2" -> Currency.ETH // this is forced
     | _ -> Currency(k)
 
 [<Test>]

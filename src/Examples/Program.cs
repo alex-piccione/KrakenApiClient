@@ -2,7 +2,6 @@
 using Alex75.KrakenApiClient;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Reflection;
 
 namespace Example
 {
@@ -16,8 +15,8 @@ namespace Example
                 .AddUserSecrets("Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352")
                 .Build();
 
-            string publicKey = configuration["public key"];
-            string privateKey = configuration["secret key"];
+            string publicKey = configuration["public key"] ?? throw new Exception("Missing cinfiguration: public key");
+            string privateKey = configuration["secret key"] ?? throw new Exception("Missing cinfiguration: secret key");
             IClient client = new Client(publicKey, privateKey);
 
             // get ticker
@@ -60,11 +59,11 @@ namespace Example
             }
         }
 
-        private static void GetBalance(IClient client)
+        private static async void GetBalance(IClient client)
         {
             try
             {
-                var balance = client.GetBalance();
+                var balance = await client.GetBalance();
 
                 foreach (var item in balance)
                     Console.WriteLine($"Curreny: {item.Currency}, Amount: {item.Total}, Available: {item.Free}");
@@ -123,9 +122,9 @@ namespace Example
             Console.WriteLine($"Order: {order.Reference}");
         }
 
-        private static void BuyXRP_with_50_EUR(IClient client)
+        private async static void BuyXRP_with_50_EUR(IClient client)
         {
-            var ticker = client.GetTicker(new CurrencyPair(Currency.XRP, Currency.EUR));
+            var ticker = await client.GetTicker(new CurrencyPair(Currency.XRP, Currency.EUR));
 
             // Kraken API does not offer a way to pay a precise amount of "base currency" (EUR)
             // so we need to calculate the amount of "quote currency" (EUR) based on the current best market ask price
@@ -139,12 +138,12 @@ namespace Example
             Console.WriteLine($"Order: {order.Reference}");
         }
 
-        private static void CreateLimitOrder(IClient client)
+        private async static void CreateLimitOrder(IClient client)
         {
             var pair = CurrencyPair.XRP_EUR;
             var payAmount = 500; //500 EUR
 
-            var marketPrice = client.GetTicker(pair).Bid;
+            var marketPrice = (await client.GetTicker(pair)).Bid;
             var price = marketPrice - (marketPrice * .04m); // -4%
             var xrpQuantity = payAmount / price;
 
@@ -156,6 +155,7 @@ namespace Example
             Console.WriteLine($"Order: {orderId}");
         }
 
+        /*
         private static void WithdrawFunds(IClient client)
         {
             var response = client.Withdraw(Currency.XRP, 50, "Binance");
@@ -168,6 +168,6 @@ namespace Example
             {
                 Console.WriteLine($"{MethodBase.GetCurrentMethod().Name} failed: {response.Error}");
             }
-        }
+        }*/
     }
 }

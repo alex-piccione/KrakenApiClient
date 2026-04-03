@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>	
+    <!--<ImplicitUsings>enable</ImplicitUsings>-->
+    <Nullable>enable</Nullable>
+	  <AnalysisLevel>latest</AnalysisLevel>
+
+	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	
+    <Authors>Alessandro Piccione</Authors>
+
+    <UserSecretsId>Alex75.KrakenApiClient-08ccac50-5aef-4bd5-b18a-707588558352</UserSecretsId>
+  </PropertyGroup>
+</Project>

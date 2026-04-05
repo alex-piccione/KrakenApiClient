@@ -30,14 +30,22 @@ type public Client (publicKey:string, secretKey:string) =
     let create_content (properties:IDictionary<string, string>) =
         let nonce = DateTime.UtcNow.Ticks.ToString()
         let content = properties
-                        |> Seq.map (fun kv -> sprintf "&%s=%s" kv.Key kv.Value)
-                        |> Seq.fold (+) ("nonce=" + nonce)
+                      |> Seq.map (fun kv -> sprintf "&%s=%s" kv.Key kv.Value)
+                      |> Seq.fold (+) ("nonce=" + nonce)
 
         let nonce_content = nonce + content
         (nonce_content, content)
 
+    let execute_call (method: string -> Task<HttpResponseMessage>) endpoint = task {
+        let! response = method endpoint
+        let! content = response.Content.ReadAsStringAsync()
+        match response.IsSuccessStatusCode with
+        | false -> return failwithf $"Response status is not success. {response.StatusCode} {response.ReasonPhrase} | {content[..500]}"
+        | true -> return content
+    }
+
     do
-        currency_mapper.startMapping().GetAwaiter().GetResult() // await... so test it will be simple
+        currency_mapper.startMapping().GetAwaiter().GetResult() // await... so testing it, will be simple
 
 
     new () = Client(null, null)
@@ -68,31 +76,16 @@ type public Client (publicKey:string, secretKey:string) =
 
         CreateMarketOrderResponse(true, null, orderIds, amount)
 
-
-    member this.GetBalance(): AccountBalance =
-        let url = $"{base_url}/private/Balance"
-        let nonce_content, content = create_content (dict [])
-        let balances =
-            (url.WithApi "/0/private/Balance" nonce_content publicKey secretKey).PostUrlEncodedAsync(content).Result
-                .EnsureSuccessStatusCode()
-                |> fun msg -> msg.Content.ReadAsStringAsync().Result
-                |> parser.parseBalance <| currency_mapper.getCurrency
-        balances
-
     interface IClient with
 
         member this.ListPairs() =
             match cache.GetPairs assets_cache_time with
             | Some pairs -> Task.FromResult pairs
             | _ -> task {
-                let! response = client.GetAsync "/0/public/AssetPairs"
-                let! content = response.Content.ReadAsStringAsync()
-                match response.IsSuccessStatusCode with
-                | false -> return failwithf $"Response status is not success. {response.StatusCode} {response.ReasonPhrase} | {content[..500]}"
-                | true -> 
-                    let pairs = parser.parsePairs content
-                    cache.SetPairs pairs
-                    return pairs :> ICollection<CurrencyPair>
+                let! content = execute_call GET "/0/public/AssetPairs"
+                let pairs = parser.parsePairs content
+                cache.SetPairs pairs
+                return pairs :> ICollection<CurrencyPair>
             }
 
         member this.GetTicker(pair: CurrencyPair): Task<Ticker> = task {
@@ -101,62 +94,40 @@ type public Client (publicKey:string, secretKey:string) =
                 | Some ticker -> return ticker
                 | _ ->
                     let kraken_pair = currency_mapper.getKrakenPair pair
-                    let! response = client.GetAsync $"/0/public/Ticker?pair={kraken_pair}"
-                    let! content = response.Content.ReadAsStringAsync()
-                    match response.IsSuccessStatusCode with
-                    | false -> return failwithf $"Response status is not success. {response.StatusCode} {response.ReasonPhrase} | {content[..500]}"
-                    | true -> 
-                        let ticker = parser.parseTicker(pair, content)
-                        cache.SetTicker ticker
-                        return ticker
-        }
+                    let! content = execute_call GET $"/0/public/Ticker?pair={kraken_pair}"
+                    let ticker = parser.parseTicker(pair, content)
+                    cache.SetTicker ticker
+                    return ticker
+            }
 
         member this.GetBalance(): Task<AccountBalance> = task {
-            let! response = POST "/0/private/Balance"
-            let! content = response.Content.ReadAsStringAsync()
-            match response.IsSuccessStatusCode with 
-            | false -> return failwith $"Failed to call GetBalance. {response.StatusCode} {response.ReasonPhrase} {content}"
-            | true -> return parser.parseBalance content <| currency_mapper.getCurrency
+            let! content = execute_call POST "/0/private/Balance"
+            return parser.parseBalance content <| currency_mapper.getCurrency
         }
 
-        member this.ListOpenOrdersIsAvailable = true
-        member this.ListOpenOrders () =
-
-            let url = $"{base_url}/0/private/OpenOrders"
-
+        //member this.ListOpenOrdersIsAvailable = true
+        member this.ListOpenOrders () = task {
+            let! content = execute_call POST "/0/private/OpenOrders"
+            return parser.parseOpenOrders content currency_mapper.parseAltPair
             //to try
                 // inputs
                 // trades = whether or not to include trades in output (optional.  default = false)
                 // userref = restrict results to given user reference id (optional)
+        }
 
-            let nonce_content, content = create_content (dict [])
-            let responseMessage = (url.WithApi "/0/private/OpenOrders" nonce_content publicKey secretKey).PostUrlEncodedAsync(content).Result
-            let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-            parser.parseOpenOrders(json, currency_mapper.parseAltPair)
+        //member this.ListOpenOrdersOfCurrenciesIsAvailable = true
+        //member this.ListOpenOrdersOfCurrencies(pairs: CurrencyPair[]) =
+        //    (this :> IApiClientListOrders).ListOpenOrders()
+        //    |> Array.filter (fun order -> Array.contains order.Pair pairs)
 
-        member this.ListOpenOrdersOfCurrenciesIsAvailable = true
-        member this.ListOpenOrdersOfCurrencies(pairs: CurrencyPair[]) =
-            (this :> IApiClientListOrders).ListOpenOrders()
-            |> Array.filter (fun order -> Array.contains order.Pair pairs)
+        //member this.ListClosedOrdersIsAvailable = true
+        member this.ListClosedOrders() = task {
+            let! content = execute_call POST "/0/private/ClosedOrders"
+            return parser.parseClosedOrders content currency_mapper.parseAltPair
+        }
 
-        member this.ListClosedOrdersIsAvailable = true
-        member this.ListClosedOrders() =
-
-            let url = $"{base_url}/0/private/ClosedOrders"
-
-            // inputs
-            // trades = whether or not to include trades in output (optional.  default = false)
-            // userref = restrict results to given user reference id (optional)
-
-            let nonce_content, content = create_content (dict [])
-            let responseMessage = (url.WithApi "/0/private/ClosedOrders" nonce_content publicKey secretKey).PostUrlEncodedAsync(content).Result
-            let json = responseMessage.EnsureSuccessStatusCode().Content.ReadAsStringAsync().Result
-            parser.parseClosedOrders json currency_mapper.parseAltPair
-
-        // todo: add an override to accept the Kraken custom filter parameters
-
-        member this.ListClosedOrdersOfCurrenciesIsAvailable = false
-        member this.ListClosedOrdersOfCurrencies(pairs:CurrencyPair[]) = failwith "Use ListClosedOrders"
+        //member this.ListClosedOrdersOfCurrenciesIsAvailable = false
+        //member this.ListClosedOrdersOfCurrencies(pairs:CurrencyPair[]) = failwith "Use ListClosedOrders"
 
         // Place Order
 

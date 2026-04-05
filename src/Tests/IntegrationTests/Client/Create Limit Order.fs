@@ -1,4 +1,4 @@
-﻿namespace IntegrationTests.Client
+﻿namespace Client
 
 open NUnit.Framework
 open FsUnit

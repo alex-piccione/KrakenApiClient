@@ -1,0 +1,69 @@
+name: .Net 10
+
+on:
+  push:
+    branches: ["net-10-cleanup"]
+  workflow_dispatch:  # Adds "Run workflow" button
+
+env:
+  PROJECT_FOLDER: src/KrakenApiClient
+  NUGET_API_KEY: ${{secrets.NUGET_API_KEY}}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: 🌿 Branch info
+      run: |
+        echo "Branch: ${{ github.ref }}"
+
+    - name: 📦 Checkout code
+      uses: actions/checkout@v5
+  
+    - name: ⚙️ Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: 🔄 Restore packages
+      run: dotnet restore
+
+    - name: 🏗️ Build
+      run: dotnet build -c Release --no-restore
+
+    - name: 🧪 Run Tests
+      if: false
+      run: |
+        dotnet test --no-restore -c Release \
+          --filter "TestCategory!=SKIP_ON_DEPLOY & TestCategory!=REQUIRES_API_KEY" \
+     
+    - name: 🎯 Define NuGet package version
+      run: |
+        NUGET_PACKAGE_VERSION=$(date +'%y.%-m.%-d') # e.g., 25.3.5
+
+        # Append -alpha for non-main branches
+        if [[ ${{ github.ref }} != "refs/heads/main" ]]; then
+          BUILD_NUMBER="${{ github.run_number }}"  # e.g., 123
+          NUGET_PACKAGE_VERSION="${NUGET_PACKAGE_VERSION}-alpha.${BUILD_NUMBER}"  # e.g., 25.3.5-alpha.123
+        fi
+
+        echo "NUGET_PACKAGE_VERSION=$NUGET_PACKAGE_VERSION" >> $GITHUB_ENV
+        echo "📦 NUGET PACKAGE VERSION=$NUGET_PACKAGE_VERSION" >> $GITHUB_OUTPUT
+    
+    - name: 📦 Pack NuGet
+      run: |
+        echo create package $NUGET_PACKAGE_VERSION
+        dotnet pack $PROJECT_FOLDER --configuration Release --no-build \
+          -p:PackageVersion=$NUGET_PACKAGE_VERSION \
+          -o ./nupkgs
+
+    - name: 🚀 Publish NuGet
+      run: |
+        echo "publish $NUGET_PACKAGE_VERSION version"
+        dotnet nuget push ./nupkgs/*.nupkg \
+          --api-key "${NUGET_API_KEY}" \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate
+

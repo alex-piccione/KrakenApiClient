@@ -58,7 +58,6 @@ let internal parseTicker (pair:CurrencyPair, data:string) =
 
     Ticker(pair, bid, ask, None, None, None)
 
-
 let internal parseBalance jsonString normalizeCurrency =
     let result = load_result_and_check_errors jsonString
 
@@ -81,31 +80,30 @@ let internal parseBalance jsonString normalizeCurrency =
 
     let final_map =
         result.Properties()
-        |> Seq.fold (fun map item ->  
+        |> Seq.fold (fun map item ->
             let currency, kind, amount = processRecord item
 
             if (map: Map<Currency, CurrencyBalance>).ContainsKey currency then
                 let existingBalance = map[currency]
-                let newBalance = 
+                let newBalance =
                     match kind with
                     | AssetType.Normal -> CurrencyBalance(currency, existingBalance.Total + amount, existingBalance.Total + amount)
-                    | AssetType.Stacking 
+                    | AssetType.Stacking
                     | AssetType.Flexible -> existingBalance.AddStacking amount
                     | _ -> existingBalance.AddStacking amount // treat all the other types as stacking, since they are not available for trading
                 map.Add(currency, newBalance)
-            else 
-                let balance = 
+            else
+                let balance =
                     match kind with
                     | AssetType.Normal -> CurrencyBalance(currency, amount, amount)
-                    | AssetType.Stacking 
+                    | AssetType.Stacking
                     | AssetType.Flexible -> CurrencyBalance.Zero(currency).AddStacking amount
                     | _ -> CurrencyBalance.Zero(currency).AddStacking amount// treat all the other types as stacking, since they are not available for trading
                 map.Add(currency, balance)
             ) emptyMap
 
     new AccountBalance(final_map.Values)
-   
-   
+
    (*
 
     for kraken_currency, amountJson in result.Properties() do
@@ -114,8 +112,7 @@ let internal parseBalance jsonString normalizeCurrency =
         //let kind = mapByKind kraken_currency
         // add the balance to the list
 
-
-        if balances.ContainsKey currency then 
+        if balances.ContainsKey currency then
              // add current values
         else
              // add new balance
@@ -123,14 +120,14 @@ let internal parseBalance jsonString normalizeCurrency =
 
         if balances |> Seq.exists (fun balance -> balance.Currency = currency) then
 
-            if kind = AssetType.Normal then 
+            if kind = AssetType.Normal then
                 let existingBalance = balances |> Seq.find (fun balance -> balance.Currency = currency)
                 let newTotal = existingBalance.Total + amount
                 let newAvailable = existingBalance.Available + amount
                 let newBalance = CurrencyBalance(currency, newTotal, newAvailable)
                 balances.Remove(existingBalance) |> ignore
                 balances.Add(newBalance)
-            else if kind = AssetType.Stacking then 
+            else if kind = AssetType.Stacking then
                 let existingBalance = balances |> Seq.find (fun balance -> balance.Currency = currency)
                 let newBalance = existingBalance.AddStacking amount
                 balances.Remove(existingBalance) |> ignore
@@ -144,30 +141,29 @@ let internal parseBalance jsonString normalizeCurrency =
     let mappedByKind:seq<(AssetType * Currency * decimal)> = result.Properties() |> Seq.map mapByKind
 
     let availableMap = Map(
-        mappedByKind 
+        mappedByKind
         |> Seq.filter (fun (kind,_,_) -> kind = AssetType.Normal)
         |> Seq.groupBy (fun (_,currency,_) -> currency)
-        |> Seq.map(fun (currency,items) -> 
+        |> Seq.map(fun (currency,items) ->
             let total = items |> Seq.sumBy( fun (_,_,value) -> value)
             (currency, total)
         ))
 
-
     // NOTE. Assume that only the "normal" balance is available for trading, and all the other are not.
-    let balances = 
+    let balances =
         mappedByKind
         |> Seq.filter (fun (kind,_,_) -> kind = "normal")
-        |> Seq.map( fun (kind,currency:Currency,amount) -> 
+        |> Seq.map( fun (kind,currency:Currency,amount) ->
             let mutable balance = CurrencyBalance(currency, amount, amount)
 
-            balance <- 
-                if flexiblesMap.ContainsKey currency then 
+            balance <-
+                if flexiblesMap.ContainsKey currency then
                     let newTotal = balance.Total + flexiblesMap[currency] // flexible are available
                     CurrencyBalance(currency, newTotal, newTotal)
                 else balance
 
             // add ETH2 to ETH
-            if currency = Currency.ETH then 
+            if currency = Currency.ETH then
                 let eth2 = mappedByKind |> Seq.tryFind (fun (_,currency,_) -> currency.UpperCase = "ETH2")
                 if eth2.IsSome then
                     let _, _, eth2_amount = eth2.Value
@@ -198,8 +194,8 @@ let internal parseBalanceEx jsonString normalizeCurrency =
     let result = load_result_and_check_errors jsonString // result is an array of assets
 
     let prop_1 = result.Properties()[0]
-    let balances = result.Properties() |> Seq.map (fun (krakenCurrencyCode, item) -> 
-        
+    let balances = result.Properties() |> Seq.map (fun (krakenCurrencyCode, item) ->
+
         let currency = normalizeCurrency krakenCurrencyCode
         let total = item["balance"].AsDecimal()
         let onHold = item["hold_trade"].AsDecimal()
@@ -217,7 +213,7 @@ let internal parseCreateOrder(jsonString:string) =
 
     struct (orderIds, amount)
 
-let internal parseOrderType value =  
+let internal parseOrderType value =
     match value with
     | "limit" -> OrderType.Limit
     | "market" -> OrderType.Market
@@ -227,13 +223,13 @@ let internal parseOrderType value =
     | "take-profit-limit" -> OrderType.TakeProfitLimit
     | x -> failwithf "Order type not recognized: %s" x
 
-let internal  parseOrderSide value = 
+let internal  parseOrderSide value =
     match value with
     | "sell" -> OrderSide.Sell
     | "buy" -> OrderSide.Buy
     | x -> failwithf "Order side not recognized: %s" x
 
-let internal parseOpenOrders(jsonString:string, normalizePair) =
+let internal parseOpenOrders (jsonString:string) normalizePair =
     let result = load_result_and_check_errors(jsonString)
 
     let readOrder (id, json:JsonValue) =
@@ -294,7 +290,7 @@ let private startDate = DateTime(1970, 1, 1)
 let private parseDate dateNumber = startDate + TimeSpan.FromSeconds(float(dateNumber))
 //DateTimeOffset.FromUnixTimeSeconds
 
-let internal parseClosedOrders (jsonString:string) normalizePair =
+let internal parseClosedOrders (jsonString:string) (normalizePair: string -> CurrencyPair) =
     let result = load_result_and_check_errors(jsonString)
 
     let readOrder (name, json:JsonValue) =
@@ -303,28 +299,28 @@ let internal parseClosedOrders (jsonString:string) normalizePair =
         let orderSide = parseOrderSide(descr.["type"].AsString())
         let orderType = parseOrderType(descr.["ordertype"].AsString())
 
-        let openTime = parseDate(json.["opentm"].AsDecimal())
+        let openTime = parseDate(json["opentm"].AsDecimal())
         let closeTime = parseDate(json.["closetm"].AsDecimal())
         let status = json.["status"].AsString()
         let reason = json.["reason"].AsString()
 
         let amount = 0m
-        let price = json.["price"].AsDecimal()
+        let price = json["price"].AsDecimal()
 
-        let pair = normalizePair(descr.["pair"].AsString())
-        let vol = json.["vol"].AsDecimal()
+        let pair = normalizePair(descr["pair"].AsString())
+        let vol = json["vol"].AsDecimal()
         //let vol_exec = json.["vol_exec"].AsDecimal()  // not used
         let buyQuantity = vol
         //let buyQuantity = Math.Min(vol, vol_exec)
 
-        let payQuantity = json.["cost"].AsDecimal()
-        let fee = json.["fee"].AsDecimal()
+        let payQuantity = json["cost"].AsDecimal()
+        let fee = json["fee"].AsDecimal()
 
         let note = sprintf "Status: %s, Reason: %s" status reason
 
         ClosedOrder(id, orderType, orderSide, openTime, closeTime, status, reason, pair, buyQuantity, payQuantity, price, fee, note)
 
-    result.["closed"].Properties() |> Array.map readOrder
+    result["closed"].Properties() |> Array.map readOrder
 
     //let orders = List<ClosedOrder>()
 

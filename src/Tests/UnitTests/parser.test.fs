@@ -76,30 +76,20 @@ let ``parseOrder for Limit order`` () =
     orderIds |> should contain "OIDW6A-5TZUS-6P7ZPN"
     amount |> should equal 223.28146083
 
-//[<Test>]
-//let ``parseOpenOrders when list is empty`` () =
-
-//    let json = loadApiResponse "list Open Orders response (empty list).json"
-
-//    let orders = parser.parseOpenOrders (json, (fun k -> CurrencyPair(k,k)))
-
-//    orders |> should not' (be null)
-//    orders |> should be Empty
-
 [<Test>]
-let ``parseOpenOrders`` () =
+let ``parseOpenOrders`` () = task {
 
     let json = readResource "list Open Orders response (one limit order untouched).json"
 
     let normalizePair = fun _ -> CurrencyPair.XRP_EUR
 
-    let orders = parser.parseOpenOrders (json, normalizePair)
+    let orders = parser.parseOpenOrders json normalizePair
 
     orders |> should not' (be null)
     orders |> should not' (be Empty)
 
     orders.Length |> should equal 1
-    let order = orders.[0]
+    let order = orders[0]
 
     //order.CreationDate |> should equalWithin (new DateTime(2019,12,04 18,37,00) TimeSpan.FromSeconds(1))
     order.Id |> should equal "OGD4S7-IISGH-2BS2QI"
@@ -108,6 +98,7 @@ let ``parseOpenOrders`` () =
     order.Side |> should equal OrderSide.Sell
     order.BuyOrSellQuantity |> should equal 250.00000000m
     order.LimitPrice |> should equal 0.30m
+}
 
 [<Test>]
 let ``parseClosedOrders`` () =

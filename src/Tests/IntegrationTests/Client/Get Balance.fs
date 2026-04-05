@@ -1,4 +1,4 @@
-﻿module IntegrationTests.Client.GetBalance
+﻿module Client.GetBalance
 
 open NUnit.Framework
 open FsUnit

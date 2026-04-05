@@ -1,4 +1,4 @@
-﻿namespace IntegrationTests.Client
+﻿namespace Client
 
 open System
 open NUnit.Framework
@@ -10,10 +10,11 @@ open utils
 module ListClosedOrders =
 
     [<Test>]
-    let ``List Closed Orders`` () =
-        let orders = client.ListClosedOrders()
+    let ``List Closed Orders`` () = task {
+        let! orders = client.ListClosedOrders()
 
         orders |> should not' (be null)
         orders |> should not' (be Empty)
 
-        orders.[0].Status |> should not' (be Empty)
+        orders[0].Status |> should not' (be Empty)
+    }

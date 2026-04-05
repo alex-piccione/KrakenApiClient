@@ -74,11 +74,11 @@ namespace Example
             }
         }
 
-        private static void ListOpenOrders(IClient client)
+        private static async void ListOpenOrders(IClient client)
         {
             try
             {
-                var orders = client.ListOpenOrders();
+                var orders = await client.ListOpenOrders();
                 foreach (var order in orders)
                     Console.WriteLine($"Order: {order}");
             }
@@ -88,11 +88,11 @@ namespace Example
             }
         }
 
-        private static void ListClosedOrders(IClient client)
+        private static async void ListClosedOrders(IClient client)
         {
             try
             {
-                var orders = client.ListClosedOrders();
+                var orders = await client.ListClosedOrders();
                 foreach (var order in orders)
                     Console.WriteLine($"Order: {order}");
             }

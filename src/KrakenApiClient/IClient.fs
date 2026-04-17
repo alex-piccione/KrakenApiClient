@@ -5,8 +5,7 @@ open Alex75.Cryptocurrencies
 open Alex75.Cryptocurrencies.Exchanges
 
 type IClient =
-    // new async interfaces
-    inherit IApiClientV2
+    inherit IApiClientV2  // <- new async interfaces
 
     // legacy not-async interfaces
     //inherit IApiClient
@@ -19,6 +18,6 @@ type IClient =
     // Custom
     abstract member Withdraw: currency:Currency * amount:decimal * walletName:string -> WithdrawalResponse
 
-    // TODO: take from IApiClientV2 when available    
+    // TODO: take from IApiClientV2 when available
     abstract member ListOpenOrders: unit -> Task<OpenOrder array>
     abstract member ListClosedOrders: unit -> Task<ClosedOrder array> 

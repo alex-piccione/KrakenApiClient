@@ -6,15 +6,15 @@
     <PackageVersion Include="FSharp.Core" Version="11.0.100" />
     <PackageVersion Include="FsHttp" Version="15.0.3" />
     <PackageVersion Include="Flurl.Http" Version="2.4.2" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.6" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.3" />
-    <PackageVersion Include="Alex75.Cryptocurrencies" Version="26.4.55" />
+    <PackageVersion Include="Alex75.Cryptocurrencies" Version="26.4.56" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.4.2" />
-    <PackageVersion Include="FSharp.Data" Version="8.1.5" />
+    <PackageVersion Include="FSharp.Data" Version="8.1.8" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
     <PackageVersion Include="FsUnit" Version="7.1.1" />
     <PackageVersion Include="nunit" Version="4.5.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="6.2.0" />

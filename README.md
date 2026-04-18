@@ -34,8 +34,8 @@ See the examples in <a href="src/Examples/Program.cs">Examples</a>
 ### Kraken documentation
 
 - REST API documentation: https://docs.kraken.com/api/docs/rest-api/get-account-balance
-- APIs general introduction: https://docs.kraken.com/api/docs/guides/global-intro
-- Kraken API authentication: https://docs.kraken.com/api/docs/guides/spot-rest-auth
+- API general introduction: https://docs.kraken.com/api/docs/guides/global-intro
+- API authentication: https://docs.kraken.com/api/docs/guides/spot-rest-auth
 
 ### Kraken (crazy) assets
 

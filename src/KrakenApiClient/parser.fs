@@ -211,7 +211,7 @@ let internal parseCreateOrder(jsonString:string) =
     let amount = parseDecimal(order.Split(' ')[1])
     let orderIds = result["txid"].AsArray() |> Array.map (fun v -> v.AsString())
 
-    struct (orderIds, amount)
+    (orderIds, amount)
 
 let internal parseOrderType value =
     match value with

@@ -2,6 +2,8 @@
 
 open System
 open System.Text
+open System.Net.Http
+open System.Collections.Generic
 open Flurl
 open Flurl.Http
 
@@ -11,14 +13,26 @@ let sha256 (data: byte[]) =
 let sha512HMAC (data:byte[], messageBytes:byte[]) =
     (new Security.Cryptography.HMACSHA512(data)).ComputeHash(messageBytes)
 
-
-let invariantCulture = System.Globalization.CultureInfo.InvariantCulture
+let public invariantCulture = System.Globalization.CultureInfo.InvariantCulture
 
 let private getNonce () = DateTime.UtcNow.Ticks.ToString()
 
-let internal createSignature (path:string) privateKey (data:Map<string, obj>) (nonce:string) =
-    let content = data |> Map.fold (fun state k v -> state + $"&{k}={v}") ("nonce=" + nonce)
-    let encoded = Encoding.UTF8.GetBytes (nonce + content)
+// for LEGACY methods
+let create_content (properties:IDictionary<string, string>) =
+    let nonce = getNonce()
+
+    let content = properties
+                  |> Seq.map (fun kv -> sprintf "&%s=%s" kv.Key kv.Value)
+                  |> Seq.fold (+) ("nonce=" + nonce)
+
+    let nonce_content = nonce + content
+    (nonce_content, content)
+
+let internal createSignature (path:string) privateKey (data:KeyValuePair<string, string> seq) (nonce:string) =
+    // cntent MUST be: nonce + "k=v&k=v&k=v..."
+    let values = data |> Seq.map(fun kv -> $"{kv.Key}={kv.Value}")
+    let content = nonce + String.Join('&', values)
+    let encoded = Encoding.UTF8.GetBytes (content)
 
     let message = Array.append (Encoding.UTF8.GetBytes path) (sha256 encoded)
 
@@ -27,43 +41,44 @@ let internal createSignature (path:string) privateKey (data:Map<string, obj>) (n
 
     Convert.ToBase64String(signature)
 
-
 /// extend HttpClient method
 
-type Net.Http.HttpClient with
+type HttpClient with
 
     /// Call GET adding the signature for API authentication
     member self.GetAsyncWithSignature path publicKey privateKey =
         let signature = createSignature path privateKey Map.empty (getNonce())
-        let message = new Net.Http.HttpRequestMessage(Net.Http.HttpMethod.Get, path)
+        let message = new HttpRequestMessage(HttpMethod.Get, path)
         message.SetHeader ("API-Key", publicKey)
         message.SetHeader ("API-Sign", signature)
 
         self.SendAsync message
 
     /// Call POST adding the signature for API authentication
-    member self.PostAsyncWithSignature path publicKey privateKey =
+    member self.PostAsyncWithSignature path publicKey privateKey (data:IDictionary<string, string> option) = // (data:IDictionary<string, string>) =
         let nonce = getNonce()
 
-        let data = Map.empty<string, obj>
+        let nonceKeyValue = Seq.singleton (KeyValuePair("nonce", nonce))
 
-        // System.Globalization.CultureInfo.InstalledUICulture
-        let form = 
-            data 
-            |> Map.add "nonce" nonce
-            |> Map.toSeq
-            |> Seq.map (fun (k, v) -> System.Collections.Generic.KeyValuePair(k, v.ToString()))
-            |> Seq.toList
+        // form data has to contain the nonce too
+        let form =
+            match data with
+            | None -> nonceKeyValue
+            | Some values ->  // Dictionary are immutable, need to convert to a sequence
+                values
+                |> Seq.cast<KeyValuePair<string, string>>
+                |> Seq.append nonceKeyValue
 
-        let signature = createSignature path privateKey data nonce
-        let message = new Net.Http.HttpRequestMessage(Net.Http.HttpMethod.Post, path)
+        let signature = createSignature path privateKey form nonce
+        let message = new HttpRequestMessage(HttpMethod.Post, path)
 
-        message.Content <- new Net.Http.FormUrlEncodedContent(form)
+        
+        message.Content <- new FormUrlEncodedContent(form)
+        //message.SetHeader ("Content-Type", "application/x-www-form-urlencoded")
         message.SetHeader ("API-Key", publicKey)
         message.SetHeader ("API-Sign", signature)
 
         self.SendAsync message
-
 
 /// extend Flurl to add API key and signature
 type Flurl.Http.IFlurlRequest with

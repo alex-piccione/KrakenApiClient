@@ -13,8 +13,8 @@ let ``createSignature produce expected signature as per official documentation e
     let path = "/0/private/AddOrder"
     let expectedSignature = "4/dpxb3iT4tp/ZCVEwSnEsLxx0bqyhLpdfOpc6fn7OR8+UClSV5n9E6aSS8MPtnRfp32bAb0nmbRn6H8ndwLUQ=="
 
-    let data = Map.ofSeq<string, obj> [
-        //"nonce", "1616492376594"
+    let data = dict [
+        "nonce", nonce
         "ordertype", "limit"
         "pair","XBTUSD"
         "price", "37500"
@@ -24,4 +24,3 @@ let ``createSignature produce expected signature as per official documentation e
 
     let signature = utils.createSignature path privateKey data nonce
     signature |> should equal expectedSignature
-  

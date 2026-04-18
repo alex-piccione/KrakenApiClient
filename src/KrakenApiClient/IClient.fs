@@ -21,3 +21,5 @@ type IClient =
     // TODO: take from IApiClientV2 when available
     abstract member ListOpenOrders: unit -> Task<OpenOrder array>
     abstract member ListClosedOrders: unit -> Task<ClosedOrder array> 
+
+    abstract member CreateMarketOrder_new: CreateOrderRequest -> Task<CreateOrderResult>

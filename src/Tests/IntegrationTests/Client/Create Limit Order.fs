@@ -22,7 +22,7 @@ module CreateLimitOrder =
     let ``CreateSellLimitOrder`` () =
         let pair = CurrencyPair("xrp", "eur")
         let sellAmount = 15m
-        let limitPrice = 1.30m
+        let limitPrice = 1.45m
 
         let ordererence = client.CreateLimitOrder(CreateOrderRequest.Limit(OrderSide.Sell, pair, sellAmount, limitPrice))
 

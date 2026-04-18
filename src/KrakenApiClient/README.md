@@ -14,7 +14,7 @@ Cached: The response is cached for a configurable amount of time.
 | Create Market Order  |    | Create an order at the current market price                        |      |
 | Create Limit Order   |    | Create an order with a specified price                             |      |
 | List open orders     |    | List all the open orders                                           |      |
-| List closed orders   |    | List all the closed order                                          |      |
+| List closed orders   |    | List all the closed orders                                         |      |
 | Withdraw Crypto      |    | Withdraw cryptocurrency to a registered wallet.                    | The _wallet name_ must be registered in advance |
 
 

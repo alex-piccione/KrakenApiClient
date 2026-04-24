@@ -102,7 +102,7 @@ type public Client (publicKey:string, secretKey:string) =
         //member this.ListOpenOrdersIsAvailable = true
         member this.ListOpenOrders () = task {
             let! content = execute_POST "/0/private/OpenOrders" None
-            return parser.parseOpenOrders content currency_mapper.parseAltPair
+            return parser.parseOpenOrders content currency_mapper.parseAltPair |> List.ofArray
             //to try
                 // inputs
                 // trades = whether or not to include trades in output (optional.  default = false)
@@ -117,7 +117,7 @@ type public Client (publicKey:string, secretKey:string) =
         //member this.ListClosedOrdersIsAvailable = true
         member this.ListClosedOrders() = task {
             let! content = execute_POST "/0/private/ClosedOrders" None
-            return parser.parseClosedOrders content currency_mapper.parseAltPair
+            return parser.parseClosedOrders content currency_mapper.parseAltPair |> List.ofArray
         }
 
         //member this.ListClosedOrdersOfCurrenciesIsAvailable = false
